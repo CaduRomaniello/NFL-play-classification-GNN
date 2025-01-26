@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 def read2025data(weeks=[1]):
@@ -7,14 +8,17 @@ def read2025data(weeks=[1]):
     
     print('Reading data...')
     
-    games = pd.read_csv(f'./nfl_data/2025/games.csv')
-    player_play = pd.read_csv(f'./nfl_data/2025/player_play.csv')
-    players = pd.read_csv(f'./nfl_data/2025/players.csv')
-    plays = pd.read_csv(f'./nfl_data/2025/plays.csv')
+    cur_path = os.path.os.getcwd()
+    data_path = os.path.abspath(os.path.join(cur_path, './nfl_data/2025/'))
+    
+    games = pd.read_csv(os.path.join(data_path, 'games.csv'))
+    player_play = pd.read_csv(os.path.join(data_path, 'player_play.csv'))
+    players = pd.read_csv(os.path.join(data_path, 'players.csv'))
+    plays = pd.read_csv(os.path.join(data_path, 'plays.csv'))
 
     tracking_data = pd.DataFrame()
     for week in weeks:
-        tracking_data = pd.concat([tracking_data, pd.read_csv(f'./nfl_data/2025/tracking_week_{week}.csv')])
+        tracking_data = pd.concat([tracking_data, pd.read_csv(os.path.join(data_path, f'tracking_week_{week}.csv'))])
         
     print('Data read successfully')
 
