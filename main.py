@@ -1,6 +1,7 @@
 import json
 
 import pandas as pd
+import networkx as nx
 import matplotlib.pyplot as plt
 
 from playground import playground
@@ -51,7 +52,7 @@ def main():
     play['possessionTeamPointDiff'] = possession_team_point_diff
     
     # adding play type to play df
-    play['playType'] = playType
+    # play['playType'] = playType
     
     # verifying if there is only one line_set event
     if tracking_data[(tracking_data['frameType'] != 'AFTER_SNAP') & (tracking_data['event'] == 'line_set')]['frameId'].nunique() != 1:
@@ -171,7 +172,7 @@ def main():
     #         player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
     #         plt.plot([key_x, player_x], [key_y, player_y], color='lightcoral', linewidth=0.5)
             
-    # plotting cloest players without team distinction
+    # plotting closest players without team distinction
     for key, value in all_dist.items():
         key_x = td_at_snap[td_at_snap['nflId'] == key]['x'].values[0]
         key_y = td_at_snap[td_at_snap['nflId'] == key]['y'].values[0]
@@ -179,6 +180,34 @@ def main():
             player_x = td_at_snap[td_at_snap['nflId'] == player['nflId']]['x'].values[0]
             player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
             plt.plot([key_x, player_x], [key_y, player_y], color='lightblue', linewidth=0.5)
+            
+    # creating network graph with attributes, adding all edges, and then adding node attributes
+    graph_attrs = json.loads(play.drop(['gameId', 'playId'], axis=1).to_json(orient='records'))[0]
+    G = nx.Graph(quarter=graph_attrs['quarter'], 
+                down=graph_attrs['down'],
+                yardsToGo=graph_attrs['yardsToGo'],
+                possessionTeam=graph_attrs['possessionTeam'],
+                gameClock=graph_attrs['gameClock'],
+                absoluteYardlineNumber=graph_attrs['absoluteYardlineNumber'],
+                offenseFormation=graph_attrs['offenseFormation'],
+                receiverAlignment=graph_attrs['receiverAlignment'],
+                playClockAtSnap=graph_attrs['playClockAtSnap'],
+                possessionTeamPointDiff=graph_attrs['possessionTeamPointDiff'])
+    
+    for key, value in all_dist.items():
+        for player in value:
+            G.add_edge(key, player['nflId'], weight=player['distance'])
+            
+    for key, value in td_at_snap.iterrows():
+        relevant_info = ['club', 'displayName', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
+        info_dict = {k: v for k, v in value.items() if k in relevant_info}
+        nx.set_node_attributes(G, {value['nflId']: info_dict})
+    
+    # print(list(G.nodes(data=True)))
+    # for n, nbrs in G.adj.items():
+    #     for nbr, eattr in nbrs.items():
+    #         wt = eattr['weight']
+    #         print(f"({n}, {nbr}, {wt:.3})")
             
     # ploting players
     colors = {'ARI': 'white',
