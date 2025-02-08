@@ -1,0 +1,4 @@
+- principais chaves para saber se é passe ou corrida: 'passLocationType', 'rushLocationType'. Geralmente é um ou outro. Tem casos que é nenhum deles, pelo o que foi visto nos dados é pq uma dos campos 'qbSpike', 'qbKneel' ou 'qbSneak' possui algum valor.
+- quando um QB corre com a bola, o dataset considera um passe e para verificar isso deve-se olhar o campo 'passResult' pois ele irá conter o valor 'R' indicando que o qb correu. Nesse caso pode-se copsiderar um passe
+- sempre verificar 'qbSpike', 'qbKneel' ou 'qbSneak' primeiro
+- se 'passResult' for igual a 'R' o jogo considera um passe mas tbm uma corrida, porém o campo 'passLocationType' vem nulo

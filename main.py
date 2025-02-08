@@ -106,7 +106,8 @@ def main():
     #         print(f'{sorted_players.loc[index][j]:.2f}, ', end='')
     #     print()
         
-    # 3 closest team players
+    # closest team players
+    k_players = 5
     team_dist = {}
     for index, value in sorted_distances.items():
         team = td_at_snap[td_at_snap['nflId'] == index]['club'].values[0]
@@ -118,12 +119,12 @@ def main():
                     'nflId': sorted_players.loc[index][i],
                     'distance': value[i]
                 })
-            if len(closest_players) == 2:
+            if len(closest_players) == k_players:
                 break
         
         team_dist[index] = closest_players
     
-    # 3 closest opponent players
+    # closest opponent players
     opponent_dist = {}
     for index, value in sorted_distances.items():
         team = td_at_snap[td_at_snap['nflId'] == index]['club'].values[0]
@@ -135,11 +136,11 @@ def main():
                     'nflId': sorted_players.loc[index][i],
                     'distance': value[i]
                 })
-            if len(closest_players) == 2:
+            if len(closest_players) == k_players:
                 break
         opponent_dist[index] = closest_players
         
-    # 3 closest all players
+    # closest all players
     all_dist = {}
     for index, value in sorted_distances.items():
         closest_players = []
@@ -149,7 +150,7 @@ def main():
                 'nflId': sorted_players.loc[index][i],
                 'distance': value[i]
             })
-            if len(closest_players) == 5:
+            if len(closest_players) == k_players:
                 break
         all_dist[index] = closest_players
         
@@ -208,6 +209,9 @@ def main():
     #     for nbr, eattr in nbrs.items():
     #         wt = eattr['weight']
     #         print(f"({n}, {nbr}, {wt:.3})")
+    
+    print(G.nodes[42401.0])
+    print(G.graph)
             
     # ploting players
     colors = {'ARI': 'white',
