@@ -1,3 +1,6 @@
 nfl_data
 __pycache__
 __init__.py
+distances/*
+
+!distances/distances.csv
