@@ -3,10 +3,17 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 
+## GNN
 from datetime import datetime
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCNConv, global_mean_pool
+
+# MLP and RF
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 class GCN(torch.nn.Module):
     def __init__(self, node_features, hidden_channels):
@@ -156,7 +163,7 @@ def test(loader, model):
         correct += int((pred == data.y).sum())  # Check against ground-truth labels.
      return correct / len(loader.dataset)  # Derive ratio of correct predictions.
 
-def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100):
+def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed=1):
     print("Running model...")
     
     n_graphs = len(pass_graphs)
@@ -286,8 +293,95 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100):
     print(f"Min loss: {min_loss:.4f} at epoch {min_loss_epoch}")
     print(f"Max train acc: {max_train_acc:.4f} at epoch {max_train_acc_epoch}")
     print(f"Max test acc: {max_test_acc:.4f} at epoch {max_test_acc_epoch}")
+    
+    print('====================')
+    print()
+    
+    run_baselines(train_graphs, test_graphs, random_seed=random_seed)
             
-            
+##############################################################################            
+##############################################################################            
+##############################################################################
+################################# MLP and RF #################################            
+##############################################################################
+##############################################################################
+##############################################################################
+
+def graph_to_vector(G):
+    node_features = []
+    for node in G.nodes():
+        features = [
+            float(G.nodes[node].get('x', 0)),
+            float(G.nodes[node].get('y', 0)),
+            float(G.nodes[node].get('s', 0)),
+            float(G.nodes[node].get('a', 0)),
+            float(G.nodes[node].get('dis', 0)),
+            float(G.nodes[node].get('o', 0)),
+            float(G.nodes[node].get('dir', 0)),
+            float(G.nodes[node].get('height', 0)),
+            float(G.nodes[node].get('weight', 0)),
+            float(G.nodes[node].get('position', 0)),
+            float(G.nodes[node].get('club', 0)),
+            float(G.nodes[node].get('playDirection', 0)),
+            float(G.nodes[node].get('totalDis', 0)),
+        ]
+        node_features.append(features)
+
+    node_features = np.array(node_features)
+    mean_node_features = node_features.mean(axis=0)
+
+    graph_features = [
+        float(G.graph.get('quarter', 0)),
+        float(G.graph.get('down', 0)),
+        float(G.graph.get('yardsToGo', 0)),
+        float(G.graph.get('absoluteYardlineNumber', 0)),
+        float(G.graph.get('playClockAtSnap', 0)),
+        float(G.graph.get('possessionTeamPointDiff', 0)),
+        float(G.graph.get('possessionTeam', 0)),
+        float(G.graph.get('gameClock', 0)),
+        float(G.graph.get('offenseFormation', 0)),
+        float(G.graph.get('receiverAlignment', 0)),
+    ]
+
+    full_vector = np.concatenate([mean_node_features, graph_features])
+    label = 1 if G.graph['playResult'] == 1 else 0
+
+    return full_vector, label
+
+def run_baselines(train_graphs, test_graphs, random_seed=1):
+    # Converter grafos em vetores
+    X_train, y_train = zip(*[graph_to_vector(G) for G in train_graphs])
+    X_test, y_test = zip(*[graph_to_vector(G) for G in test_graphs])
+
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
+    y_train = np.array(y_train)
+    y_test = np.array(y_test)
+
+    # Normalização para a MLP
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # Random Forest
+    rf = RandomForestClassifier(n_estimators=100, random_state=42)
+    rf.fit(X_train, y_train)
+    rf_preds = rf.predict(X_test)
+    rf_acc = accuracy_score(y_test, rf_preds)
+    print(f"🎯 Random Forest Accuracy: {rf_acc:.4f}")
+
+    # MLP
+    mlp = MLPClassifier(
+        hidden_layer_sizes=(64, 64),  # Estrutura da rede
+        max_iter=3000,                # Número máximo de iterações
+        random_state=random_seed,     # Seed para reprodutibilidade
+        learning_rate_init=0.01,     # Taxa de aprendizado inicial
+        alpha=5e-4                    # Regularização L2 (equivalente ao weight decay)
+    )
+    mlp.fit(X_train_scaled, y_train)
+    mlp_preds = mlp.predict(X_test_scaled)
+    mlp_acc = accuracy_score(y_test, mlp_preds)
+    print(f"🤖 MLP Accuracy: {mlp_acc:.4f}")
             
             
             
@@ -467,3 +561,60 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100):
 # Min loss: 51.7727 at epoch 295
 # Max train acc: 0.7728 at epoch 290
 # Max test acc: 0.7404 at epoch 292
+
+
+
+
+
+
+
+
+
+
+# ==================== (2 files)
+# Min loss: 18.6128 at epoch 300
+# Max train acc: 0.7618 at epoch 299
+# Max test acc: 0.7164 at epoch 296
+# ====================
+
+# 🎯 Random Forest Accuracy: 0.7382
+# 🤖 MLP Accuracy: 0.6891
+
+
+
+
+
+
+
+
+
+# ==================== (6 files)
+# Min loss: 51.2389 at epoch 299
+# Max train acc: 0.7749 at epoch 298
+# Max test acc: 0.7320 at epoch 233
+# ====================
+
+# 🎯 Random Forest Accuracy: 0.7548
+# 🤖 MLP Accuracy: 0.7050
+
+
+
+
+
+
+
+
+
+
+
+# ==================== (9 files)
+# Min loss: 74.2383 at epoch 296
+# Max train acc: 0.7749 at epoch 286
+# Max test acc: 0.7662 at epoch 222
+# ====================
+
+# 🎯 Random Forest Accuracy: 0.7318
+# 🤖 MLP Accuracy: 0.6777
+
+# 🎯 Random Forest Accuracy: 0.7351
+# 🤖 MLP Accuracy: 0.7179

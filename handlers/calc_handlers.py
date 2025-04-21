@@ -28,15 +28,23 @@ def calc_game_clock_to_seconds(plays: pd.DataFrame) -> pd.DataFrame:
     return plays
 
 def calc_total_dis(plays: pd.DataFrame) -> pd.DataFrame:
-    print("Calculating total distance...")
+    # print("Calculating total distance...")
     
-    #TODO: check this line of code
-    plays = plays.assign(totalDis=plays.groupby(['gameId', 'playId', 'nflId'])['dis'].transform('sum'))
+    # print("Calculating total distance...")
 
-    # grouped = plays.groupby(['gameId', 'playId', 'nflId'])
-    # total_dis = grouped['dis'].sum().reset_index()
-    # total_dis.rename(columns={'dis': 'totalDis'}, inplace=True)
-    # plays = plays.merge(total_dis, on=['gameId', 'playId', 'nflId'])
+    # total_dis = plays.groupby(['gameId', 'playId', 'nflId'])['dis'].sum()
+    # index_vals = plays.set_index(['gameId', 'playId', 'nflId']).index.map(total_dis)
+    # plays.loc[:, 'totalDis'] = index_vals.map(total_dis)
+
+    # return plays
+    
+    # #TODO: check this line of code
+    # plays = plays.assign(totalDis=plays.groupby(['gameId', 'playId', 'nflId'])['dis'].transform('sum'))
+
+    grouped = plays.groupby(['gameId', 'playId', 'nflId'])
+    total_dis = grouped['dis'].sum().reset_index()
+    total_dis.rename(columns={'dis': 'totalDis'}, inplace=True)
+    plays = plays.merge(total_dis, on=['gameId', 'playId', 'nflId'])
 
     return plays
 

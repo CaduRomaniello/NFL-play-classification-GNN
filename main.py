@@ -1,4 +1,5 @@
 import json
+import random
 
 import pandas as pd
 import networkx as nx
@@ -22,11 +23,33 @@ from visualization.create_plot import createFootballField
 PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'possessionTeam', 'gameClock', 'absoluteYardlineNumber', 'offenseFormation', 'receiverAlignment', 'playClockAtSnap', 'possessionTeamPointDiff', 'playResult']
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
+RANDOM_SEED = 1
 
 def main():
+    random.seed(RANDOM_SEED)
+    
+    weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    rush_graphs = []
+    pass_graphs = []
+    
+    for week in weeks:
+        print('--------------------------------------------------------')
+        print(f'Getting data for week {week}...')
+        week_pass_graphs, week_rush_graphs = getGraphs([week])
+        
+        pass_graphs.extend(week_pass_graphs)
+        rush_graphs.extend(week_rush_graphs)
+        print()
+        
+    model_run(pass_graphs, rush_graphs, epochs=10, show_info=True, random_seed=RANDOM_SEED)
+        
+        
+        
+
+def getGraphs(weeks=[1]):
     #* reading data
     # games, player_play, players, plays, tracking_data = read2025data()
-    games, player_play, players, plays, tracking_data = read2025data(weeks=[1, 2, 3, 4, 5, 6])
+    games, player_play, players, plays, tracking_data = read2025data(weeks=weeks)
     
     #* removing test data
     plays = plays[plays['gameId'].isin(tracking_data['gameId'])]
@@ -103,10 +126,11 @@ def main():
     pass_graphs, rush_graphs = graphs_data_balancer(graphs) #! uncoment
     
     #* running the model
-    model_run(pass_graphs, rush_graphs, epochs=300, show_info=True)
+    # model_run(pass_graphs, rush_graphs, epochs=300, show_info=True)
+    
     # a = convert_nx_to_pytorch_geometric(graphs, include_labels=True)
     
-    return
+    return pass_graphs, rush_graphs
 
 
 
