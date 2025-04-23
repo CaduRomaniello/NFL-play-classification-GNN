@@ -25,10 +25,28 @@ TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a'
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
 
+CONFIG = {
+    'RANDOM_SEED': 1,
+    'GNN_EPOCHS': 10,
+    'GNN_HIDDEN_CHANNELS': 64,
+    'GNN_HIDDEN_LAYERS': 3,
+    'GNN_LEARNING_RATE': 0.0001,
+    'GNN_DROPOUT': 0.5,
+    'GNN_WEIGHT_DECAY': 5e-4,
+    'RF_ESTIMATORS': 100,
+    'MLP_HIDDEN_CHANNELS': 64,
+    'MLP_HIDDEN_LAYERS': 2,
+    'MLP_MAX_ITER':3000,
+    'MLP_LEARNING_RATE': 0.01,
+    'MLP_ALPHA': 5e-4,
+    'DATASET_SPLIT': 0.8,
+    'SHOW_INFO': True,
+}
+
 def main():
     random.seed(RANDOM_SEED)
     
-    weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    weeks = [1]
     rush_graphs = []
     pass_graphs = []
     
@@ -41,7 +59,7 @@ def main():
         rush_graphs.extend(week_rush_graphs)
         print()
         
-    model_run(pass_graphs, rush_graphs, epochs=10, show_info=True, random_seed=RANDOM_SEED)
+    model_run(pass_graphs, rush_graphs, config=CONFIG)
         
         
         

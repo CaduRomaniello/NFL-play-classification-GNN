@@ -16,27 +16,29 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 class GCN(torch.nn.Module):
-    def __init__(self, node_features, hidden_channels):
+    def __init__(self, node_features, hidden_channels, random_seed):
         super(GCN, self).__init__()
-        torch.manual_seed(12345)
+        torch.manual_seed(random_seed)
         self.conv1 = GCNConv(node_features, hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels)
         self.conv3 = GCNConv(hidden_channels, hidden_channels)
         self.lin = torch.nn.Linear(hidden_channels, 2)
 
-    def forward(self, x, edge_index, batch):
+    def forward(self, x, edge_index, batch, config):
         # 1. Obtain node embeddings 
         x = self.conv1(x, edge_index)
-        x = x.relu()
-        x = self.conv2(x, edge_index)
-        x = x.relu()
-        x = self.conv3(x, edge_index)
+        if config['GNN_HIDDEN_LAYERS'] > 1:
+            x = x.relu()
+            x = self.conv2(x, edge_index)
+        if config['GNN_HIDDEN_LAYERS'] > 2:
+            x = x.relu()
+            x = self.conv3(x, edge_index)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
 
         # 3. Apply a final classifier
-        x = F.dropout(x, p=0.5, training=self.training)
+        x = F.dropout(x, p=config['GNN_DROPOUT'], training=self.training)
         x = self.lin(x)
         
         return x
@@ -139,12 +141,12 @@ def convert_nx_to_pytorch_geometric(graphs, include_labels=True):
     
     return data_list
 
-def train(model, loader, criterion, optimizer):
+def train(model, loader, criterion, optimizer, config):
     model.train()
     total_loss = 0
 
     for data in loader:  # Iterate in batches over the training dataset.
-        out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
+        out = model(data.x, data.edge_index, data.batch, config)  # Perform a single forward pass.
         loss = criterion(out, data.y)  # Compute the loss.
         total_loss += loss.item()  # Accumulate the loss.
         loss.backward()  # Derive gradients.
@@ -153,21 +155,21 @@ def train(model, loader, criterion, optimizer):
     return total_loss
     # print(f'Loss: {total_loss / len(loader):.4f}')
 
-def test(loader, model):
+def test(loader, model, config):
      model.eval()
 
      correct = 0
      for data in loader:  # Iterate in batches over the training/test dataset.
-        out = model(data.x, data.edge_index, data.batch)  
+        out = model(data.x, data.edge_index, data.batch, config)  
         pred = out.argmax(dim=1)  # Use the class with highest probability.
         correct += int((pred == data.y).sum())  # Check against ground-truth labels.
      return correct / len(loader.dataset)  # Derive ratio of correct predictions.
 
-def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed=1):
+def model_run(pass_graphs, rush_graphs, config):
     print("Running model...")
     
     n_graphs = len(pass_graphs)
-    train_split = int(0.8 * n_graphs)
+    train_split = int(config['DATASET_SPLIT'] * n_graphs)
     
     # Embaralhar os grafos para evitar qualquer viés
     # indices = np.random.permutation(n_graphs)
@@ -218,7 +220,7 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed
     #! ASSERTS
     #! ASSERTS
     
-    if show_info:
+    if config['SHOW_INFO']:
         dataset = convert_nx_to_pytorch_geometric(train_graphs, include_labels=True)
 
         print()
@@ -259,10 +261,10 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed
     test_loader_with_labels = DataLoader(test_dataset_with_labels, batch_size=64, shuffle=False)
     test_loader_no_labels = DataLoader(test_dataset_no_labels, batch_size=64, shuffle=False)
     
-    model = GCN(train_dataset[0].num_node_features, hidden_channels=64)
+    model = GCN(train_dataset[0].num_node_features, hidden_channels=config['GNN_HIDDEN_CHANNELS'], random_seed=config['RANDOM_SEED'])
     print(model)
     
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config['GNN_LEARNING_RATE'], weight_decay=config['GNN_WEIGHT_DECAY'])
     criterion = torch.nn.CrossEntropyLoss()
     
     min_loss = 9999999999
@@ -271,10 +273,10 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed
     max_test_acc_epoch = 0
     max_train_acc = 0
     max_train_acc_epoch = 0
-    for epoch in range(1, epochs + 1):
-        total_loss = train(model, train_loader, criterion, optimizer)
-        train_acc = test(train_loader, model)
-        test_acc = test(test_loader_with_labels, model)
+    for epoch in range(1, config['GNN_EPOCHS'] + 1):
+        total_loss = train(model, train_loader, criterion, optimizer, config=config)
+        train_acc = test(train_loader, model, config)
+        test_acc = test(test_loader_with_labels, model, config)
         if epoch % 10 == 0:
             print(f'Epoch: {epoch:03d}, Total Loss: {total_loss:.4f}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
             
@@ -297,7 +299,7 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed
     print('====================')
     print()
     
-    run_baselines(train_graphs, test_graphs, random_seed=random_seed)
+    run_baselines(train_graphs, test_graphs, config=config)
             
 ##############################################################################            
 ##############################################################################            
@@ -348,7 +350,7 @@ def graph_to_vector(G):
 
     return full_vector, label
 
-def run_baselines(train_graphs, test_graphs, random_seed=1):
+def run_baselines(train_graphs, test_graphs, config):
     # Converter grafos em vetores
     X_train, y_train = zip(*[graph_to_vector(G) for G in train_graphs])
     X_test, y_test = zip(*[graph_to_vector(G) for G in test_graphs])
@@ -364,7 +366,7 @@ def run_baselines(train_graphs, test_graphs, random_seed=1):
     X_test_scaled = scaler.transform(X_test)
 
     # Random Forest
-    rf = RandomForestClassifier(n_estimators=100, random_state=42)
+    rf = RandomForestClassifier(n_estimators=config['RF_ESTIMATORS'], random_state=config['RANDOM_SEED'])
     rf.fit(X_train, y_train)
     rf_preds = rf.predict(X_test)
     rf_acc = accuracy_score(y_test, rf_preds)
@@ -372,11 +374,11 @@ def run_baselines(train_graphs, test_graphs, random_seed=1):
 
     # MLP
     mlp = MLPClassifier(
-        hidden_layer_sizes=(64, 64),  # Estrutura da rede
-        max_iter=3000,                # Número máximo de iterações
-        random_state=random_seed,     # Seed para reprodutibilidade
-        learning_rate_init=0.01,     # Taxa de aprendizado inicial
-        alpha=5e-4                    # Regularização L2 (equivalente ao weight decay)
+        hidden_layer_sizes=[config['MLP_HIDDEN_CHANNELS']] * config['MLP_HIDDEN_LAYERS'],  # Estrutura da rede
+        max_iter=config['MLP_MAX_ITER'],                                                   # Número máximo de iterações
+        random_state=config['RANDOM_SEED'],                                                # Seed para reprodutibilidade
+        learning_rate_init=config['MLP_LEARNING_RATE'],                                    # Taxa de aprendizado inicial
+        alpha=config['MLP_ALPHA']                                                          # Regularização L2 (equivalente ao weight decay)
     )
     mlp.fit(X_train_scaled, y_train)
     mlp_preds = mlp.predict(X_test_scaled)
