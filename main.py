@@ -53,7 +53,7 @@ def main():
     pass_graphs = []
     random_seed = 0
     random.seed(random_seed)
-    random_seed = 8
+    random_seed = 13
     
     for week in weeks:
         print('--------------------------------------------------------')
