@@ -52,6 +52,7 @@ def main():
     rush_graphs = []
     pass_graphs = []
     random_seed = 0
+    random.seed(random_seed)
     
     for week in weeks:
         print('--------------------------------------------------------')
@@ -67,6 +68,7 @@ def main():
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         output_filename = f"output/{timestamp}.txt"
         random_seed += 1
+        random.seed(random_seed)
         
         with open(output_filename, "w", encoding="utf-8") as output_file:
             # Redirecionar os logs para o arquivo
@@ -86,8 +88,6 @@ def main():
                 CONFIG['MLP_HIDDEN_LAYERS'] = random.choice([1, 2, 3]) 
                 CONFIG['MLP_LEARNING_RATE'] = random.choice([0.01, 0.001, 0.0001]) 
                 CONFIG['MLP_ALPHA'] = random.choice([5e-3, 5e-4, 5e-5])
-                
-                random.seed(CONFIG['RANDOM_SEED'])
                 
                 print("CONFIG values:")
                 for key, value in CONFIG.items():

@@ -1,0 +1,95 @@
+Iteration 1/8
+Output file: output/2025-04-24_08-35-39.txt
+CONFIG values:
+RANDOM_SEED: 1
+GNN_EPOCHS: 100
+GNN_HIDDEN_CHANNELS: 128
+GNN_HIDDEN_LAYERS: 1
+GNN_LEARNING_RATE: 0.0001
+GNN_DROPOUT: 0.2
+GNN_WEIGHT_DECAY: 0.0005
+RF_ESTIMATORS: 100
+MLP_HIDDEN_CHANNELS: 64
+MLP_HIDDEN_LAYERS: 3
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.001
+MLP_ALPHA: 0.005
+DATASET_SPLIT: 0.8
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 9764
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 33], edge_attr=[33, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 33
+Average node degree: 1.50
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+Número de grafos para treino: 9764
+Número de grafos para teste: 2442
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 128)
+  (conv2): GCNConv(128, 128)
+  (conv3): GCNConv(128, 128)
+  (lin): Linear(in_features=128, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 556.7901, Train Acc: 0.6051, Test Acc: 0.5983
+Epoch: 020, Total Loss: 124.8266, Train Acc: 0.6316, Test Acc: 0.6274
+Epoch: 030, Total Loss: 104.0747, Train Acc: 0.5999, Test Acc: 0.5905
+Epoch: 040, Total Loss: 101.8303, Train Acc: 0.6002, Test Acc: 0.6097
+Epoch: 050, Total Loss: 100.1304, Train Acc: 0.6434, Test Acc: 0.6323
+Epoch: 060, Total Loss: 98.9373, Train Acc: 0.6694, Test Acc: 0.6556
+Epoch: 070, Total Loss: 97.8374, Train Acc: 0.6702, Test Acc: 0.6593
+Epoch: 080, Total Loss: 95.7721, Train Acc: 0.6772, Test Acc: 0.6761
+Epoch: 090, Total Loss: 94.3401, Train Acc: 0.6709, Test Acc: 0.6687
+Epoch: 100, Total Loss: 93.8849, Train Acc: 0.6637, Test Acc: 0.6589
+
+====================
+Min loss: 93.8849 at epoch 100
+Max train acc: 0.6828 at epoch 96
+Max test acc: 0.6802 at epoch 91
+Best metrics of best model:
+              precision    recall  f1-score   support
+
+        Rush       0.66      0.67      0.66      1221
+        Pass       0.66      0.65      0.66      1221
+
+    accuracy                           0.66      2442
+   macro avg       0.66      0.66      0.66      2442
+weighted avg       0.66      0.66      0.66      2442
+
+====================
+
+🎯 Random Forest Accuracy: 0.7387
+              precision    recall  f1-score   support
+
+        Rush       0.72      0.78      0.75      1221
+        Pass       0.76      0.70      0.73      1221
+
+    accuracy                           0.74      2442
+   macro avg       0.74      0.74      0.74      2442
+weighted avg       0.74      0.74      0.74      2442
+
+🤖 MLP Accuracy: 0.6732
+              precision    recall  f1-score   support
+
+        Rush       0.68      0.67      0.67      1221
+        Pass       0.67      0.68      0.68      1221
+
+    accuracy                           0.67      2442
+   macro avg       0.67      0.67      0.67      2442
+weighted avg       0.67      0.67      0.67      2442
+
