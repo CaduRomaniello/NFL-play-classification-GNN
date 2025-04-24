@@ -10,7 +10,7 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCNConv, global_mean_pool
 
 # MLP and RF
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -154,14 +154,20 @@ def train(model, loader, criterion, optimizer):
     # print(f'Loss: {total_loss / len(loader):.4f}')
 
 def test(loader, model):
-     model.eval()
+    model.eval()
 
-     correct = 0
-     for data in loader:  # Iterate in batches over the training/test dataset.
+    all_preds = []
+    all_labels = []
+    correct = 0
+    for data in loader:  # Iterate in batches over the dataset.
         out = model(data.x, data.edge_index, data.batch)  
         pred = out.argmax(dim=1)  # Use the class with highest probability.
+        all_preds.extend(pred.cpu().numpy())  # Store predictions
+        all_labels.extend(data.y.cpu().numpy())  # Store true labels
         correct += int((pred == data.y).sum())  # Check against ground-truth labels.
-     return correct / len(loader.dataset)  # Derive ratio of correct predictions.
+
+    accuracy = correct / len(loader.dataset)  # Derive ratio of correct predictions.
+    return accuracy, all_preds, all_labels
 
 def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed=1):
     print("Running model...")
@@ -271,10 +277,11 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed
     max_test_acc_epoch = 0
     max_train_acc = 0
     max_train_acc_epoch = 0
+    best_model_state = None
     for epoch in range(1, epochs + 1):
         total_loss = train(model, train_loader, criterion, optimizer)
-        train_acc = test(train_loader, model)
-        test_acc = test(test_loader_with_labels, model)
+        train_acc, train_preds, train_labels = test(train_loader, model)
+        test_acc, test_preds, test_labels = test(test_loader_with_labels, model)
         if epoch % 10 == 0:
             print(f'Epoch: {epoch:03d}, Total Loss: {total_loss:.4f}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
             
@@ -287,12 +294,18 @@ def model_run(pass_graphs, rush_graphs, show_info=False, epochs=100, random_seed
         if test_acc > max_test_acc:
             max_test_acc = test_acc
             max_test_acc_epoch = epoch
+            best_model_state = model.state_dict()
          
     print()
     print('====================')   
+    model.load_state_dict(best_model_state)
     print(f"Min loss: {min_loss:.4f} at epoch {min_loss_epoch}")
     print(f"Max train acc: {max_train_acc:.4f} at epoch {max_train_acc_epoch}")
     print(f"Max test acc: {max_test_acc:.4f} at epoch {max_test_acc_epoch}")
+    
+    _, test_preds, test_labels = test(test_loader_with_labels, model)
+    print("Métricas finais do melhor modelo:")
+    print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
     
     print('====================')
     print()
@@ -369,6 +382,7 @@ def run_baselines(train_graphs, test_graphs, random_seed=1):
     rf_preds = rf.predict(X_test)
     rf_acc = accuracy_score(y_test, rf_preds)
     print(f"🎯 Random Forest Accuracy: {rf_acc:.4f}")
+    print(classification_report(y_test, rf_preds, target_names=["Rush", "Pass"]))
 
     # MLP
     mlp = MLPClassifier(
@@ -382,6 +396,7 @@ def run_baselines(train_graphs, test_graphs, random_seed=1):
     mlp_preds = mlp.predict(X_test_scaled)
     mlp_acc = accuracy_score(y_test, mlp_preds)
     print(f"🤖 MLP Accuracy: {mlp_acc:.4f}")
+    print(classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"]))
             
             
             
