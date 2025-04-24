@@ -305,8 +305,8 @@ def model_run(pass_graphs, rush_graphs, config):
     print(f"Max train acc: {max_train_acc:.4f} at epoch {max_train_acc_epoch}")
     print(f"Max test acc: {max_test_acc:.4f} at epoch {max_test_acc_epoch}")
     
-    _, test_preds, test_labels = test(test_loader_with_labels, model)
-    print("Métricas finais do melhor modelo:")
+    _, test_preds, test_labels = test(test_loader_with_labels, model, config)
+    print("Best metrics of best model:")
     print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
     
     print('====================')

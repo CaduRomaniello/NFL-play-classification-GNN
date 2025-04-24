@@ -1,3 +1,6 @@
+from contextlib import redirect_stdout
+from datetime import datetime
+import time
 import json
 import random
 
@@ -24,10 +27,11 @@ PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'po
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
+NUMBER_OF_ITERS = 8
 
 CONFIG = {
     'RANDOM_SEED': 1,
-    'GNN_EPOCHS': 10,
+    'GNN_EPOCHS': 50,
     'GNN_HIDDEN_CHANNELS': 64,
     'GNN_HIDDEN_LAYERS': 3,
     'GNN_LEARNING_RATE': 0.0001,
@@ -43,12 +47,11 @@ CONFIG = {
     'SHOW_INFO': True,
 }
 
-def main():
-    random.seed(RANDOM_SEED)
-    
-    weeks = [1]
+def main():    
+    weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     rush_graphs = []
     pass_graphs = []
+    random_seed = 0
     
     for week in weeks:
         print('--------------------------------------------------------')
@@ -59,7 +62,43 @@ def main():
         rush_graphs.extend(week_rush_graphs)
         print()
         
-    model_run(pass_graphs, rush_graphs, config=CONFIG)
+    for i in range(NUMBER_OF_ITERS):
+        start_time = time.time()
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        output_filename = f"output/{timestamp}.txt"
+        random_seed += 1
+        
+        with open(output_filename, "w", encoding="utf-8") as output_file:
+            # Redirecionar os logs para o arquivo
+            with redirect_stdout(output_file):
+                print(f"Iteration {i + 1}/{NUMBER_OF_ITERS}")
+                print(f"Output file: {output_filename}")
+                
+                CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
+                CONFIG['GNN_EPOCHS'] = random.choice([100, 200, 300])  # Exemplo: 32, 64 ou 128
+                CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
+                CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
+                CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
+                CONFIG['GNN_DROPOUT'] = random.choice([0.2, 0.3, 0.4, 0.5])
+                CONFIG['GNN_WEIGHT_DECAY'] = random.choice([5e-3, 5e-4, 5e-5])
+                CONFIG['RF_ESTIMATORS'] = random.choice([50, 100, 150])
+                CONFIG['MLP_HIDDEN_CHANNELS'] = random.choice([32, 64, 128]) 
+                CONFIG['MLP_HIDDEN_LAYERS'] = random.choice([1, 2, 3]) 
+                CONFIG['MLP_LEARNING_RATE'] = random.choice([0.01, 0.001, 0.0001]) 
+                CONFIG['MLP_ALPHA'] = random.choice([5e-3, 5e-4, 5e-5])
+                
+                random.seed(CONFIG['RANDOM_SEED'])
+                
+                print("CONFIG values:")
+                for key, value in CONFIG.items():
+                    print(f"{key}: {value}")
+        
+                model_run(pass_graphs, rush_graphs, config=CONFIG)
+        
+        end_time = time.time()
+        duration = end_time - start_time
+        print(f"Iteration {i + 1} completed. Logs saved to {output_filename}. Duration: {duration:.2f} seconds")
+        
         
         
         
