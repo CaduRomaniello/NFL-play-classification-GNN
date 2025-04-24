@@ -27,7 +27,7 @@ PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'po
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
-NUMBER_OF_ITERS = 8
+NUMBER_OF_ITERS = 5
 
 CONFIG = {
     'RANDOM_SEED': 1,
@@ -53,6 +53,7 @@ def main():
     pass_graphs = []
     random_seed = 0
     random.seed(random_seed)
+    random_seed = 8
     
     for week in weeks:
         print('--------------------------------------------------------')
