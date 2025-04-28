@@ -1,0 +1,121 @@
+Iteration 1/1
+Output file: output/2025-04-28_10-24-23.txt
+CONFIG values:
+RANDOM_SEED: 19
+GNN_EPOCHS: 300
+GNN_HIDDEN_CHANNELS: 32
+GNN_HIDDEN_LAYERS: 3
+GNN_LEARNING_RATE: 0.001
+GNN_DROPOUT: 0.3
+GNN_WEIGHT_DECAY: 0.0005
+RF_ESTIMATORS: 100
+MLP_HIDDEN_CHANNELS: 128
+MLP_HIDDEN_LAYERS: 2
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.0001
+MLP_ALPHA: 0.005
+VALIDATION_SPLIT: 0.8
+TEST_SPLIT: 0.9
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 13426
+Number of train graphs: 10984
+Number of validation graphs: 1220
+Number of test graphs: 1222
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in validation set: 50.00%
+Percentage of rushes in validation set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 31], edge_attr=[31, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 31
+Average node degree: 1.41
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 32)
+  (conv2): GCNConv(32, 32)
+  (conv3): GCNConv(32, 32)
+  (lin): Linear(in_features=32, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 110.1274, Train Acc: 0.6566, Val Acc: 0.6918
+Epoch: 020, Total Loss: 100.2394, Train Acc: 0.7095, Val Acc: 0.7279
+Epoch: 030, Total Loss: 93.7943, Train Acc: 0.7306, Val Acc: 0.7426
+Epoch: 040, Total Loss: 92.0946, Train Acc: 0.7324, Val Acc: 0.7467
+Epoch: 050, Total Loss: 88.2706, Train Acc: 0.7397, Val Acc: 0.7574
+Epoch: 060, Total Loss: 88.2432, Train Acc: 0.6843, Val Acc: 0.7131
+Epoch: 070, Total Loss: 87.3790, Train Acc: 0.7621, Val Acc: 0.7787
+Epoch: 080, Total Loss: 85.9942, Train Acc: 0.7525, Val Acc: 0.7648
+Epoch: 090, Total Loss: 85.6192, Train Acc: 0.7682, Val Acc: 0.7869
+Epoch: 100, Total Loss: 85.5388, Train Acc: 0.7668, Val Acc: 0.7820
+Epoch: 110, Total Loss: 84.5160, Train Acc: 0.7628, Val Acc: 0.7779
+Epoch: 120, Total Loss: 84.2692, Train Acc: 0.7755, Val Acc: 0.7828
+Epoch: 130, Total Loss: 83.6377, Train Acc: 0.7634, Val Acc: 0.7852
+Epoch: 140, Total Loss: 83.5869, Train Acc: 0.7621, Val Acc: 0.7787
+Epoch: 150, Total Loss: 83.0343, Train Acc: 0.7758, Val Acc: 0.7959
+Epoch: 160, Total Loss: 82.6180, Train Acc: 0.7592, Val Acc: 0.7738
+Epoch: 170, Total Loss: 82.4437, Train Acc: 0.7840, Val Acc: 0.7975
+Epoch: 180, Total Loss: 83.0406, Train Acc: 0.7753, Val Acc: 0.7951
+Epoch: 190, Total Loss: 81.7292, Train Acc: 0.7678, Val Acc: 0.7770
+Epoch: 200, Total Loss: 82.0468, Train Acc: 0.7718, Val Acc: 0.7918
+Epoch: 210, Total Loss: 80.5402, Train Acc: 0.7829, Val Acc: 0.8033
+Epoch: 220, Total Loss: 80.2493, Train Acc: 0.7808, Val Acc: 0.7918
+Epoch: 230, Total Loss: 81.4131, Train Acc: 0.7802, Val Acc: 0.7934
+Epoch: 240, Total Loss: 80.2297, Train Acc: 0.7751, Val Acc: 0.7984
+Epoch: 250, Total Loss: 79.8962, Train Acc: 0.7705, Val Acc: 0.7885
+Epoch: 260, Total Loss: 80.4460, Train Acc: 0.7731, Val Acc: 0.7893
+Epoch: 270, Total Loss: 79.1138, Train Acc: 0.7469, Val Acc: 0.7738
+Epoch: 280, Total Loss: 79.7620, Train Acc: 0.7790, Val Acc: 0.7967
+Epoch: 290, Total Loss: 79.1178, Train Acc: 0.7882, Val Acc: 0.8066
+Epoch: 300, Total Loss: 79.0932, Train Acc: 0.7853, Val Acc: 0.7951
+
+====================
+Min loss: 78.3804 at epoch 298
+Max train acc: 0.7978 at epoch 278
+Max validation acc: 0.8131 at epoch 298
+Best metrics of best model:
+Test accuracy: 0.7602
+              precision    recall  f1-score   support
+
+        Rush       0.77      0.74      0.76       611
+        Pass       0.75      0.78      0.77       611
+
+    accuracy                           0.76      1222
+   macro avg       0.76      0.76      0.76      1222
+weighted avg       0.76      0.76      0.76      1222
+
+====================
+
+🎯 Random Forest Accuracy: 0.7349
+              precision    recall  f1-score   support
+
+        Rush       0.72      0.77      0.74       611
+        Pass       0.75      0.70      0.72       611
+
+    accuracy                           0.73      1222
+   macro avg       0.74      0.73      0.73      1222
+weighted avg       0.74      0.73      0.73      1222
+
+🤖 MLP Accuracy: 0.6890
+              precision    recall  f1-score   support
+
+        Rush       0.69      0.68      0.69       611
+        Pass       0.69      0.70      0.69       611
+
+    accuracy                           0.69      1222
+   macro avg       0.69      0.69      0.69      1222
+weighted avg       0.69      0.69      0.69      1222
+

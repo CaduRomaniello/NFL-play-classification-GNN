@@ -1,0 +1,77 @@
+Iteration 1/1
+Output file: output/2025-04-28_10-59-02.txt
+CONFIG values:
+RANDOM_SEED: 24
+GNN_EPOCHS: 300
+GNN_HIDDEN_CHANNELS: 64
+GNN_HIDDEN_LAYERS: 3
+GNN_LEARNING_RATE: 0.001
+GNN_DROPOUT: 0.3
+GNN_WEIGHT_DECAY: 0.005
+RF_ESTIMATORS: 50
+MLP_HIDDEN_CHANNELS: 32
+MLP_HIDDEN_LAYERS: 3
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.0001
+MLP_ALPHA: 0.005
+VALIDATION_SPLIT: 0.8
+TEST_SPLIT: 0.9
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 13426
+Number of train graphs: 10984
+Number of validation graphs: 1220
+Number of test graphs: 1222
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in validation set: 50.00%
+Percentage of rushes in validation set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 32], edge_attr=[32, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 32
+Average node degree: 1.45
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 64)
+  (conv2): GCNConv(64, 64)
+  (conv3): GCNConv(64, 64)
+  (lin): Linear(in_features=64, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 106.6165, Train Acc: 0.6850, Val Acc: 0.7131
+Epoch: 020, Total Loss: 98.6165, Train Acc: 0.7114, Val Acc: 0.7303
+Epoch: 030, Total Loss: 94.2846, Train Acc: 0.7418, Val Acc: 0.7607
+Epoch: 040, Total Loss: 91.6399, Train Acc: 0.7515, Val Acc: 0.7705
+Epoch: 050, Total Loss: 90.6689, Train Acc: 0.7561, Val Acc: 0.7787
+Epoch: 060, Total Loss: 89.8030, Train Acc: 0.7507, Val Acc: 0.7631
+Epoch: 070, Total Loss: 89.6653, Train Acc: 0.7632, Val Acc: 0.7713
+Epoch: 080, Total Loss: 88.7753, Train Acc: 0.7554, Val Acc: 0.7770
+Epoch: 090, Total Loss: 87.6797, Train Acc: 0.7637, Val Acc: 0.7811
+Epoch: 100, Total Loss: 87.7812, Train Acc: 0.7577, Val Acc: 0.7721
+Epoch: 110, Total Loss: 86.9043, Train Acc: 0.7648, Val Acc: 0.7836
+Epoch: 120, Total Loss: 86.4295, Train Acc: 0.7462, Val Acc: 0.7697
+Epoch: 130, Total Loss: 87.4781, Train Acc: 0.7656, Val Acc: 0.7730
+Epoch: 140, Total Loss: 86.2519, Train Acc: 0.7719, Val Acc: 0.7746
+Epoch: 150, Total Loss: 85.9875, Train Acc: 0.7671, Val Acc: 0.7811
+Epoch: 160, Total Loss: 85.3890, Train Acc: 0.7654, Val Acc: 0.7754
+Epoch: 170, Total Loss: 85.2085, Train Acc: 0.7777, Val Acc: 0.7869
+Epoch: 180, Total Loss: 87.0214, Train Acc: 0.7692, Val Acc: 0.7779
+Epoch: 190, Total Loss: 84.1489, Train Acc: 0.7607, Val Acc: 0.7787
+Epoch: 200, Total Loss: 85.6331, Train Acc: 0.7736, Val Acc: 0.7820
+Epoch: 210, Total Loss: 85.2562, Train Acc: 0.7730, Val Acc: 0.7877
+Epoch: 220, Total Loss: 84.9667, Train Acc: 0.7464, Val Acc: 0.7557
+Epoch: 230, Total Loss: 84.3243, Train Acc: 0.7716, Val Acc: 0.7803
+Epoch: 240, Total Loss: 84.2650, Train Acc: 0.7709, Val Acc: 0.7893

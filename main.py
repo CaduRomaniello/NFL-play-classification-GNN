@@ -27,7 +27,7 @@ PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'po
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
-NUMBER_OF_ITERS = 6
+NUMBER_OF_ITERS = 1
 
 CONFIG = {
     'RANDOM_SEED': 1,
@@ -43,7 +43,8 @@ CONFIG = {
     'MLP_MAX_ITER':3000,
     'MLP_LEARNING_RATE': 0.01,
     'MLP_ALPHA': 5e-4,
-    'DATASET_SPLIT': 0.8,
+    'VALIDATION_SPLIT': 0.8,
+    'TEST_SPLIT': 0.9,
     'SHOW_INFO': True,
 }
 
@@ -53,7 +54,7 @@ def main():
     pass_graphs = []
     random_seed = 0
     random.seed(random_seed)
-    random_seed = 18
+    random_seed = 23
     
     for week in weeks:
         print('--------------------------------------------------------')
@@ -71,30 +72,30 @@ def main():
         random_seed += 1
         random.seed(random_seed)
         
-        with open(output_filename, "w", encoding="utf-8") as output_file:
-            # Redirecionar os logs para o arquivo
-            with redirect_stdout(output_file):
-                print(f"Iteration {i + 1}/{NUMBER_OF_ITERS}")
-                print(f"Output file: {output_filename}")
-                
-                CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
-                CONFIG['GNN_EPOCHS'] = random.choice([100, 200, 300])  # Exemplo: 32, 64 ou 128
-                CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
-                CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
-                CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
-                CONFIG['GNN_DROPOUT'] = random.choice([0.2, 0.3, 0.4, 0.5])
-                CONFIG['GNN_WEIGHT_DECAY'] = random.choice([5e-3, 5e-4, 5e-5])
-                CONFIG['RF_ESTIMATORS'] = random.choice([50, 100, 150])
-                CONFIG['MLP_HIDDEN_CHANNELS'] = random.choice([32, 64, 128]) 
-                CONFIG['MLP_HIDDEN_LAYERS'] = random.choice([1, 2, 3]) 
-                CONFIG['MLP_LEARNING_RATE'] = random.choice([0.01, 0.001, 0.0001]) 
-                CONFIG['MLP_ALPHA'] = random.choice([5e-3, 5e-4, 5e-5])
-                
-                print("CONFIG values:")
-                for key, value in CONFIG.items():
-                    print(f"{key}: {value}")
+        # with open(output_filename, "w", encoding="utf-8") as output_file:
+        #     # Redirecionar os logs para o arquivo
+        #     with redirect_stdout(output_file):
+        print(f"Iteration {i + 1}/{NUMBER_OF_ITERS}")
+        print(f"Output file: {output_filename}")
         
-                model_run(pass_graphs, rush_graphs, config=CONFIG)
+        CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
+        CONFIG['GNN_EPOCHS'] = random.choice([100, 200, 300])  # Exemplo: 32, 64 ou 128
+        CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
+        CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
+        CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
+        CONFIG['GNN_DROPOUT'] = random.choice([0.2, 0.3, 0.4, 0.5])
+        CONFIG['GNN_WEIGHT_DECAY'] = random.choice([5e-3, 5e-4, 5e-5])
+        CONFIG['RF_ESTIMATORS'] = random.choice([50, 100, 150])
+        CONFIG['MLP_HIDDEN_CHANNELS'] = random.choice([32, 64, 128]) 
+        CONFIG['MLP_HIDDEN_LAYERS'] = random.choice([1, 2, 3]) 
+        CONFIG['MLP_LEARNING_RATE'] = random.choice([0.01, 0.001, 0.0001]) 
+        CONFIG['MLP_ALPHA'] = random.choice([5e-3, 5e-4, 5e-5])
+        
+        print("CONFIG values:")
+        for key, value in CONFIG.items():
+            print(f"{key}: {value}")
+
+        model_run(pass_graphs, rush_graphs, config=CONFIG)
         
         end_time = time.time()
         duration = end_time - start_time

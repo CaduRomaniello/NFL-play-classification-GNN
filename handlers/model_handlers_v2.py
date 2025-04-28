@@ -175,7 +175,8 @@ def model_run(pass_graphs, rush_graphs, config):
     print("Running model...")
     
     n_graphs = len(pass_graphs)
-    train_split = int(config['DATASET_SPLIT'] * n_graphs)
+    validation_split = int(config['VALIDATION_SPLIT'] * n_graphs)
+    train_split = int(config['TEST_SPLIT'] * n_graphs)
     
     # Embaralhar os grafos para evitar qualquer viés
     # indices = np.random.permutation(n_graphs)
@@ -194,8 +195,11 @@ def model_run(pass_graphs, rush_graphs, config):
     #! ASSERTS
     #! ASSERTS
     
-    train_graphs = pass_graphs[:train_split] + rush_graphs[:train_split]
+    train_graphs = pass_graphs[:validation_split] + rush_graphs[:validation_split]
     random.shuffle(train_graphs)
+
+    validation_graphs = pass_graphs[validation_split:train_split] + rush_graphs[validation_split:train_split]
+    random.shuffle(validation_graphs)
     
     test_graphs = pass_graphs[train_split:] + rush_graphs[train_split:]
     random.shuffle(test_graphs)
@@ -212,6 +216,16 @@ def model_run(pass_graphs, rush_graphs, config):
             n_rush_test += 1
     
     assert n_pass_test == n_rush_test, f"Train set is not balanced: {n_pass_test} passes and {n_rush_test} rushes."
+
+    n_pass_validation = 0
+    n_rush_validation = 0
+    for i in validation_graphs:
+        if i.graph['playResult'] == 1:
+            n_pass_validation += 1
+        else:
+            n_rush_validation += 1
+
+    assert n_pass_validation == n_rush_validation, f"Validation set is not balanced: {n_pass_validation} passes and {n_rush_validation} rushes."
     
     n_pass = 0
     n_rush = 0
@@ -232,9 +246,14 @@ def model_run(pass_graphs, rush_graphs, config):
         print()
         # print(f'Dataset: {dataset}:')
         print('====================')
-        print(f'Number of graphs: {len(dataset)}')
+        print(f'Number of graphs: {len(train_graphs) + len(validation_graphs) + len(test_graphs)}')
+        print(f"Number of train graphs: {len(train_graphs)}")
+        print(f"Number of validation graphs: {len(validation_graphs)}")
+        print(f"Number of test graphs: {len(test_graphs)}")
         print(f'Percentage of passes in train set: {n_pass_test / len(train_graphs) * 100:.2f}%')
         print(f'Percentage of rushes in train set: {n_rush_test / len(train_graphs) * 100:.2f}%')
+        print(f'Percentage of passes in validation set: {n_pass_validation / len(validation_graphs) * 100:.2f}%')
+        print(f'Percentage of rushes in validation set: {n_rush_validation / len(validation_graphs) * 100:.2f}%')
         print(f'Percentage of passes in test set: {n_pass / len(test_graphs) * 100:.2f}%')
         print(f'Percentage of rushes in test set: {n_rush / len(test_graphs) * 100:.2f}%')
 
@@ -253,17 +272,18 @@ def model_run(pass_graphs, rush_graphs, config):
         print(f'Has self-loops: {data.has_self_loops()}')
         print(f'Is undirected: {data.is_undirected()}')
     
-    print(f"Número de grafos para treino: {len(train_graphs)}")
-    print(f"Número de grafos para teste: {len(test_graphs)}")
-    
     # Converter para o formato PyTorch Geometric
     train_dataset = convert_nx_to_pytorch_geometric(train_graphs, include_labels=True)
+
+    # Para validação, não incluir os labels
+    validation_dataset = convert_nx_to_pytorch_geometric(validation_graphs, include_labels=True)
     
     # Para teste real, não incluir os labels
     test_dataset_with_labels = convert_nx_to_pytorch_geometric(test_graphs, include_labels=True)
     test_dataset_no_labels = convert_nx_to_pytorch_geometric(test_graphs, include_labels=False)
     
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+    validation_loader = DataLoader(validation_dataset, batch_size=64, shuffle=False)
     test_loader_with_labels = DataLoader(test_dataset_with_labels, batch_size=64, shuffle=False)
     test_loader_no_labels = DataLoader(test_dataset_no_labels, batch_size=64, shuffle=False)
     
@@ -275,17 +295,17 @@ def model_run(pass_graphs, rush_graphs, config):
     
     min_loss = 9999999999
     min_loss_epoch = 0
-    max_test_acc = 0
-    max_test_acc_epoch = 0
+    max_val_acc = 0
+    max_val_acc_epoch = 0
     max_train_acc = 0
     max_train_acc_epoch = 0
     best_model_state = None
     for epoch in range(1, config['GNN_EPOCHS'] + 1):
         total_loss = train(model, train_loader, criterion, optimizer, config=config)
         train_acc, train_preds, train_labels = test(train_loader, model, config)
-        test_acc, test_preds, test_labels = test(test_loader_with_labels, model, config)
+        val_acc, val_preds, val_labels = test(validation_loader, model, config)
         if epoch % 10 == 0:
-            print(f'Epoch: {epoch:03d}, Total Loss: {total_loss:.4f}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
+            print(f'Epoch: {epoch:03d}, Total Loss: {total_loss:.4f}, Train Acc: {train_acc:.4f}, Val Acc: {val_acc:.4f}')
             
         if total_loss < min_loss:
             min_loss = total_loss
@@ -293,9 +313,9 @@ def model_run(pass_graphs, rush_graphs, config):
         if train_acc > max_train_acc:
             max_train_acc = train_acc
             max_train_acc_epoch = epoch
-        if test_acc > max_test_acc:
-            max_test_acc = test_acc
-            max_test_acc_epoch = epoch
+        if val_acc > max_val_acc:
+            max_val_acc = val_acc
+            max_val_acc_epoch = epoch
             best_model_state = model.state_dict()
          
     print()
@@ -303,10 +323,11 @@ def model_run(pass_graphs, rush_graphs, config):
     model.load_state_dict(best_model_state)
     print(f"Min loss: {min_loss:.4f} at epoch {min_loss_epoch}")
     print(f"Max train acc: {max_train_acc:.4f} at epoch {max_train_acc_epoch}")
-    print(f"Max test acc: {max_test_acc:.4f} at epoch {max_test_acc_epoch}")
+    print(f"Max validation acc: {max_val_acc:.4f} at epoch {max_val_acc_epoch}")
     
-    _, test_preds, test_labels = test(test_loader_with_labels, model, config)
+    test_accr, test_preds, test_labels = test(test_loader_with_labels, model, config)
     print("Best metrics of best model:")
+    print(f"Test accuracy: {test_accr:.4f}")
     print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
     
     print('====================')
