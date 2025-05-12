@@ -57,6 +57,11 @@ def save_confusion_matrix(y_true, y_pred, model_name, output_dir="images"):
         model_name (str): Nome do modelo (ex: "GCN").
         output_dir (str): Diretório onde salvar a imagem.
     """
+
+    print(f"Confusion matrix: {model_name}")
+    print('y_true:', y_true)
+    print('y_pred:', y_pred)
+    print()
     # Gerar a matriz de confusão
     cm = confusion_matrix(y_true, y_pred)
     
@@ -420,19 +425,19 @@ def model_run(pass_graphs, rush_graphs, config):
     print(f"Test accuracy: {test_accr:.4f}")
     print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
     
-    # save_confusion_matrix(test_labels, test_preds, model_name="GCN")
+    save_confusion_matrix(test_labels, test_preds, model_name="GCN")
     
     print('====================')
     print()
-    print(train_losses)
-    print()
-    print()
-    print(val_losses)
-    print()
-    plot_loss_curves(train_losses, val_losses, model_name="GCN_withVal")
-    plot_loss_curves(train_losses, model_name="GCN_noVal")
-    plot_loss_curves(train_losses[1:], val_losses[1:], model_name="GCN_2_withVal")
-    plot_loss_curves(train_losses[1:], model_name="GCN_2_noVal")
+    # print(train_losses)
+    # print()
+    # print()
+    # print(val_losses)
+    # print()
+    # plot_loss_curves(train_losses, val_losses, model_name="GCN_withVal")
+    # plot_loss_curves(train_losses, model_name="GCN_noVal")
+    # plot_loss_curves(train_losses[1:], val_losses[1:], model_name="GCN_2_withVal")
+    # plot_loss_curves(train_losses[1:], model_name="GCN_2_noVal")
     
     run_baselines(train_graphs, test_graphs, config=config)
             
@@ -524,8 +529,8 @@ def run_baselines(train_graphs, test_graphs, config):
     print(classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"]))
     # save_confusion_matrix(y_test, mlp_preds, model_name="MLP")
     
-    if hasattr(mlp, 'loss_curve_'):
-        plot_loss_curves(mlp.loss_curve_, model_name="MLP")
+    # if hasattr(mlp, 'loss_curve_'):
+    #     plot_loss_curves(mlp.loss_curve_, model_name="MLP")
             
             
             
