@@ -2,6 +2,9 @@ import random
 import torch
 import numpy as np
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
+
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 ## GNN
 from datetime import datetime
@@ -14,6 +17,61 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
+
+def plot_loss_curves(train_losses, val_losses=None, model_name="Model", output_dir="images"):
+    """
+    Plots and saves the learning curves for model training.
+    
+    Args:
+        train_losses (list): Training loss values per epoch
+        val_losses (list, optional): Validation loss values per epoch
+        model_name (str): Name of the model (e.g., "GCN", "MLP")
+        output_dir (str): Directory where to save the plot
+    """
+    plt.figure(figsize=(10, 6))
+    epochs = range(1, len(train_losses) + 1)
+    
+    plt.plot(epochs, train_losses, 'b-', label='Training Loss')
+    if val_losses:
+        plt.plot(epochs, val_losses, 'r-', label='Validation Loss')
+    
+    plt.title(f'Learning Curve - {model_name}')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.7)
+    
+    # Save the plot
+    output_path = f"{output_dir}/learning_curve_{model_name}.png"
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.close()
+    print(f"Learning curve saved for {model_name} at {output_path}")
+
+def save_confusion_matrix(y_true, y_pred, model_name, output_dir="images"):
+    """
+    Gera e salva a matriz de confusão como uma imagem PNG.
+
+    Args:
+        y_true (list or array): Rótulos verdadeiros.
+        y_pred (list or array): Predições do modelo.
+        model_name (str): Nome do modelo (ex: "GCN").
+        output_dir (str): Diretório onde salvar a imagem.
+    """
+    # Gerar a matriz de confusão
+    cm = confusion_matrix(y_true, y_pred)
+    
+    # Criar a visualização da matriz de confusão
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Rush", "Pass"])
+    disp.plot(cmap="Blues", values_format="d")
+    
+    # Configurar título
+    plt.title(f"Confusion Matrix - {model_name}")
+    
+    # Salvar a imagem
+    output_path = f"{output_dir}/confusion_matrix_{model_name}.png"
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.close()  # Fechar o plot para evitar sobreposição
+    print(f"Confusion matrix saved for {model_name} at {output_path}")
 
 class GCN(torch.nn.Module):
     def __init__(self, node_features, hidden_channels, random_seed):
@@ -144,15 +202,18 @@ def convert_nx_to_pytorch_geometric(graphs, include_labels=True):
 def train(model, loader, criterion, optimizer, config):
     model.train()
     total_loss = 0
+    total_samples = 0
 
     for data in loader:  # Iterate in batches over the training dataset.
+        batch_size = data.y.size(0)
+        total_samples += batch_size
         out = model(data.x, data.edge_index, data.batch, config)  # Perform a single forward pass.
         loss = criterion(out, data.y)  # Compute the loss.
         total_loss += loss.item()  # Accumulate the loss.
         loss.backward()  # Derive gradients.
         optimizer.step()  # Update parameters based on gradients.
         optimizer.zero_grad()  # Clear gradients.
-    return total_loss
+    return total_loss / total_samples if total_samples > 0 else 0  # Return average loss over the epoch.
     # print(f'Loss: {total_loss / len(loader):.4f}')
 
 def test(loader, model, config):
@@ -300,10 +361,39 @@ def model_run(pass_graphs, rush_graphs, config):
     max_train_acc = 0
     max_train_acc_epoch = 0
     best_model_state = None
+    
+    train_losses = []
+    val_losses = []
+    
     for epoch in range(1, config['GNN_EPOCHS'] + 1):
         total_loss = train(model, train_loader, criterion, optimizer, config=config)
+        train_losses.append(total_loss)
+        
+        #=======================================================
+        # getting the total validation loss
+        model.eval()
+        val_loss = 0
+        val_samples = 0
+
+        # Use torch.no_grad() to disable gradient calculations
+        with torch.no_grad():
+            for data in validation_loader:
+                batch_size = data.y.size(0)
+                val_samples += batch_size
+                out = model(data.x, data.edge_index, data.batch, config)
+                loss = criterion(out, data.y)
+                val_loss += loss.item()
+
+        # Store the total validation loss
+        val_losses.append(val_loss / val_samples if val_samples > 0 else 0)
+
+        # Return to training mode for next epoch
+        model.train()
+        #=======================================================
+        
         train_acc, train_preds, train_labels = test(train_loader, model, config)
         val_acc, val_preds, val_labels = test(validation_loader, model, config)
+        
         if epoch % 10 == 0:
             print(f'Epoch: {epoch:03d}, Total Loss: {total_loss:.4f}, Train Acc: {train_acc:.4f}, Val Acc: {val_acc:.4f}')
             
@@ -330,8 +420,19 @@ def model_run(pass_graphs, rush_graphs, config):
     print(f"Test accuracy: {test_accr:.4f}")
     print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
     
+    # save_confusion_matrix(test_labels, test_preds, model_name="GCN")
+    
     print('====================')
     print()
+    print(train_losses)
+    print()
+    print()
+    print(val_losses)
+    print()
+    plot_loss_curves(train_losses, val_losses, model_name="GCN_withVal")
+    plot_loss_curves(train_losses, model_name="GCN_noVal")
+    plot_loss_curves(train_losses[1:], val_losses[1:], model_name="GCN_2_withVal")
+    plot_loss_curves(train_losses[1:], model_name="GCN_2_noVal")
     
     run_baselines(train_graphs, test_graphs, config=config)
             
@@ -406,6 +507,7 @@ def run_baselines(train_graphs, test_graphs, config):
     rf_acc = accuracy_score(y_test, rf_preds)
     print(f"🎯 Random Forest Accuracy: {rf_acc:.4f}")
     print(classification_report(y_test, rf_preds, target_names=["Rush", "Pass"]))
+    # save_confusion_matrix(y_test, rf_preds, model_name="RandomForest")
 
     # MLP
     mlp = MLPClassifier(
@@ -420,6 +522,10 @@ def run_baselines(train_graphs, test_graphs, config):
     mlp_acc = accuracy_score(y_test, mlp_preds)
     print(f"🤖 MLP Accuracy: {mlp_acc:.4f}")
     print(classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"]))
+    # save_confusion_matrix(y_test, mlp_preds, model_name="MLP")
+    
+    if hasattr(mlp, 'loss_curve_'):
+        plot_loss_curves(mlp.loss_curve_, model_name="MLP")
             
             
             
