@@ -1,51 +1,30 @@
-import pandas as pd
-
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+import seaborn as sns
+import numpy as np
+from sklearn.metrics import ConfusionMatrixDisplay
 
-from data_handlers.filter_data import process_single_data
-from data_handlers.read_files import read2025data
-from visualization.create_plot import createFootballField
+# Matriz de confusão (valores reais)
+conf_matrix = np.array([[477, 134],
+                        [171, 440]])
 
-def playground():
-    games, player_play, players, plays, tracking_data = read2025data()
-    play, players = process_single_data(plays, tracking_data, 55, 2022091110)
-    print(play)
-    
-    
-    
-    
-    # play = plays.loc[(plays['gameId'] == 2022091110) & (plays['playId'] == 55)]
-    # yards_to_go = play['yardsToGo'].values[0]
-    # yardline_number = play['yardlineNumber'].values[0]
+# Labels
+labels = ['Rush', 'Pass']
 
-    # game_id = 2022091110
-    # play_id = 55
-    # first_play = tracking_data[(tracking_data['gameId'] == game_id) & (tracking_data['playId'] == play_id) & (tracking_data['frameType'] == 'SNAP')].sort_values('club')
+# Tamanho da fonte (ajustável)
+font_size = 30
 
-    # new_columns = players[['nflId', 'height', 'weight', 'position']]
-    
-    # pd.set_option('display.max_columns', None)
-    # result = pd.merge(first_play, new_columns, on='nflId')
+# Plot
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=labels, yticklabels=labels, 
+            annot_kws={"size": font_size})
 
-    # createFootballField(highlight_line=True, highlight_line_number=100-yardline_number), 
+plt.title("Confusion Matrix - Random Forest", fontsize=font_size + 2)
+plt.xlabel("Predicted label", fontsize=font_size)
+plt.ylabel("True label", fontsize=font_size)
+plt.xticks(fontsize=font_size)
+plt.yticks(fontsize=font_size)
+# plt.colorbar(label='', shrink=0.8)
 
-    # plt.plot([100 - yardline_number - yards_to_go + 10, 100 - yardline_number - yards_to_go + 10], [0, 53.3], color='blue')
-
-    # colors = {'ARI': 'black',
-    #         'KC': 'red',
-    #         'football': '#7b3f00'}
-
-    # for index, player in result.iterrows():
-    #     x = player['x']
-    #     y = player['y']
-    #     s = player['displayName']
-    #     plt.scatter(x, y, color=colors[player['club']])
-
-    # football = tracking_data[(tracking_data['gameId'] == game_id) & (tracking_data['playId'] == play_id) & (tracking_data['frameType'] == 'SNAP') & (tracking_data['displayName'] == 'football')]
-    # plt.scatter(football['x'].values[0], football['y'].values[0], color=colors[football['club'].values[0]])
-
-    # plt.show()
-    
-if __name__ == "__main__":
-    playground()
+plt.tight_layout()
+plt.show()
