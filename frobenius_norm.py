@@ -21,10 +21,10 @@ def pass_or_rush(play):
     elif not pd.isna(play['passLocationType']):
         return 'pass'
     elif not pd.isna(play['passResult']):
-        print("PASS WITHOUT INFO")
+        # print("PASS WITHOUT INFO")
         return 'pass'
     else:
-        print("can't determine play type")
+        # print("can't determine play type")
         return 'none'
     
 # keeping only the n smallest values in a row for Frobenius norm calculation
@@ -37,23 +37,23 @@ def keep_n_smallest(row, n):
     
 # getting paths
 cur_path = os.path.os.getcwd()
-print(cur_path)
+# print(cur_path)
 data_path = os.path.abspath(os.path.join(cur_path, './nfl_data/2025/'))
-print(data_path)
+# print(data_path)
 distances_path = os.path.abspath(os.path.join(cur_path, './frobenius_norm/'))
-print(distances_path)
+# print(distances_path)
 
 # loading data
 games = pd.read_csv(os.path.join(data_path, 'games.csv'))
 plays = pd.read_csv(os.path.join(data_path, 'plays.csv'))
 
 # filtrando apenas as jogadas de passe ou corrida
-print(f'Number of plays before filtering by play type: {len(plays)}')
+# print(f'Number of plays before filtering by play type: {len(plays)}')
 
 plays['play_type'] = plays.apply(pass_or_rush, axis=1)
 plays = plays[plays['play_type'] != 'none']
 
-print(f'Number of plays after filtering by play type: {len(plays)}')
+# print(f'Number of plays after filtering by play type: {len(plays)}')
 
 # adding week to plays
 games.sort_values(['week'], ascending=[True], inplace=True)
@@ -63,11 +63,11 @@ plays = pd.merge(plays, games_info, on='gameId')
 plays.sort_values(['week'], ascending=[True], inplace=True)
 
 # filtering plays to only include week 1 |||| remove this when you want to process all weeks
-print(f'Number of plays before filtering by week: {len(plays)}')
+# print(f'Number of plays before filtering by week: {len(plays)}')
 
-plays = plays[plays['week'] == 1]
+# plays = plays[plays['week'] == 1]
 
-print(f'Number of plays after filtering by week: {len(plays)}')
+# print(f'Number of plays after filtering by week: {len(plays)}')
 
 # separating plays into pass and rush
 pass_plays = plays[plays['play_type'] == 'pass']
@@ -76,33 +76,33 @@ pass_plays = pass_plays.reset_index(drop=True)
 rush_plays = plays[plays['play_type'] == 'rush']
 rush_plays = rush_plays.reset_index(drop=True)
 
-print(f'Number of pass plays: {len(pass_plays)}')
-print(f'Number of rush plays: {len(rush_plays)}')
+# print(f'Number of pass plays: {len(pass_plays)}')
+# print(f'Number of rush plays: {len(rush_plays)}')
 
 # files to process
-# files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv']
-files = ['tracking_week_1.csv']
+files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv']
+# files = ['tracking_week_1.csv']
 
 # reading data
 data = pd.DataFrame()
 for i, file in enumerate(files):
     data = pd.concat([data, pd.read_csv(data_path + '/' + file)])
     
-print(f'Number of rows in tracking data before filtering by frame type: {len(data)}')
+# print(f'Number of rows in tracking data before filtering by frame type: {len(data)}')
 
 data = data[(data['frameType'] == 'SNAP') & (data['displayName'] != "football")]
 
-print(f'Number of rows in tracking data after filtering by frame type: {len(data)}')
+# print(f'Number of rows in tracking data after filtering by frame type: {len(data)}')
 
 # filtering data to only include plays that are in the plays dataframe
 plays['game_play_key'] = plays['gameId'].astype(str) + '_' + plays['playId'].astype(str)
 data['game_play_key'] = data['gameId'].astype(str) + '_' + data['playId'].astype(str)
 
-print(f'Number of plays before filtering tracking data by plays: {len(data)}')
+# print(f'Number of plays before filtering tracking data by plays: {len(data)}')
 
 data = data[data['game_play_key'].isin(plays['game_play_key'])]
 
-print(f'Number of plays after filtering tracking data by plays: {len(data)}')
+# print(f'Number of plays after filtering tracking data by plays: {len(data)}')
 
 data.drop('game_play_key', axis=1, inplace=True)
 plays.drop('game_play_key', axis=1, inplace=True)
@@ -114,16 +114,16 @@ start_time = datetime.now()
 print(f"Início da execução: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 # calculating frobenius norm for all type of edges combinations
-for n in range(1, 3):
-    print(f'Calculating Frobenius norm for n={n}')
+for n in range(1, 23):
+    print(f'Calculating Frobenius norm for n={n} - {datetime.now() - start_time} elapsed')
     # initializing list to store Frobenius norms
     norms = []
     # calculating frobenius norm
     for i, pass_play in pass_plays.iterrows():
-        iteration_time = datetime.now()
-        print(f'    Processing pass play {i}/{len(pass_plays)} - {iteration_time - start_time} elapsed')
-        if i == 2:
-            break
+        # iteration_time = datetime.now()
+        # print(f'    Processing pass play {i}/{len(pass_plays)} - {iteration_time - start_time} elapsed')
+        # if i == 2:
+        #     break
         # filtering pass play data
         play_data = data[(data['gameId'] == pass_play['gameId']) & (data['playId'] == pass_play['playId'])]
         
@@ -167,7 +167,7 @@ for n in range(1, 3):
         'std_frobenius_norm': np.std(norms) if norms else None
     })
     
-print(f"Fim da execução: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+# print(f"Fim da execução: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 # saving results
 df_distances = pd.DataFrame(results)
