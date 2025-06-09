@@ -80,8 +80,8 @@ print(f'Number of pass plays: {len(pass_plays)}')
 print(f'Number of rush plays: {len(rush_plays)}')
 
 # files to process
-files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv']
-# files = ['tracking_week_1.csv']
+# files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv']
+files = ['tracking_week_1.csv']
 
 # reading data
 data = pd.DataFrame()
@@ -114,7 +114,7 @@ start_time = datetime.now()
 print(f"Início da execução: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 # calculating frobenius norm for all type of edges combinations
-for n in range(1, 23):
+for n in range(1, 2):
     print(f'Calculating Frobenius norm for n={n} - {datetime.now() - start_time} elapsed')
     # initializing list to store Frobenius norms
     norms = []
