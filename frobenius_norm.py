@@ -47,7 +47,7 @@ print(f"[{datetime.now()} - {datetime.now() - start_time}] Início da execução
 
 # ---> getting paths
 cur_path = os.path.os.getcwd()
-data_path = os.path.abspath(os.path.join(cur_path, 'nfl_data/2025/'))
+data_path = os.path.abspath(os.path.join(cur_path, 'Mestrado/nfl_data/2025/'))
 
 # --- >loading data
 games = pd.read_csv(os.path.join(data_path, 'games.csv'))
@@ -192,8 +192,8 @@ print(f"\n[{datetime.now()} - {datetime.now() - start_time}] Fim da execução")
 
 # ---> saving results
 df_distances = pd.DataFrame(results)
-df_distances.to_csv(os.path.join('./', 'frobenius_norm.csv'))
+df_distances.to_csv(os.path.join('./', 'Mestrado/frobenius_norm.csv'))
 
-json_path = os.path.join('./', 'frobenius_norm.json')
+json_path = os.path.join('./', 'Mestrado/frobenius_norm.json')
 with open(json_path, 'w') as json_file:
     json.dump(results, json_file, indent=4)
