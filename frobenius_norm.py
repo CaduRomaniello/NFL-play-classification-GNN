@@ -38,9 +38,9 @@ def keep_n_smallest(row, n):
 # getting paths
 cur_path = os.path.os.getcwd()
 # print(cur_path)
-data_path = os.path.abspath(os.path.join(cur_path, './nfl_data/2025/'))
+data_path = os.path.abspath(os.path.join(cur_path, './Mestrado/nfl_data/2025/'))
 # print(data_path)
-distances_path = os.path.abspath(os.path.join(cur_path, './frobenius_norm/'))
+distances_path = os.path.abspath(os.path.join(cur_path, './Mestrado/frobenius_norm/'))
 # print(distances_path)
 
 # loading data
@@ -172,8 +172,8 @@ print(f"Fim da execução: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 # saving results
 df_distances = pd.DataFrame(results)
-df_distances.to_csv(os.path.join('./', 'frobenius_norm.csv'))
+df_distances.to_csv(os.path.join('./', 'Mestrado/frobenius_norm.csv'))
 
-json_path = os.path.join('./', 'frobenius_norm.json')
+json_path = os.path.join('./', 'Mestrado/frobenius_norm.json')
 with open(json_path, 'w') as json_file:
     json.dump(results, json_file, indent=4)
