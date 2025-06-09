@@ -63,11 +63,11 @@ plays = pd.merge(plays, games_info, on='gameId')
 plays.sort_values(['week'], ascending=[True], inplace=True)
 
 # filtering plays to only include week 1 |||| remove this when you want to process all weeks
-print(f'Number of plays before filtering by week: {len(plays)}')
+# print(f'Number of plays before filtering by week: {len(plays)}')
 
-plays = plays[plays['week'] == 1]
+# plays = plays[plays['week'] == 1]
 
-print(f'Number of plays after filtering by week: {len(plays)}')
+# print(f'Number of plays after filtering by week: {len(plays)}')
 
 # separating plays into pass and rush
 pass_plays = plays[plays['play_type'] == 'pass']
@@ -80,8 +80,8 @@ print(f'Number of pass plays: {len(pass_plays)}')
 print(f'Number of rush plays: {len(rush_plays)}')
 
 # files to process
-# files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv']
-files = ['tracking_week_1.csv']
+files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv']
+# files = ['tracking_week_1.csv']
 
 # reading data
 data = pd.DataFrame()
@@ -114,16 +114,17 @@ start_time = datetime.now()
 print(f"Início da execução: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
 # calculating frobenius norm for all type of edges combinations
-for n in range(1, 2):
+for n in range(1, 23):
     print(f'Calculating Frobenius norm for n={n} - {datetime.now() - start_time} elapsed')
     # initializing list to store Frobenius norms
     norms = []
     # calculating frobenius norm
     for i, pass_play in pass_plays.iterrows():
-        iteration_time = datetime.now()
-        print(f'    Processing pass play {i}/{len(pass_plays)} - {iteration_time - start_time} elapsed')
-        if i == 2:
-            break
+        if i % 100 == 0:
+            iteration_time = datetime.now()
+            print(f'    Processing pass play {i}/{len(pass_plays)} - {iteration_time - start_time} elapsed')
+        # if i == 2:
+        #     break
         
         # filtering pass play data
         play_data = data[(data['gameId'] == pass_play['gameId']) & (data['playId'] == pass_play['playId'])]
