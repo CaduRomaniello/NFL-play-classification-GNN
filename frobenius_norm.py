@@ -63,11 +63,11 @@ plays = pd.merge(plays, games_info, on='gameId')
 plays.sort_values(['week'], ascending=[True], inplace=True)
 
 # filtering plays to only include week 1 |||| remove this when you want to process all weeks
-# print(f'Number of plays before filtering by week: {len(plays)}')
+print(f'Number of plays before filtering by week: {len(plays)}')
 
-# plays = plays[plays['week'] == 1]
+plays = plays[plays['week'] == 1]
 
-# print(f'Number of plays after filtering by week: {len(plays)}')
+print(f'Number of plays after filtering by week: {len(plays)}')
 
 # separating plays into pass and rush
 pass_plays = plays[plays['play_type'] == 'pass']
