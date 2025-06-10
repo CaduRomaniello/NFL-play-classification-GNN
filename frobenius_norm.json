@@ -1,112 +1,107 @@
 [
     {
         "n": 1,
-        "mean_frobenius_norm": 24.96391419715346,
-        "std_frobenius_norm": 3.3298291413065186
+        "mean_frobenius_norm": 6.467671506330913,
+        "std_frobenius_norm": 0.18076103995491566
     },
     {
         "n": 2,
-        "mean_frobenius_norm": 40.28427358662041,
-        "std_frobenius_norm": 4.871221969330601
+        "mean_frobenius_norm": 8.912834862759084,
+        "std_frobenius_norm": 0.2528536609942755
     },
     {
         "n": 3,
-        "mean_frobenius_norm": 53.59266611038109,
-        "std_frobenius_norm": 6.511821970052014
+        "mean_frobenius_norm": 10.624349518963596,
+        "std_frobenius_norm": 0.30660694645817954
     },
     {
         "n": 4,
-        "mean_frobenius_norm": 66.14506706094244,
-        "std_frobenius_norm": 8.121796852594906
+        "mean_frobenius_norm": 11.92109788861956,
+        "std_frobenius_norm": 0.34641096877401323
     },
     {
         "n": 5,
-        "mean_frobenius_norm": 77.83953321188365,
-        "std_frobenius_norm": 9.65502628772395
+        "mean_frobenius_norm": 12.930479277156332,
+        "std_frobenius_norm": 0.38270491035474336
     },
     {
         "n": 6,
-        "mean_frobenius_norm": 88.62332445790526,
-        "std_frobenius_norm": 11.090071213645203
+        "mean_frobenius_norm": 13.712062032081176,
+        "std_frobenius_norm": 0.41965308070312934
     },
     {
         "n": 7,
-        "mean_frobenius_norm": 98.61948254406836,
-        "std_frobenius_norm": 12.434668286434011
+        "mean_frobenius_norm": 14.305403388492644,
+        "std_frobenius_norm": 0.46033563883421835
     },
     {
         "n": 8,
-        "mean_frobenius_norm": 107.86424951769376,
-        "std_frobenius_norm": 13.697928553869913
+        "mean_frobenius_norm": 14.732324843839825,
+        "std_frobenius_norm": 0.5061800405704071
     },
     {
         "n": 9,
-        "mean_frobenius_norm": 116.37110747282429,
-        "std_frobenius_norm": 14.858185955855047
+        "mean_frobenius_norm": 15.006562876766361,
+        "std_frobenius_norm": 0.5595797635239466
     },
     {
         "n": 10,
-        "mean_frobenius_norm": 124.17431667974702,
-        "std_frobenius_norm": 15.961040581902411
+        "mean_frobenius_norm": 15.138015468184554,
+        "std_frobenius_norm": 0.6161433721705514
     },
     {
         "n": 11,
-        "mean_frobenius_norm": 131.3342357921342,
-        "std_frobenius_norm": 17.014191162997793
+        "mean_frobenius_norm": 15.131276020089063,
+        "std_frobenius_norm": 0.6675830825794794
     },
     {
         "n": 12,
-        "mean_frobenius_norm": 137.88013502109376,
-        "std_frobenius_norm": 18.020726616020085
+        "mean_frobenius_norm": 14.98808601628093,
+        "std_frobenius_norm": 0.7105641744321273
     },
     {
         "n": 13,
-        "mean_frobenius_norm": 143.84529581695924,
-        "std_frobenius_norm": 18.997767608506212
+        "mean_frobenius_norm": 14.705261972395483,
+        "std_frobenius_norm": 0.7446649427927127
     },
     {
         "n": 14,
-        "mean_frobenius_norm": 149.34287804405588,
-        "std_frobenius_norm": 19.989758014700826
+        "mean_frobenius_norm": 14.274616244412703,
+        "std_frobenius_norm": 0.7630171969620182
     },
     {
         "n": 15,
-        "mean_frobenius_norm": 154.39982411904018,
-        "std_frobenius_norm": 21.07951105150208
+        "mean_frobenius_norm": 13.681068727665808,
+        "std_frobenius_norm": 0.7631679702898682
     },
     {
         "n": 16,
-        "mean_frobenius_norm": 159.25743780344712,
-        "std_frobenius_norm": 22.235690523465767
+        "mean_frobenius_norm": 12.902824623942957,
+        "std_frobenius_norm": 0.7399658157673853
     },
     {
         "n": 17,
-        "mean_frobenius_norm": 164.30780983833262,
-        "std_frobenius_norm": 23.527506044795103
+        "mean_frobenius_norm": 11.901097397716573,
+        "std_frobenius_norm": 0.6873487193328955
     },
     {
         "n": 18,
-        "mean_frobenius_norm": 169.21758318661,
-        "std_frobenius_norm": 24.864432843802536
+        "mean_frobenius_norm": 10.609366709321822,
+        "std_frobenius_norm": 0.6126900155694203
     },
     {
         "n": 19,
-        "mean_frobenius_norm": 174.54951211178275,
-        "std_frobenius_norm": 26.417985223305557
+        "mean_frobenius_norm": 8.901045302608729,
+        "std_frobenius_norm": 0.5090484555602243
     },
     {
         "n": 20,
-        "mean_frobenius_norm": 183.45821087742897,
-        "std_frobenius_norm": 29.151576589879756
+        "mean_frobenius_norm": 6.463429945388457,
+        "std_frobenius_norm": 0.2952841481823126
     },
     {
         "n": 21,
-        "mean_frobenius_norm": 190.51121588788618,
-        "std_frobenius_norm": 32.49970926100873
-    },
-    {
-        "n": 22,
-        "mean_frobenius_norm": 190.51121588788618,
-        "std_frobenius_norm": 32.49970926100873
+        "mean_frobenius_norm": 0.0,
+        "std_frobenius_norm": 0.0
     }
 ]
