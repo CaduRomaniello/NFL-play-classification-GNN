@@ -38,6 +38,7 @@ def keep_n_smallest(row, n):
     row_copy[row_copy == 0] = np.inf
     smallest_indices = row_copy.nsmallest(n).index
     result[~result.index.isin(smallest_indices)] = 0
+    result[result.index.isin(smallest_indices)] = 1
     
     return result  
 
@@ -135,7 +136,7 @@ print(f'[{datetime.now()} - {datetime.now() - start_time}] Finished calculating 
 results = []
 
 # ---> calculating frobenius norm for all type of edges combinations
-for n in range(1, 23):
+for n in range(1, 22):
     print(f'\n[{datetime.now()} - {datetime.now() - start_time}] Calculating Frobenius norm for n={n}')
 
     sample_key = list(dist_matrices.keys())[0]  # Pega a primeira chave
