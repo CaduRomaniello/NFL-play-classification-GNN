@@ -6,6 +6,10 @@ import pandas as pd
 from datetime import datetime
 from scipy.spatial.distance import cdist
 
+# Spectral distance imports
+from numpy.linalg import eigh
+from scipy.sparse.csgraph import laplacian
+
 # classifying plays based on pass or rush
 def pass_or_rush(play):
     if not pd.isna(play['qbSpike']) and play['qbSpike']:
@@ -154,11 +158,20 @@ for n in range(1, 22):
                                index=dist_matrices[f"{play['gameId']}_{play['playId']}"]['nflIds'],
                                columns=dist_matrices[f"{play['gameId']}_{play['playId']}"]['nflIds'])
         dist_df = dist_df.apply(lambda row: keep_n_smallest(row, n), axis=1)
-        n_closest[f"{play['gameId']}_{play['playId']}"] = dist_df.values
+        n_closest[f"{play['gameId']}_{play['playId']}"] = {}
+        n_closest[f"{play['gameId']}_{play['playId']}"]['adjacency'] = dist_df.values
+
+        laplacian_matrix = laplacian(dist_df.values)
+        eigvals, eigvectors = eigh(laplacian_matrix)
+
+        n_closest[f"{play['gameId']}_{play['playId']}"]['laplacian'] = laplacian_matrix
+        n_closest[f"{play['gameId']}_{play['playId']}"]['eigvals'] = eigvals
+        n_closest[f"{play['gameId']}_{play['playId']}"]['eigvectors'] = eigvectors
+
     print(f'[{datetime.now()} - {datetime.now() - start_time}]     Finished keeping only the {n} closest players for each play')
 
     sample_key = list(n_closest.keys())[0]  # Pega a primeira chave
-    sample_matrix = n_closest[sample_key]
+    sample_matrix = n_closest[sample_key]['adjacency']
     total_elements = sample_matrix.size
     zero_elements = (sample_matrix == 0).sum()
     print(f'[{datetime.now()} - {datetime.now() - start_time}]     Sample distance matrix for n={n} has {total_elements} elements, of which {zero_elements} are zero ({(zero_elements / total_elements) * 100:.2f}% zeros)')
@@ -172,20 +185,31 @@ for n in range(1, 22):
         # if i == 10:
         #     break
         
-        pass_dist_matrix = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]
+        pass_dist_matrix = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['adjacency']
+        # laplacian_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['laplacian']
+        eigvals_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['eigvals']
+        # eigvectors_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['eigvectors']
         
         # iterating through rush plays to calculate Frobenius norm from the difference of distance matrices
         for j, rush_play in rush_plays.iterrows():
-            rush_dist_matrix = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]
-            
+            rush_dist_matrix = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['adjacency']
+            # laplacian_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['laplacian']
+            eigvals_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['eigvals']
+            # eigvectors_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['eigvectors']
+
+            # Calcula a Distância Euclidiana entre os dois espectros.
+            #    Este é o valor da Distância Espectral.
+            spectral_distance = np.linalg.norm(eigvals_pass - eigvals_rush)
+            norms.append(spectral_distance)
+
             # calculating Frobenius norm
-            frobenius_norm = np.linalg.norm(pass_dist_matrix - rush_dist_matrix)
-            norms.append(frobenius_norm)
+            # frobenius_norm = np.linalg.norm(pass_dist_matrix - rush_dist_matrix)
+            # norms.append(frobenius_norm)
 
     results.append({
         'n': n,
-        'mean_frobenius_norm': np.mean(norms) if norms else None,
-        'std_frobenius_norm': np.std(norms) if norms else None
+        'mean': np.mean(norms) if norms else None,
+        'std': np.std(norms) if norms else None
     })
     print(f'[{datetime.now()} - {datetime.now() - start_time}] Finished calculating Frobenius norm for n={n} with results: {json.dumps(results[-1])}')
     
@@ -193,8 +217,8 @@ print(f"\n[{datetime.now()} - {datetime.now() - start_time}] Fim da execução")
 
 # ---> saving results
 df_distances = pd.DataFrame(results)
-df_distances.to_csv(os.path.join('./', 'Mestrado/frobenius_norm.csv'))
+df_distances.to_csv(os.path.join('./', 'Mestrado/spectral_distance.csv'))
 
-json_path = os.path.join('./', 'Mestrado/frobenius_norm.json')
+json_path = os.path.join('./', 'Mestrado/spectral_distance.json')
 with open(json_path, 'w') as json_file:
     json.dump(results, json_file, indent=4)
