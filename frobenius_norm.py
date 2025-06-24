@@ -165,24 +165,28 @@ for n in range(1, 22):
 
 
         # laplacian values for spectral distance
-        laplacian_matrix = laplacian(dist_df.values)
-        eigvals, eigvectors = eigh(laplacian_matrix)
+        # laplacian_matrix = laplacian(dist_df.values)
+        # eigvals, eigvectors = eigh(laplacian_matrix)
 
-        n_closest[f"{play['gameId']}_{play['playId']}"]['laplacian'] = laplacian_matrix
-        n_closest[f"{play['gameId']}_{play['playId']}"]['eigvals'] = eigvals
-        n_closest[f"{play['gameId']}_{play['playId']}"]['eigvectors'] = eigvectors
+        # n_closest[f"{play['gameId']}_{play['playId']}"]['laplacian'] = laplacian_matrix
+        # n_closest[f"{play['gameId']}_{play['playId']}"]['eigvals'] = eigvals
+        # n_closest[f"{play['gameId']}_{play['playId']}"]['eigvectors'] = eigvectors
 
         # normalizing adjacency matrix by the number of non-zero elements
-        non_zero_elements = np.count_nonzero(dist_df.values)
-        mask = dist_df.values != 0
-        adjacency_normalized_by_non_zeros = dist_df.values.copy()
-        adjacency_normalized_by_non_zeros[mask] = adjacency_normalized_by_non_zeros[mask] / non_zero_elements
-        n_closest[f"{play['gameId']}_{play['playId']}"]['adjacency_normalized_by_non_zeros'] = adjacency_normalized_by_non_zeros
+        # non_zero_elements = np.count_nonzero(dist_df.values)
+        # mask = dist_df.values != 0
+        # adjacency_normalized_by_non_zeros = dist_df.values.copy()
+        # adjacency_normalized_by_non_zeros[mask] = adjacency_normalized_by_non_zeros[mask] / non_zero_elements
+        # n_closest[f"{play['gameId']}_{play['playId']}"]['adjacency_normalized_by_non_zeros'] = adjacency_normalized_by_non_zeros
+
+        # mean node degree
+        mean_degree = np.mean(np.sum(dist_df.values != 0, axis=1))
+        n_closest[f"{play['gameId']}_{play['playId']}"]['mean_degree'] = mean_degree
 
     print(f'[{datetime.now()} - {datetime.now() - start_time}]     Finished keeping only the {n} closest players for each play')
 
     sample_key = list(n_closest.keys())[0]  # Pega a primeira chave
-    sample_matrix = n_closest[sample_key]['adjacency_normalized_by_non_zeros'] # change this attr according to metric used
+    sample_matrix = n_closest[sample_key]['adjacency'] # change this attr according to metric used
     total_elements = sample_matrix.size
     zero_elements = (sample_matrix == 0).sum()
     print(f'[{datetime.now()} - {datetime.now() - start_time}]     Sample distance matrix for n={n} has {total_elements} elements, of which {zero_elements} are zero ({(zero_elements / total_elements) * 100:.2f}% zeros)')
@@ -200,12 +204,12 @@ for n in range(1, 22):
         pass_dist_matrix = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['adjacency']
 
         # laplacian values
-        eigvals_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['eigvals']
+        # eigvals_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['eigvals']
         # laplacian_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['laplacian']
         # eigvectors_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['eigvectors']
 
         # normalized by non zereos values
-        pass_dist_matrix_normalized = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['adjacency_normalized_by_non_zeros']
+        # pass_dist_matrix_normalized = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['adjacency_normalized_by_non_zeros']
         
         # iterating through rush plays to calculate Frobenius norm from the difference of distance matrices
         for j, rush_play in rush_plays.iterrows():
@@ -213,24 +217,30 @@ for n in range(1, 22):
             rush_dist_matrix = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['adjacency']
 
             # laplacian values
-            eigvals_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['eigvals']
+            # eigvals_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['eigvals']
             # laplacian_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['laplacian']
             # eigvectors_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['eigvectors']
 
             # normalized by non zereos values
-            rush_dist_matrix_normalized = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['adjacency_normalized_by_non_zeros']
+            # rush_dist_matrix_normalized = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['adjacency_normalized_by_non_zeros']
 
             # spectral calculation
             # spectral_distance = np.linalg.norm(eigvals_pass - eigvals_rush)
             # norms.append(spectral_distance)
 
             # calculating Frobenius norm
-            # frobenius_norm = np.linalg.norm(pass_dist_matrix - rush_dist_matrix)
+            frobenius_norm = np.linalg.norm(pass_dist_matrix - rush_dist_matrix)
             # norms.append(frobenius_norm)
 
             # normalized by non zero elements calculation
-            frobenius_norm_normalized = np.linalg.norm(pass_dist_matrix_normalized - rush_dist_matrix_normalized)
-            norms.append(frobenius_norm_normalized)
+            # frobenius_norm_normalized = np.linalg.norm(pass_dist_matrix_normalized - rush_dist_matrix_normalized)
+            # norms.append(frobenius_norm_normalized)
+
+            # calculating frobenius norm normalized by node degree
+            mean_degree_pass = n_closest[f"{pass_play['gameId']}_{pass_play['playId']}"]['mean_degree']
+            mean_degree_rush = n_closest[f"{rush_play['gameId']}_{rush_play['playId']}"]['mean_degree']
+            frobenius_norm_normalized_by_degree = frobenius_norm / ((mean_degree_pass + mean_degree_rush) / 2)
+            norms.append(frobenius_norm_normalized_by_degree)
 
     results.append({
         'n': n,
@@ -243,8 +253,8 @@ print(f"\n[{datetime.now()} - {datetime.now() - start_time}] Fim da execução")
 
 # ---> saving results
 df_distances = pd.DataFrame(results)
-df_distances.to_csv(os.path.join('./', 'Mestrado/non_zero.csv'))
+df_distances.to_csv(os.path.join('./', 'Mestrado/mean_degree.csv'))
 
-json_path = os.path.join('./', 'Mestrado/non_zero.json')
+json_path = os.path.join('./', 'Mestrado/mean_degree.json')
 with open(json_path, 'w') as json_file:
     json.dump(results, json_file, indent=4)
