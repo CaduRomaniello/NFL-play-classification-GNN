@@ -1,35 +1,22 @@
 import random
-print('A1')
 import torch
-print('A2')
 import numpy as np
-print('A3')
 import torch.nn.functional as F
-print('A4')
 # import matplotlib.pyplot as plt
 
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-print('A5')
 
 ## GNN
 from datetime import datetime
-print('A6')
 from torch_geometric.data import Data
-print('A7')
 from torch_geometric.loader import DataLoader
-print('A8')
 from torch_geometric.nn import GCNConv, global_mean_pool
-print('A9')
 
 # MLP and RF
 from sklearn.metrics import accuracy_score, classification_report
-print('A10')
 from sklearn.preprocessing import StandardScaler
-print('A11')
 from sklearn.neural_network import MLPClassifier
-print('A12')
 from sklearn.ensemble import RandomForestClassifier
-print('A13')
 
 # def plot_loss_curves(train_losses, val_losses=None, model_name="Model", output_dir="images"):
 #     """

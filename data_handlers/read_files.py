@@ -10,7 +10,7 @@ def read2025data(weeks=[1]):
     
     cur_path = os.getcwd()
     print(f'------------------------------> {cur_path}')
-    data_path = os.path.abspath(os.path.join(cur_path, './nfl_data/2025/'))
+    data_path = os.path.abspath(os.path.join(cur_path, './Mestrado/nfl_data/2025/'))
     print(f'------------------------------> {data_path}')
     
     games = pd.read_csv(os.path.join(data_path, 'games.csv'))
