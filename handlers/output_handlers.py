@@ -17,7 +17,7 @@ def json2csv(data, timestamp, n):
     best_gcn_results = data.get('best_gcn_results', {})
     last_gcn_results = data.get('last_gcn_results', {})
     rf_results = data.get('rf_results', {})
-    mlp_results = data.get('rf_results', {})
+    mlp_results = data.get('mlp_results', {})
 
     best_gcn_dict = {
         "model_name": "GCN",
