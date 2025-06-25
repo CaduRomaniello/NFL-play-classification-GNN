@@ -1,0 +1,706 @@
+mkdir -p failed for path /.config/matplotlib: [Errno 13] Permission denied: '/.config'
+Matplotlib created a temporary cache directory at /tmp/matplotlib-5sahdvzi because there was an issue with the default path (/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/libpyg.so: undefined symbol: _ZNK5torch8autograd4Node4nameEv
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_geometric/typing.py:86: UserWarning: An issue occurred while importing 'torch-scatter'. Disabling its usage. Stacktrace: /media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_scatter/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
+/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_geometric/typing.py:97: UserWarning: An issue occurred while importing 'torch-cluster'. Disabling its usage. Stacktrace: /media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_cluster/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
+/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_geometric/typing.py:113: UserWarning: An issue occurred while importing 'torch-spline-conv'. Disabling its usage. Stacktrace: /media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_spline_conv/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(
+/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_sparse/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+-----------> Running main with N_CLOSEST_PLAYERS = 2
+--------------------------------------------------------
+Getting data for week 1...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 2...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 3...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 4...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[A^[[ACreating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 5...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 6...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 7...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 8...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+--------------------------------------------------------
+Getting data for week 9...
+Reading data...
+------------------------------> /media/work/carlosromaniello
+------------------------------> /media/work/carlosromaniello/Mestrado/nfl_data/2025
+Data read successfully
+Calculating possession team point difference...
+Verifying plays result...
+Verifying invalid values...
+Calculating game clock to seconds...
+Merging player info...
+Calculating distance between players...
+Creating graphs...
+Balancing graphs...
+
+Using random seed: 1
+Iteration 1/25
+Output file: output/2025-06-25_18-12-11.txt
+CONFIG values:
+RANDOM_SEED: 1
+GNN_EPOCHS: 100
+GNN_HIDDEN_CHANNELS: 128
+GNN_HIDDEN_LAYERS: 1
+GNN_LEARNING_RATE: 0.0001
+GNN_DROPOUT: 0.2
+GNN_WEIGHT_DECAY: 0.0005
+RF_ESTIMATORS: 100
+MLP_HIDDEN_CHANNELS: 64
+MLP_HIDDEN_LAYERS: 3
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.001
+MLP_ALPHA: 0.005
+VALIDATION_SPLIT: 0.8
+TEST_SPLIT: 0.9
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 12206
+Number of train graphs: 9764
+Number of validation graphs: 1220
+Number of test graphs: 1222
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in validation set: 50.00%
+Percentage of rushes in validation set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 31], edge_attr=[31, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 31
+Average node degree: 1.41
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 128)
+  (conv2): GCNConv(128, 128)
+  (conv3): GCNConv(128, 128)
+  (lin): Linear(in_features=128, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 0.0574, Train Acc: 0.6098, Val Acc: 0.6041
+Epoch: 020, Total Loss: 0.0129, Train Acc: 0.6348, Val Acc: 0.6410
+Epoch: 030, Total Loss: 0.0107, Train Acc: 0.6018, Val Acc: 0.6090
+Epoch: 040, Total Loss: 0.0104, Train Acc: 0.5773, Val Acc: 0.5902
+Epoch: 050, Total Loss: 0.0102, Train Acc: 0.6537, Val Acc: 0.6352
+Epoch: 060, Total Loss: 0.0101, Train Acc: 0.6672, Val Acc: 0.6516
+Epoch: 070, Total Loss: 0.0097, Train Acc: 0.6536, Val Acc: 0.6320
+Epoch: 080, Total Loss: 0.0097, Train Acc: 0.6690, Val Acc: 0.6566
+Epoch: 090, Total Loss: 0.0097, Train Acc: 0.6858, Val Acc: 0.6689
+Epoch: 100, Total Loss: 0.0096, Train Acc: 0.6862, Val Acc: 0.6762
+
+====================
+Min loss: 0.0096 at epoch 99
+Max train acc: 0.6896 at epoch 99
+Max validation acc: 0.6762 at epoch 100
+Best metrics of last model:
+Test accuracy: 0.6686
+              precision    recall  f1-score   support
+
+        Rush       0.65      0.72      0.69       611
+        Pass       0.69      0.62      0.65       611
+
+    accuracy                           0.67      1222
+   macro avg       0.67      0.67      0.67      1222
+weighted avg       0.67      0.67      0.67      1222
+
+Best metrics of best model:
+Test accuracy: 0.6686
+              precision    recall  f1-score   support
+
+        Rush       0.65      0.72      0.69       611
+        Pass       0.69      0.62      0.65       611
+
+    accuracy                           0.67      1222
+   macro avg       0.67      0.67      0.67      1222
+weighted avg       0.67      0.67      0.67      1222
+
+====================
+
+🎯 Random Forest Accuracy: 0.7275
+              precision    recall  f1-score   support
+
+        Rush       0.71      0.77      0.74       611
+        Pass       0.75      0.68      0.71       611
+
+    accuracy                           0.73      1222
+   macro avg       0.73      0.73      0.73      1222
+weighted avg       0.73      0.73      0.73      1222
+
+🤖 MLP Accuracy: 0.6604
+              precision    recall  f1-score   support
+
+        Rush       0.66      0.66      0.66       611
+        Pass       0.66      0.66      0.66       611
+
+    accuracy                           0.66      1222
+   macro avg       0.66      0.66      0.66      1222
+weighted avg       0.66      0.66      0.66      1222
+
+Using random seed: 2
+Iteration 2/25
+Output file: output/2025-06-25_18-14-04.txt
+CONFIG values:
+RANDOM_SEED: 2
+GNN_EPOCHS: 100
+GNN_HIDDEN_CHANNELS: 32
+GNN_HIDDEN_LAYERS: 1
+GNN_LEARNING_RATE: 0.0001
+GNN_DROPOUT: 0.3
+GNN_WEIGHT_DECAY: 5e-05
+RF_ESTIMATORS: 150
+MLP_HIDDEN_CHANNELS: 64
+MLP_HIDDEN_LAYERS: 2
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.0001
+MLP_ALPHA: 0.005
+VALIDATION_SPLIT: 0.8
+TEST_SPLIT: 0.9
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 12206
+Number of train graphs: 9764
+Number of validation graphs: 1220
+Number of test graphs: 1222
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in validation set: 50.00%
+Percentage of rushes in validation set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 33], edge_attr=[33, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 33
+Average node degree: 1.50
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 32)
+  (conv2): GCNConv(32, 32)
+  (conv3): GCNConv(32, 32)
+  (lin): Linear(in_features=32, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 0.1269, Train Acc: 0.5650, Val Acc: 0.5828
+Epoch: 020, Total Loss: 0.0168, Train Acc: 0.5628, Val Acc: 0.5730
+Epoch: 030, Total Loss: 0.0111, Train Acc: 0.5721, Val Acc: 0.5689
+Epoch: 040, Total Loss: 0.0107, Train Acc: 0.5792, Val Acc: 0.6041
+Epoch: 050, Total Loss: 0.0107, Train Acc: 0.5912, Val Acc: 0.5902
+Epoch: 060, Total Loss: 0.0107, Train Acc: 0.6129, Val Acc: 0.6016
+Epoch: 070, Total Loss: 0.0106, Train Acc: 0.6070, Val Acc: 0.6123
+Epoch: 080, Total Loss: 0.0104, Train Acc: 0.6205, Val Acc: 0.6246
+Epoch: 090, Total Loss: 0.0103, Train Acc: 0.6375, Val Acc: 0.6213
+Epoch: 100, Total Loss: 0.0103, Train Acc: 0.6366, Val Acc: 0.6328
+
+====================
+Min loss: 0.0102 at epoch 97
+Max train acc: 0.6501 at epoch 95
+Max validation acc: 0.6459 at epoch 95
+Best metrics of last model:
+Test accuracy: 0.6129
+              precision    recall  f1-score   support
+
+        Rush       0.61      0.64      0.62       611
+        Pass       0.62      0.59      0.60       611
+
+    accuracy                           0.61      1222
+   macro avg       0.61      0.61      0.61      1222
+weighted avg       0.61      0.61      0.61      1222
+
+Best metrics of best model:
+Test accuracy: 0.6129
+              precision    recall  f1-score   support
+
+        Rush       0.61      0.64      0.62       611
+        Pass       0.62      0.59      0.60       611
+
+    accuracy                           0.61      1222
+   macro avg       0.61      0.61      0.61      1222
+weighted avg       0.61      0.61      0.61      1222
+
+====================
+
+🎯 Random Forest Accuracy: 0.7349
+              precision    recall  f1-score   support
+
+        Rush       0.72      0.78      0.75       611
+        Pass       0.76      0.69      0.72       611
+
+    accuracy                           0.73      1222
+   macro avg       0.74      0.73      0.73      1222
+weighted avg       0.74      0.73      0.73      1222
+
+/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/sklearn/neural_network/_multilayer_perceptron.py:780: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (3000) reached and the optimization hasn't converged yet.
+  warnings.warn(
+🤖 MLP Accuracy: 0.6792
+              precision    recall  f1-score   support
+
+        Rush       0.69      0.66      0.67       611
+        Pass       0.67      0.70      0.68       611
+
+    accuracy                           0.68      1222
+   macro avg       0.68      0.68      0.68      1222
+weighted avg       0.68      0.68      0.68      1222
+
+Using random seed: 3
+Iteration 3/25
+Output file: output/2025-06-25_18-16-58.txt
+CONFIG values:
+RANDOM_SEED: 3
+GNN_EPOCHS: 100
+GNN_HIDDEN_CHANNELS: 128
+GNN_HIDDEN_LAYERS: 3
+GNN_LEARNING_RATE: 0.001
+GNN_DROPOUT: 0.4
+GNN_WEIGHT_DECAY: 5e-05
+RF_ESTIMATORS: 100
+MLP_HIDDEN_CHANNELS: 128
+MLP_HIDDEN_LAYERS: 3
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.01
+MLP_ALPHA: 5e-05
+VALIDATION_SPLIT: 0.8
+TEST_SPLIT: 0.9
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 12206
+Number of train graphs: 9764
+Number of validation graphs: 1220
+Number of test graphs: 1222
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in validation set: 50.00%
+Percentage of rushes in validation set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 33], edge_attr=[33, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 33
+Average node degree: 1.50
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 128)
+  (conv2): GCNConv(128, 128)
+  (conv3): GCNConv(128, 128)
+  (lin): Linear(in_features=128, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 0.0093, Train Acc: 0.7066, Val Acc: 0.7287
+Epoch: 020, Total Loss: 0.0084, Train Acc: 0.7043, Val Acc: 0.7131
+Epoch: 030, Total Loss: 0.0081, Train Acc: 0.7656, Val Acc: 0.7680
+Epoch: 040, Total Loss: 0.0078, Train Acc: 0.7638, Val Acc: 0.7484
+Epoch: 050, Total Loss: 0.0076, Train Acc: 0.7748, Val Acc: 0.7541
+Epoch: 060, Total Loss: 0.0075, Train Acc: 0.7852, Val Acc: 0.7590
+Epoch: 070, Total Loss: 0.0072, Train Acc: 0.7855, Val Acc: 0.7418
+Epoch: 080, Total Loss: 0.0070, Train Acc: 0.7920, Val Acc: 0.7484
+Epoch: 090, Total Loss: 0.0069, Train Acc: 0.8025, Val Acc: 0.7639
+Epoch: 100, Total Loss: 0.0067, Train Acc: 0.8076, Val Acc: 0.7623
+
+====================
+Min loss: 0.0067 at epoch 100
+Max train acc: 0.8132 at epoch 97
+Max validation acc: 0.7738 at epoch 69
+Best metrics of last model:
+Test accuracy: 0.7512
+              precision    recall  f1-score   support
+
+        Rush       0.75      0.75      0.75       611
+        Pass       0.75      0.76      0.75       611
+
+    accuracy                           0.75      1222
+   macro avg       0.75      0.75      0.75      1222
+weighted avg       0.75      0.75      0.75      1222
+
+Best metrics of best model:
+Test accuracy: 0.7512
+              precision    recall  f1-score   support
+
+        Rush       0.75      0.75      0.75       611
+        Pass       0.75      0.76      0.75       611
+
+    accuracy                           0.75      1222
+   macro avg       0.75      0.75      0.75      1222
+weighted avg       0.75      0.75      0.75      1222
+
+====================
+
+🎯 Random Forest Accuracy: 0.7373
+              precision    recall  f1-score   support
+
+        Rush       0.72      0.78      0.75       611
+        Pass       0.76      0.69      0.72       611
+
+    accuracy                           0.74      1222
+   macro avg       0.74      0.74      0.74      1222
+weighted avg       0.74      0.74      0.74      1222
+
+🤖 MLP Accuracy: 0.6784
+              precision    recall  f1-score   support
+
+        Rush       0.67      0.71      0.69       611
+        Pass       0.69      0.65      0.67       611
+
+    accuracy                           0.68      1222
+   macro avg       0.68      0.68      0.68      1222
+weighted avg       0.68      0.68      0.68      1222
+
+Using random seed: 4
+Iteration 4/25
+Output file: output/2025-06-25_18-20-46.txt
+CONFIG values:
+RANDOM_SEED: 4
+GNN_EPOCHS: 100
+GNN_HIDDEN_CHANNELS: 64
+GNN_HIDDEN_LAYERS: 1
+GNN_LEARNING_RATE: 1e-05
+GNN_DROPOUT: 0.5
+GNN_WEIGHT_DECAY: 0.0005
+RF_ESTIMATORS: 50
+MLP_HIDDEN_CHANNELS: 32
+MLP_HIDDEN_LAYERS: 1
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.01
+MLP_ALPHA: 0.0005
+VALIDATION_SPLIT: 0.8
+TEST_SPLIT: 0.9
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 12206
+Number of train graphs: 9764
+Number of validation graphs: 1220
+Number of test graphs: 1222
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in validation set: 50.00%
+Percentage of rushes in validation set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 31], edge_attr=[31, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 31
+Average node degree: 1.41
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 64)
+  (conv2): GCNConv(64, 64)
+  (conv3): GCNConv(64, 64)
+  (lin): Linear(in_features=64, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 0.3532, Train Acc: 0.5221, Val Acc: 0.5205
+Epoch: 020, Total Loss: 0.2713, Train Acc: 0.5362, Val Acc: 0.5344
+Epoch: 030, Total Loss: 0.2126, Train Acc: 0.5399, Val Acc: 0.5410
+Epoch: 040, Total Loss: 0.1577, Train Acc: 0.5420, Val Acc: 0.5451
+Epoch: 050, Total Loss: 0.1176, Train Acc: 0.5510, Val Acc: 0.5525
+Epoch: 060, Total Loss: 0.0811, Train Acc: 0.5555, Val Acc: 0.5615
+Epoch: 070, Total Loss: 0.0567, Train Acc: 0.5594, Val Acc: 0.5664
+Epoch: 080, Total Loss: 0.0370, Train Acc: 0.5612, Val Acc: 0.5697
+Epoch: 090, Total Loss: 0.0243, Train Acc: 0.5618, Val Acc: 0.5754
+Epoch: 100, Total Loss: 0.0173, Train Acc: 0.5605, Val Acc: 0.5787
+
+====================
+Min loss: 0.0173 at epoch 100
+Max train acc: 0.5629 at epoch 99
+Max validation acc: 0.5820 at epoch 94
+Best metrics of last model:
+Test accuracy: 0.5540
+              precision    recall  f1-score   support
+
+        Rush       0.55      0.60      0.57       611
+        Pass       0.56      0.51      0.53       611
+
+    accuracy                           0.55      1222
+   macro avg       0.55      0.55      0.55      1222
+weighted avg       0.55      0.55      0.55      1222
+
+Best metrics of best model:
+Test accuracy: 0.5540
+              precision    recall  f1-score   support
+
+        Rush       0.55      0.60      0.57       611
+        Pass       0.56      0.51      0.53       611
+
+    accuracy                           0.55      1222
+   macro avg       0.55      0.55      0.55      1222
+weighted avg       0.55      0.55      0.55      1222
+
+====================
+
+🎯 Random Forest Accuracy: 0.7250
+              precision    recall  f1-score   support
+
+        Rush       0.70      0.77      0.74       611
+        Pass       0.75      0.68      0.71       611
+
+    accuracy                           0.73      1222
+   macro avg       0.73      0.73      0.72      1222
+weighted avg       0.73      0.73      0.72      1222
+
+🤖 MLP Accuracy: 0.7373
+              precision    recall  f1-score   support
+
+        Rush       0.74      0.73      0.73       611
+        Pass       0.73      0.75      0.74       611
+
+    accuracy                           0.74      1222
+   macro avg       0.74      0.74      0.74      1222
+weighted avg       0.74      0.74      0.74      1222
+
+Using random seed: 5
+Iteration 5/25
+Output file: output/2025-06-25_18-22-28.txt
+CONFIG values:
+RANDOM_SEED: 5
+GNN_EPOCHS: 300
+GNN_HIDDEN_CHANNELS: 64
+GNN_HIDDEN_LAYERS: 3
+GNN_LEARNING_RATE: 0.0001
+GNN_DROPOUT: 0.2
+GNN_WEIGHT_DECAY: 0.0005
+RF_ESTIMATORS: 50
+MLP_HIDDEN_CHANNELS: 128
+MLP_HIDDEN_LAYERS: 1
+MLP_MAX_ITER: 3000
+MLP_LEARNING_RATE: 0.01
+MLP_ALPHA: 0.005
+VALIDATION_SPLIT: 0.8
+TEST_SPLIT: 0.9
+SHOW_INFO: True
+Running model...
+ Converting graphs to PyTorch Geometric format...
+
+====================
+Number of graphs: 12206
+Number of train graphs: 9764
+Number of validation graphs: 1220
+Number of test graphs: 1222
+Percentage of passes in train set: 50.00%
+Percentage of rushes in train set: 50.00%
+Percentage of passes in validation set: 50.00%
+Percentage of rushes in validation set: 50.00%
+Percentage of passes in test set: 50.00%
+Percentage of rushes in test set: 50.00%
+
+Data(x=[22, 23], edge_index=[2, 32], edge_attr=[32, 1], y=[1])
+=============================================================
+Number of nodes: 22
+Number of node features: 23
+Number of edges: 32
+Average node degree: 1.45
+Has isolated nodes: False
+Has self-loops: False
+Is undirected: False
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+ Converting graphs to PyTorch Geometric format...
+GCN(
+  (conv1): GCNConv(23, 64)
+  (conv2): GCNConv(64, 64)
+  (conv3): GCNConv(64, 64)
+  (lin): Linear(in_features=64, out_features=2, bias=True)
+)
+Epoch: 010, Total Loss: 0.0127, Train Acc: 0.6302, Val Acc: 0.6730
+Epoch: 020, Total Loss: 0.0104, Train Acc: 0.6723, Val Acc: 0.6861
+Epoch: 030, Total Loss: 0.0095, Train Acc: 0.6993, Val Acc: 0.7115
+Epoch: 040, Total Loss: 0.0092, Train Acc: 0.6929, Val Acc: 0.7033
+Epoch: 050, Total Loss: 0.0088, Train Acc: 0.7190, Val Acc: 0.7336
+Epoch: 060, Total Loss: 0.0086, Train Acc: 0.7266, Val Acc: 0.7287
+Epoch: 070, Total Loss: 0.0083, Train Acc: 0.7388, Val Acc: 0.7361
+Epoch: 080, Total Loss: 0.0083, Train Acc: 0.7243, Val Acc: 0.7279
+Epoch: 090, Total Loss: 0.0083, Train Acc: 0.7526, Val Acc: 0.7426
+Epoch: 100, Total Loss: 0.0082, Train Acc: 0.7484, Val Acc: 0.7426
+^CTraceback (most recent call last):
+  File "/media/work/carlosromaniello/Mestrado/main.py", line 533, in <module>
+    main()
+  File "/media/work/carlosromaniello/Mestrado/main.py", line 102, in main
+    results = model_run(pass_graphs, rush_graphs, config=CONFIG)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/handlers/model_handlers_v2.py", line 399, in model_run
+    train_acc, train_preds, train_labels = test(train_loader, model, config)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/handlers/model_handlers_v2.py", line 231, in test
+    out = model(data.x, data.edge_index, data.batch, config)  
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/handlers/model_handlers_v2.py", line 95, in forward
+    x = self.conv2(x, edge_index)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_geometric/nn/conv/gcn_conv.py", line 260, in forward
+    x = self.lin(x)
+        ^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/media/work/carlosromaniello/Mestrado/venv/lib/python3.11/site-packages/torch_geometric/nn/dense/linear.py", line 147, in forward
+    return F.linear(x, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
