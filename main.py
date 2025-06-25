@@ -23,7 +23,7 @@ from IPython.display import display
 from scipy.spatial.distance import cdist
 from sklearn.preprocessing import LabelEncoder
 from data_handlers.read_files import read2025data
-# from visualization.confusion_matrix_plot import save_confusion_matrix
+from visualization.confusion_matrix_plot import save_confusion_matrix
 # from visualization.create_plot import createFootballField
 
 # the team that have 
@@ -102,7 +102,7 @@ def main():
         results = model_run(pass_graphs, rush_graphs, config=CONFIG)
 
         json2csv(results, timestamp, N_CLOSEST_PLAYERS)
-        # save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
+        save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
         save_data_to_json(results, timestamp, N_CLOSEST_PLAYERS)
         
         end_time = time.time()
