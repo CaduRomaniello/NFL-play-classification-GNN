@@ -412,20 +412,29 @@ def model_run(pass_graphs, rush_graphs, config):
             max_val_acc = val_acc
             max_val_acc_epoch = epoch
             best_model_state = model.state_dict()
-         
+        
     print()
     print('====================')   
-    model.load_state_dict(best_model_state)
     print(f"Min loss: {min_loss:.4f} at epoch {min_loss_epoch}")
     print(f"Max train acc: {max_train_acc:.4f} at epoch {max_train_acc_epoch}")
     print(f"Max validation acc: {max_val_acc:.4f} at epoch {max_val_acc_epoch}")
+
+    test_accr, test_preds, test_labels = test(test_loader_with_labels, model, config)
+    print("Best metrics of last model:")
+    print(f"Test accuracy: {test_accr:.4f}")
+    print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
+    last_gcn_results = classification_report(test_labels, test_preds, target_names=["Rush", "Pass"], output_dict=True)
+    last_gcn_results['confusion_matrix'] = confusion_matrix(test_labels, test_preds)
     
+    model.load_state_dict(best_model_state)
     test_accr, test_preds, test_labels = test(test_loader_with_labels, model, config)
     print("Best metrics of best model:")
     print(f"Test accuracy: {test_accr:.4f}")
     print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
+    best_gcn_results = classification_report(test_labels, test_preds, target_names=["Rush", "Pass"], output_dict=True)
+    best_gcn_results['confusion_matrix'] = confusion_matrix(test_labels, test_preds)
     
-    save_confusion_matrix(test_labels, test_preds, model_name="GCN")
+    # save_confusion_matrix(test_labels, test_preds, model_name="GCN")
     
     print('====================')
     print()
@@ -439,8 +448,16 @@ def model_run(pass_graphs, rush_graphs, config):
     # plot_loss_curves(train_losses[1:], val_losses[1:], model_name="GCN_2_withVal")
     # plot_loss_curves(train_losses[1:], model_name="GCN_2_noVal")
     
-    run_baselines(train_graphs, test_graphs, config=config)
-            
+    rf_results, mlp_results = run_baselines(train_graphs, test_graphs, config=config)
+
+    return {
+        'last_gcn_results': last_gcn_results,
+        'best_gcn_results': best_gcn_results,
+        'rf_results': rf_results,
+        'mlp_results': mlp_results,
+        'config': config,
+    }
+    
 ##############################################################################            
 ##############################################################################            
 ##############################################################################
@@ -512,6 +529,8 @@ def run_baselines(train_graphs, test_graphs, config):
     rf_acc = accuracy_score(y_test, rf_preds)
     print(f"🎯 Random Forest Accuracy: {rf_acc:.4f}")
     print(classification_report(y_test, rf_preds, target_names=["Rush", "Pass"]))
+    rf_results = classification_report(y_test, rf_preds, target_names=["Rush", "Pass"], output_dict=True)
+    rf_results['confusion_matrix'] = confusion_matrix(y_test, rf_preds)
     # save_confusion_matrix(y_test, rf_preds, model_name="RandomForest")
 
     # MLP
@@ -527,10 +546,14 @@ def run_baselines(train_graphs, test_graphs, config):
     mlp_acc = accuracy_score(y_test, mlp_preds)
     print(f"🤖 MLP Accuracy: {mlp_acc:.4f}")
     print(classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"]))
+    mlp_results = classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"], output_dict=True)
+    mlp_results['confusion_matrix'] = confusion_matrix(y_test, mlp_preds)
     # save_confusion_matrix(y_test, mlp_preds, model_name="MLP")
     
     # if hasattr(mlp, 'loss_curve_'):
     #     plot_loss_curves(mlp.loss_curve_, model_name="MLP")
+
+    return rf_results, mlp_results
             
             
             

@@ -55,8 +55,8 @@ def graphs_data_balancer(graphs):
     n_pass_graphs = len(pass_graphs)
     n_rush_graphs = len(rush_graphs)
     
-    random.shuffle(pass_graphs)
-    random.shuffle(rush_graphs)
+    # random.shuffle(pass_graphs)
+    # random.shuffle(rush_graphs)
     
     if (n_pass_graphs > n_rush_graphs):
         pass_graphs = pass_graphs[:n_rush_graphs]

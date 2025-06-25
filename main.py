@@ -14,12 +14,14 @@ from handlers.merge_handlers import merge_player_info
 from handlers.model_handlers_v2 import model_run
 # from handlers.model_handlers_ import model_run
 from handlers.model_handlers_v2 import convert_nx_to_pytorch_geometric
+from handlers.output_handlers import json2csv
 from handlers.verify_handlers import verify_invalid_values, verify_plays_result
-from playground import playground
+# from playground import playground
 from IPython.display import display
 from scipy.spatial.distance import cdist
 from sklearn.preprocessing import LabelEncoder
 from data_handlers.read_files import read2025data
+from visualization.confusion_matrix_plot import save_confusion_matrix
 from visualization.create_plot import createFootballField
 
 # the team that have 
@@ -27,10 +29,10 @@ PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'po
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
-NUMBER_OF_ITERS = 1
+NUMBER_OF_ITERS = 2
 
 CONFIG = {
-    'RANDOM_SEED': 1,
+    'RANDOM_SEED': 0,
     'GNN_EPOCHS': 50,
     'GNN_HIDDEN_CHANNELS': 64,
     'GNN_HIDDEN_LAYERS': 3,
@@ -40,7 +42,7 @@ CONFIG = {
     'RF_ESTIMATORS': 100,
     'MLP_HIDDEN_CHANNELS': 64,
     'MLP_HIDDEN_LAYERS': 2,
-    'MLP_MAX_ITER':3000,
+    'MLP_MAX_ITER':30,
     'MLP_LEARNING_RATE': 0.01,
     'MLP_ALPHA': 5e-4,
     'VALIDATION_SPLIT': 0.8,
@@ -49,12 +51,11 @@ CONFIG = {
 }
 
 def main():    
-    weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    weeks = [1]
     rush_graphs = []
     pass_graphs = []
     random_seed = 0
-    random.seed(random_seed)
-    random_seed = 23
     
     for week in weeks:
         print('--------------------------------------------------------')
@@ -70,6 +71,7 @@ def main():
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         output_filename = f"output/{timestamp}.txt"
         random_seed += 1
+        print(f"Using random seed: {random_seed}")
         random.seed(random_seed)
         
         # with open(output_filename, "w", encoding="utf-8") as output_file:
@@ -79,7 +81,7 @@ def main():
         print(f"Output file: {output_filename}")
         
         CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
-        CONFIG['GNN_EPOCHS'] = random.choice([100, 200, 300])  # Exemplo: 32, 64 ou 128
+        CONFIG['GNN_EPOCHS'] = random.choice([10, 20, 30])  # Exemplo: 32, 64 ou 128
         CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
         CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
         CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
@@ -95,11 +97,14 @@ def main():
         for key, value in CONFIG.items():
             print(f"{key}: {value}")
 
-        model_run(pass_graphs, rush_graphs, config=CONFIG)
+        results = model_run(pass_graphs, rush_graphs, config=CONFIG)
+
+        json2csv(results, timestamp, N_CLOSEST_PLAYERS)
+        save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
         
         end_time = time.time()
         duration = end_time - start_time
-        print(f"Iteration {i + 1} completed. Logs saved to {output_filename}. Duration: {duration:.2f} seconds")
+        # print(f"Iteration {i + 1} completed. Logs saved to {output_filename}. Duration: {duration:.2f} seconds")
         
         
         
@@ -520,4 +525,7 @@ def old_main():
     
     
 if __name__ == "__main__":
-    main()
+    for i in range(2, 5):
+        N_CLOSEST_PLAYERS = i
+        print(f"-----------> Running main with N_CLOSEST_PLAYERS = {N_CLOSEST_PLAYERS}")
+        main()
