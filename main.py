@@ -8,7 +8,7 @@ import pandas as pd
 import networkx as nx
 # import matplotlib
 # matplotlib.use('Agg') # 'Agg' é um backend para gerar imagens para arquivos (PNG, JPG, etc.)
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 from handlers.calc_handlers import calc_distance_between_players, calc_game_clock_to_seconds, calc_n_closest_players, calc_possession_team_point_diff, calc_total_dis
 from handlers.graph_handlers import graphs_create, graphs_data_balancer
