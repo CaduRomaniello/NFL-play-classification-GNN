@@ -74,7 +74,7 @@ def json2csv(data, timestamp, n):
     }
 
     rf_dict = {
-        "model_name": "GCN",
+        "model_name": "RF",
         "rush_precision": rf_results['Rush']['precision'],
         "rush_recall": rf_results['Rush']['recall'],
         "rush_f1_score": rf_results['Rush']['f1-score'],
@@ -101,7 +101,7 @@ def json2csv(data, timestamp, n):
     }
 
     mlp_dict = {
-        "model_name": "GCN",
+        "model_name": "MLP",
         "rush_precision": mlp_results['Rush']['precision'],
         "rush_recall": mlp_results['Rush']['recall'],
         "rush_f1_score": mlp_results['Rush']['f1-score'],
