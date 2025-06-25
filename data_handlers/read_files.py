@@ -6,12 +6,10 @@ def read2025data(weeks=[1]):
         raise ValueError('read2025data: Weeks must be provided')
     
     
-    print('Reading data...')
+    print('    Reading data...')
     
     cur_path = os.getcwd()
-    print(f'------------------------------> {cur_path}')
     data_path = os.path.abspath(os.path.join(cur_path, './Mestrado/nfl_data/2025/'))
-    print(f'------------------------------> {data_path}')
     
     games = pd.read_csv(os.path.join(data_path, 'games.csv'))
     player_play = pd.read_csv(os.path.join(data_path, 'player_play.csv'))
@@ -22,6 +20,6 @@ def read2025data(weeks=[1]):
     for week in weeks:
         tracking_data = pd.concat([tracking_data, pd.read_csv(os.path.join(data_path, f'tracking_week_{week}.csv'))])
         
-    print('Data read successfully')
+    print('    Data read successfully')
 
     return games, player_play, players, plays, tracking_data

@@ -3,7 +3,7 @@ from IPython.display import display
 from scipy.spatial.distance import cdist
 
 def calc_possession_team_point_diff(plays: pd.DataFrame, games: pd.DataFrame) -> pd.DataFrame:
-    print("Calculating possession team point difference...")
+    print("    Calculating possession team point difference...")
     
     plays['possessionTeamPointDiff'] = plays.apply(lambda x: point_diff(x, games), axis=1)
     return plays
@@ -22,13 +22,13 @@ def point_diff(p, games:pd.DataFrame):
     return possession_team_point_diff
         
 def calc_game_clock_to_seconds(plays: pd.DataFrame) -> pd.DataFrame:
-    print("Calculating game clock to seconds...")
+    print("    Calculating game clock to seconds...")
     
     plays['gameClock'] = plays['gameClock'].apply(lambda x: int(x.split(':')[0]) * 60 + int(x.split(':')[1]))
     return plays
 
 def calc_total_dis(plays: pd.DataFrame) -> pd.DataFrame:
-    # print("Calculating total distance...")
+    print("    Calculating total distance...")
     
     # print("Calculating total distance...")
 
@@ -49,7 +49,7 @@ def calc_total_dis(plays: pd.DataFrame) -> pd.DataFrame:
     return plays
 
 def calc_distance_between_players(tracking_data: pd.DataFrame, n: int = 2) -> dict:
-    print("Calculating distance between players...")
+    print("    Calculating distance between players...")
     
     distances = {}
     grouped_by_game = tracking_data.groupby('gameId')

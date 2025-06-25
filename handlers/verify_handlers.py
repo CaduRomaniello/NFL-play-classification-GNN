@@ -3,7 +3,7 @@ from tqdm import tqdm
 from IPython.display import display
 
 def verify_plays_result(plays: pd.DataFrame) -> pd.DataFrame:
-    print("Verifying plays result...")
+    print("    Verifying plays result...")
     
     plays['playResult'] = plays.apply(lambda x: play_result(x), axis=1)
     return plays
@@ -33,7 +33,7 @@ def play_result(play: pd.Series) -> int:
     return playType
         
 def verify_invalid_values(plays: pd.DataFrame, tracking: pd.DataFrame) -> pd.DataFrame:
-    print("Verifying invalid values...")
+    print("    Verifying invalid values...")
     
     plays.fillna({'receiverAlignment': 'EMPTY'}, inplace=True)
     plays.fillna({'offenseFormation': 'EMPTY'}, inplace=True)

@@ -6,7 +6,7 @@ import networkx as nx
 from IPython.display import display
 
 def graphs_create(plays: pd.DataFrame, tracking_data: pd.DataFrame, distances: dict) -> list[nx.Graph]:
-    print("Creating graphs...")
+    print("    Creating graphs...")
     # ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'possessionTeam', 'gameClock', 'absoluteYardlineNumber', 'offenseFormation', 'receiverAlignment', 'playClockAtSnap', 'possessionTeamPointDiff', 'playResult']
     graphs = []
     for i, play in plays.iterrows():
@@ -42,7 +42,7 @@ def graphs_create(plays: pd.DataFrame, tracking_data: pd.DataFrame, distances: d
     return graphs
 
 def graphs_data_balancer(graphs):
-    print("Balancing graphs...")
+    print("    Balancing graphs...")
     
     pass_graphs = []
     rush_graphs = []

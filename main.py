@@ -60,8 +60,8 @@ def main():
     random_seed = 0
     
     for week in weeks:
-        print('--------------------------------------------------------')
-        print(f'Getting data for week {week}...')
+        print('  --------------------------------------------------------')
+        print(f'  Getting data for week {week}...')
         week_pass_graphs, week_rush_graphs = getGraphs([week])
         
         pass_graphs.extend(week_pass_graphs)
@@ -73,14 +73,13 @@ def main():
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         output_filename = f"output/{timestamp}.txt"
         random_seed += 1
-        print(f"Using random seed: {random_seed}")
         random.seed(random_seed)
         
         # with open(output_filename, "w", encoding="utf-8") as output_file:
         #     # Redirecionar os logs para o arquivo
         #     with redirect_stdout(output_file):
-        print(f"Iteration {i + 1}/{NUMBER_OF_ITERS}")
-        print(f"Output file: {output_filename}")
+        print(f"  Iteration {i + 1}/{NUMBER_OF_ITERS}")
+        # print(f"Output file: {output_filename}")
         
         CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
         CONFIG['GNN_EPOCHS'] = random.choice([100, 200, 300])  # Exemplo: 32, 64 ou 128
@@ -95,9 +94,9 @@ def main():
         CONFIG['MLP_LEARNING_RATE'] = random.choice([0.01, 0.001, 0.0001]) 
         CONFIG['MLP_ALPHA'] = random.choice([5e-3, 5e-4, 5e-5])
         
-        print("CONFIG values:")
+        print("    CONFIG values:")
         for key, value in CONFIG.items():
-            print(f"{key}: {value}")
+            print(f"      {key}: {value}")
 
         results = model_run(pass_graphs, rush_graphs, config=CONFIG)
 
@@ -529,5 +528,7 @@ def getGraphs(weeks=[1]):
 if __name__ == "__main__":
     for i in range(2, 11):
         N_CLOSEST_PLAYERS = i
-        print(f"-----------> Running main with N_CLOSEST_PLAYERS = {N_CLOSEST_PLAYERS}")
+        print('**********************************************************************************')
+        print(f"**********  Running main with N_CLOSEST_PLAYERS = {N_CLOSEST_PLAYERS}  **********")
+        print('**********************************************************************************')
         main()

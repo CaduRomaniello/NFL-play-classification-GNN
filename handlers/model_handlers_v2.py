@@ -238,7 +238,7 @@ def test(loader, model, config):
     return accuracy, all_preds, all_labels
 
 def model_run(pass_graphs, rush_graphs, config):
-    print("Running model...")
+    print("    Running model...")
     
     n_graphs = len(pass_graphs)
     validation_split = int(config['VALIDATION_SPLIT'] * n_graphs)
@@ -311,32 +311,32 @@ def model_run(pass_graphs, rush_graphs, config):
 
         print()
         # print(f'Dataset: {dataset}:')
-        print('====================')
-        print(f'Number of graphs: {len(train_graphs) + len(validation_graphs) + len(test_graphs)}')
-        print(f"Number of train graphs: {len(train_graphs)}")
-        print(f"Number of validation graphs: {len(validation_graphs)}")
-        print(f"Number of test graphs: {len(test_graphs)}")
-        print(f'Percentage of passes in train set: {n_pass_test / len(train_graphs) * 100:.2f}%')
-        print(f'Percentage of rushes in train set: {n_rush_test / len(train_graphs) * 100:.2f}%')
-        print(f'Percentage of passes in validation set: {n_pass_validation / len(validation_graphs) * 100:.2f}%')
-        print(f'Percentage of rushes in validation set: {n_rush_validation / len(validation_graphs) * 100:.2f}%')
-        print(f'Percentage of passes in test set: {n_pass / len(test_graphs) * 100:.2f}%')
-        print(f'Percentage of rushes in test set: {n_rush / len(test_graphs) * 100:.2f}%')
+        print('    ====================')
+        print(f'    Number of graphs: {len(train_graphs) + len(validation_graphs) + len(test_graphs)}')
+        print(f"    Number of train graphs: {len(train_graphs)}")
+        print(f"    Number of validation graphs: {len(validation_graphs)}")
+        print(f"    Number of test graphs: {len(test_graphs)}")
+        print(f'    Percentage of passes in train set: {n_pass_test / len(train_graphs) * 100:.2f}%')
+        print(f'    Percentage of rushes in train set: {n_rush_test / len(train_graphs) * 100:.2f}%')
+        print(f'    Percentage of passes in validation set: {n_pass_validation / len(validation_graphs) * 100:.2f}%')
+        print(f'    Percentage of rushes in validation set: {n_rush_validation / len(validation_graphs) * 100:.2f}%')
+        print(f'    Percentage of passes in test set: {n_pass / len(test_graphs) * 100:.2f}%')
+        print(f'    Percentage of rushes in test set: {n_rush / len(test_graphs) * 100:.2f}%')
 
         data = dataset[0]  # Get the first graph object.
 
         print()
         print(data)
-        print('=============================================================')
+        print('    =============================================================')
 
         # Gather some statistics about the first graph.
-        print(f'Number of nodes: {data.num_nodes}')
-        print(f'Number of node features: {data.num_node_features}')
-        print(f'Number of edges: {data.num_edges}')
-        print(f'Average node degree: {data.num_edges / data.num_nodes:.2f}')
-        print(f'Has isolated nodes: {data.has_isolated_nodes()}')
-        print(f'Has self-loops: {data.has_self_loops()}')
-        print(f'Is undirected: {data.is_undirected()}')
+        print(f'    Number of nodes: {data.num_nodes}')
+        print(f'    Number of node features: {data.num_node_features}')
+        print(f'    Number of edges: {data.num_edges}')
+        print(f'    Average node degree: {data.num_edges / data.num_nodes:.2f}')
+        print(f'    Has isolated nodes: {data.has_isolated_nodes()}')
+        print(f'    Has self-loops: {data.has_self_loops()}')
+        print(f'    Is undirected: {data.is_undirected()}')
     
     # Converter para o formato PyTorch Geometric
     train_dataset = convert_nx_to_pytorch_geometric(train_graphs, include_labels=True)
@@ -354,7 +354,8 @@ def model_run(pass_graphs, rush_graphs, config):
     test_loader_no_labels = DataLoader(test_dataset_no_labels, batch_size=64, shuffle=False)
     
     model = GCN(train_dataset[0].num_node_features, hidden_channels=config['GNN_HIDDEN_CHANNELS'], random_seed=config['RANDOM_SEED'])
-    print(model)
+    print(f'    {model}')
+    print()
     
     optimizer = torch.optim.Adam(model.parameters(), lr=config['GNN_LEARNING_RATE'], weight_decay=config['GNN_WEIGHT_DECAY'])
     criterion = torch.nn.CrossEntropyLoss()
@@ -400,7 +401,7 @@ def model_run(pass_graphs, rush_graphs, config):
         val_acc, val_preds, val_labels = test(validation_loader, model, config)
         
         if epoch % 10 == 0:
-            print(f'Epoch: {epoch:03d}, Total Loss: {total_loss:.4f}, Train Acc: {train_acc:.4f}, Val Acc: {val_acc:.4f}')
+            print(f'    Epoch: {epoch:03d}, Total Loss: {total_loss:.4f}, Train Acc: {train_acc:.4f}, Val Acc: {val_acc:.4f}')
             
         if total_loss < min_loss:
             min_loss = total_loss
@@ -414,29 +415,29 @@ def model_run(pass_graphs, rush_graphs, config):
             best_model_state = model.state_dict()
         
     print()
-    print('====================')   
-    print(f"Min loss: {min_loss:.4f} at epoch {min_loss_epoch}")
-    print(f"Max train acc: {max_train_acc:.4f} at epoch {max_train_acc_epoch}")
-    print(f"Max validation acc: {max_val_acc:.4f} at epoch {max_val_acc_epoch}")
+    print('    ====================')   
+    print(f"    Min loss: {min_loss:.4f} at epoch {min_loss_epoch}")
+    print(f"    Max train acc: {max_train_acc:.4f} at epoch {max_train_acc_epoch}")
+    print(f"    Max validation acc: {max_val_acc:.4f} at epoch {max_val_acc_epoch}")
 
     test_accr, test_preds, test_labels = test(test_loader_with_labels, model, config)
-    print("Best metrics of last model:")
-    print(f"Test accuracy: {test_accr:.4f}")
-    print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
+    print("    Best metrics of last model:")
+    print(f"    Test accuracy: {test_accr:.4f}")
+    print(f'    {classification_report(test_labels, test_preds, target_names=["Rush", "Pass"])}')
     last_gcn_results = classification_report(test_labels, test_preds, target_names=["Rush", "Pass"], output_dict=True)
     last_gcn_results['confusion_matrix'] = confusion_matrix(test_labels, test_preds)
     
     model.load_state_dict(best_model_state)
     test_accr, test_preds, test_labels = test(test_loader_with_labels, model, config)
-    print("Best metrics of best model:")
-    print(f"Test accuracy: {test_accr:.4f}")
-    print(classification_report(test_labels, test_preds, target_names=["Rush", "Pass"]))
+    print("    Best metrics of best model:")
+    print(f"    Test accuracy: {test_accr:.4f}")
+    print(f'    {classification_report(test_labels, test_preds, target_names=["Rush", "Pass"])}')
     best_gcn_results = classification_report(test_labels, test_preds, target_names=["Rush", "Pass"], output_dict=True)
     best_gcn_results['confusion_matrix'] = confusion_matrix(test_labels, test_preds)
     
     # save_confusion_matrix(test_labels, test_preds, model_name="GCN")
     
-    print('====================')
+    print('    ====================')
     print()
     # print(train_losses)
     # print()
@@ -527,8 +528,8 @@ def run_baselines(train_graphs, test_graphs, config):
     rf.fit(X_train, y_train)
     rf_preds = rf.predict(X_test)
     rf_acc = accuracy_score(y_test, rf_preds)
-    print(f"🎯 Random Forest Accuracy: {rf_acc:.4f}")
-    print(classification_report(y_test, rf_preds, target_names=["Rush", "Pass"]))
+    print(f"    🎯 Random Forest Accuracy: {rf_acc:.4f}")
+    print(f'    {classification_report(y_test, rf_preds, target_names=["Rush", "Pass"])}')
     rf_results = classification_report(y_test, rf_preds, target_names=["Rush", "Pass"], output_dict=True)
     rf_results['confusion_matrix'] = confusion_matrix(y_test, rf_preds)
     # save_confusion_matrix(y_test, rf_preds, model_name="RandomForest")
@@ -544,8 +545,8 @@ def run_baselines(train_graphs, test_graphs, config):
     mlp.fit(X_train_scaled, y_train)
     mlp_preds = mlp.predict(X_test_scaled)
     mlp_acc = accuracy_score(y_test, mlp_preds)
-    print(f"🤖 MLP Accuracy: {mlp_acc:.4f}")
-    print(classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"]))
+    print(f"    🤖 MLP Accuracy: {mlp_acc:.4f}")
+    print(f'    {classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"])}')
     mlp_results = classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"], output_dict=True)
     mlp_results['confusion_matrix'] = confusion_matrix(y_test, mlp_preds)
     # save_confusion_matrix(y_test, mlp_preds, model_name="MLP")
