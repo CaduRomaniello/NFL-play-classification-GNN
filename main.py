@@ -13,18 +13,29 @@ print('xxxxxxxxxxxxxxxxxxxxxxxxx')
 print('bbbbbbbbbbbbbbbbbbbb')
 
 from handlers.calc_handlers import calc_distance_between_players, calc_game_clock_to_seconds, calc_n_closest_players, calc_possession_team_point_diff, calc_total_dis
+print('1')
 from handlers.graph_handlers import graphs_create, graphs_data_balancer
+print('2')
 from handlers.merge_handlers import merge_player_info
+print('3')
 from handlers.model_handlers_v2 import model_run
+print('4')
 # from handlers.model_handlers_ import model_run
 from handlers.model_handlers_v2 import convert_nx_to_pytorch_geometric
+print('5')
 from handlers.output_handlers import json2csv, save_data_to_json
+print('6')
 from handlers.verify_handlers import verify_invalid_values, verify_plays_result
+print('7')
 # from playground import playground
 from IPython.display import display
+print('8')
 from scipy.spatial.distance import cdist
+print('9')
 from sklearn.preprocessing import LabelEncoder
+print('10')
 from data_handlers.read_files import read2025data
+print('11')
 # from visualization.confusion_matrix_plot import save_confusion_matrix
 # from visualization.create_plot import createFootballField
 
