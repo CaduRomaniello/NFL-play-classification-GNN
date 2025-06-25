@@ -3,6 +3,32 @@ import os
 # Comentar/descomentar para testar com GPU/CPU
 # os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
+from contextlib import redirect_stdout
+from datetime import datetime
+import time
+import json
+import random
+import numpy as np
+import torch.nn.functional as F
+# import matplotlib.pyplot as plt
+
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+## GNN
+from datetime import datetime
+from torch_geometric.data import Data
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import GCNConv, global_mean_pool
+
+# MLP and RF
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+import pandas as pd
+import networkx as nx
+
 import torch
 print(f"PyTorch versão: {torch.__version__}")
 print(f"CUDA disponível: {torch.cuda.is_available()}")
