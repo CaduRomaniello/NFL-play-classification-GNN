@@ -52,7 +52,7 @@ print(f"[{datetime.now()} - {datetime.now() - start_time}] Início da execução
 
 # ---> getting paths
 cur_path = os.path.os.getcwd()
-data_path = os.path.abspath(os.path.join(cur_path, 'Mestrado/nfl_data/2025/'))
+data_path = os.path.abspath(os.path.join(cur_path, 'nfl_data/2025/'))
 
 # --- >loading data
 games = pd.read_csv(os.path.join(data_path, 'games.csv'))
@@ -71,9 +71,9 @@ plays = pd.merge(plays, games_info, on='gameId')
 plays.sort_values(['week'], ascending=[True], inplace=True)
 
 # ---> filtering plays to only include week 1 |||| remove this when you want to process all weeks
-# print(f'[{datetime.now()} - {datetime.now() - start_time}] Number of plays before filtering by week: {len(plays)}')
-# plays = plays[plays['week'] == 1]
-# print(f'[{datetime.now()} - {datetime.now() - start_time}] Number of plays after filtering by week: {len(plays)}\n')
+print(f'[{datetime.now()} - {datetime.now() - start_time}] Number of plays before filtering by week: {len(plays)}')
+plays = plays[plays['week'] == 1]
+print(f'[{datetime.now()} - {datetime.now() - start_time}] Number of plays after filtering by week: {len(plays)}\n')
 
 # ---> separating plays into pass and rush
 print(f'[{datetime.now()} - {datetime.now() - start_time}] Separating plays into pass and rush plays...')
@@ -87,8 +87,8 @@ print(f'[{datetime.now()} - {datetime.now() - start_time}] Number of pass plays:
 print(f'[{datetime.now()} - {datetime.now() - start_time}] Number of rush plays: {len(rush_plays)}\n')
 
 # ---> files to process
-files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv', 'tracking_week_8.csv', 'tracking_week_9.csv']
-# files = ['tracking_week_1.csv']
+# files = ['tracking_week_1.csv', 'tracking_week_2.csv', 'tracking_week_3.csv', 'tracking_week_4.csv', 'tracking_week_5.csv', 'tracking_week_6.csv', 'tracking_week_7.csv', 'tracking_week_8.csv', 'tracking_week_9.csv']
+files = ['tracking_week_1.csv']
 
 # ---> reading data
 data = pd.DataFrame()
@@ -253,8 +253,8 @@ print(f"\n[{datetime.now()} - {datetime.now() - start_time}] Fim da execução")
 
 # ---> saving results
 df_distances = pd.DataFrame(results)
-df_distances.to_csv(os.path.join('./', 'Mestrado/mean_degree.csv'))
+df_distances.to_csv(os.path.join('./', 'mean_degree.csv'))
 
-json_path = os.path.join('./', 'Mestrado/mean_degree.json')
+json_path = os.path.join('./', 'mean_degree.json')
 with open(json_path, 'w') as json_file:
     json.dump(results, json_file, indent=4)
