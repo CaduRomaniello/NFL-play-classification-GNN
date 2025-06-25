@@ -26,7 +26,7 @@ from scipy.spatial.distance import cdist
 from sklearn.preprocessing import LabelEncoder
 from data_handlers.read_files import read2025data
 # from visualization.confusion_matrix_plot import save_confusion_matrix
-from visualization.create_plot import createFootballField
+# from visualization.create_plot import createFootballField
 
 # the team that have 
 PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'possessionTeam', 'gameClock', 'absoluteYardlineNumber', 'offenseFormation', 'receiverAlignment', 'playClockAtSnap', 'possessionTeamPointDiff', 'playResult']
