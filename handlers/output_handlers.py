@@ -1,3 +1,4 @@
+import json
 import os
 
 import pandas as pd
@@ -145,3 +146,22 @@ def json2csv(data, timestamp, n):
 
 # model_name,rush_precision,rush_recall,rush_f1_score,rush_support,pass_precision,pass_recall,pass_f1_score,
 # pass_support,accuracy,macro_precision,macro_recall,macro_f1_score,weighted_precision,weighted_recall,weighted_f1_score,config
+
+def save_data_to_json(data, timestamp, n):
+    """
+    Salva um dicionário Python em um arquivo JSON.
+    
+    Args:
+        data (dict): O dicionário Python a ser salvo.
+        file_path (str): O caminho completo para o arquivo JSON de saída.
+    """
+    # Cria o diretório se não existir
+    cur_path = os.getcwd()
+    out_path = os.path.abspath(os.path.join(cur_path, f'eniac/n{n}/{timestamp}'))
+
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+    
+    # Salva o dicionário como JSON
+    with open(out_path, 'w') as json_file:
+        json.dump(data, json_file, indent=4)

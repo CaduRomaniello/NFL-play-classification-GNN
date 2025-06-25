@@ -2,7 +2,7 @@ import random
 import torch
 import numpy as np
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
@@ -18,65 +18,65 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-def plot_loss_curves(train_losses, val_losses=None, model_name="Model", output_dir="images"):
-    """
-    Plots and saves the learning curves for model training.
+# def plot_loss_curves(train_losses, val_losses=None, model_name="Model", output_dir="images"):
+#     """
+#     Plots and saves the learning curves for model training.
     
-    Args:
-        train_losses (list): Training loss values per epoch
-        val_losses (list, optional): Validation loss values per epoch
-        model_name (str): Name of the model (e.g., "GCN", "MLP")
-        output_dir (str): Directory where to save the plot
-    """
-    plt.figure(figsize=(10, 6))
-    epochs = range(1, len(train_losses) + 1)
+#     Args:
+#         train_losses (list): Training loss values per epoch
+#         val_losses (list, optional): Validation loss values per epoch
+#         model_name (str): Name of the model (e.g., "GCN", "MLP")
+#         output_dir (str): Directory where to save the plot
+#     """
+#     plt.figure(figsize=(10, 6))
+#     epochs = range(1, len(train_losses) + 1)
     
-    plt.plot(epochs, train_losses, 'b-', label='Training Loss')
-    if val_losses:
-        plt.plot(epochs, val_losses, 'r-', label='Validation Loss')
+#     plt.plot(epochs, train_losses, 'b-', label='Training Loss')
+#     if val_losses:
+#         plt.plot(epochs, val_losses, 'r-', label='Validation Loss')
     
-    plt.title(f'Learning Curve - {model_name}')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.grid(True, linestyle='--', alpha=0.7)
+#     plt.title(f'Learning Curve - {model_name}')
+#     plt.xlabel('Epochs')
+#     plt.ylabel('Loss')
+#     plt.legend()
+#     plt.grid(True, linestyle='--', alpha=0.7)
     
-    # Save the plot
-    output_path = f"{output_dir}/learning_curve_{model_name}.png"
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.close()
-    print(f"Learning curve saved for {model_name} at {output_path}")
+#     # Save the plot
+#     output_path = f"{output_dir}/learning_curve_{model_name}.png"
+#     plt.savefig(output_path, dpi=300, bbox_inches="tight")
+#     plt.close()
+#     print(f"Learning curve saved for {model_name} at {output_path}")
 
-def save_confusion_matrix(y_true, y_pred, model_name, output_dir="images"):
-    """
-    Gera e salva a matriz de confusão como uma imagem PNG.
+# def save_confusion_matrix(y_true, y_pred, model_name, output_dir="images"):
+#     """
+#     Gera e salva a matriz de confusão como uma imagem PNG.
 
-    Args:
-        y_true (list or array): Rótulos verdadeiros.
-        y_pred (list or array): Predições do modelo.
-        model_name (str): Nome do modelo (ex: "GCN").
-        output_dir (str): Diretório onde salvar a imagem.
-    """
+#     Args:
+#         y_true (list or array): Rótulos verdadeiros.
+#         y_pred (list or array): Predições do modelo.
+#         model_name (str): Nome do modelo (ex: "GCN").
+#         output_dir (str): Diretório onde salvar a imagem.
+#     """
 
-    print(f"Confusion matrix: {model_name}")
-    print('y_true:', y_true)
-    print('y_pred:', y_pred)
-    print()
-    # Gerar a matriz de confusão
-    cm = confusion_matrix(y_true, y_pred)
+#     print(f"Confusion matrix: {model_name}")
+#     print('y_true:', y_true)
+#     print('y_pred:', y_pred)
+#     print()
+#     # Gerar a matriz de confusão
+#     cm = confusion_matrix(y_true, y_pred)
     
-    # Criar a visualização da matriz de confusão
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Rush", "Pass"])
-    disp.plot(cmap="Blues", values_format="d")
+#     # Criar a visualização da matriz de confusão
+#     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Rush", "Pass"])
+#     disp.plot(cmap="Blues", values_format="d")
     
-    # Configurar título
-    plt.title(f"Confusion Matrix - {model_name}")
+#     # Configurar título
+#     plt.title(f"Confusion Matrix - {model_name}")
     
-    # Salvar a imagem
-    output_path = f"{output_dir}/confusion_matrix_{model_name}.png"
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.close()  # Fechar o plot para evitar sobreposição
-    print(f"Confusion matrix saved for {model_name} at {output_path}")
+#     # Salvar a imagem
+#     output_path = f"{output_dir}/confusion_matrix_{model_name}.png"
+#     plt.savefig(output_path, dpi=300, bbox_inches="tight")
+#     plt.close()  # Fechar o plot para evitar sobreposição
+#     print(f"Confusion matrix saved for {model_name} at {output_path}")
 
 class GCN(torch.nn.Module):
     def __init__(self, node_features, hidden_channels, random_seed):

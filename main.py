@@ -7,9 +7,9 @@ import random
 import pandas as pd
 import networkx as nx
 print('xxxxxxxxxxxxxxxxxxxxxxxxx')
-import matplotlib
-matplotlib.use('Agg') # 'Agg' é um backend para gerar imagens para arquivos (PNG, JPG, etc.)
-import matplotlib.pyplot as plt
+# import matplotlib
+# matplotlib.use('Agg') # 'Agg' é um backend para gerar imagens para arquivos (PNG, JPG, etc.)
+# import matplotlib.pyplot as plt
 print('bbbbbbbbbbbbbbbbbbbb')
 
 from handlers.calc_handlers import calc_distance_between_players, calc_game_clock_to_seconds, calc_n_closest_players, calc_possession_team_point_diff, calc_total_dis
@@ -18,14 +18,14 @@ from handlers.merge_handlers import merge_player_info
 from handlers.model_handlers_v2 import model_run
 # from handlers.model_handlers_ import model_run
 from handlers.model_handlers_v2 import convert_nx_to_pytorch_geometric
-from handlers.output_handlers import json2csv
+from handlers.output_handlers import json2csv, save_data_to_json
 from handlers.verify_handlers import verify_invalid_values, verify_plays_result
 # from playground import playground
 from IPython.display import display
 from scipy.spatial.distance import cdist
 from sklearn.preprocessing import LabelEncoder
 from data_handlers.read_files import read2025data
-from visualization.confusion_matrix_plot import save_confusion_matrix
+# from visualization.confusion_matrix_plot import save_confusion_matrix
 from visualization.create_plot import createFootballField
 
 # the team that have 
@@ -108,7 +108,8 @@ def main():
         results = model_run(pass_graphs, rush_graphs, config=CONFIG)
 
         json2csv(results, timestamp, N_CLOSEST_PLAYERS)
-        save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
+        # save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
+        save_data_to_json(results, timestamp, N_CLOSEST_PLAYERS)
         
         end_time = time.time()
         duration = end_time - start_time
@@ -214,322 +215,322 @@ def getGraphs(weeks=[1]):
     
     
     
-def old_main():
-    games, player_play, players, plays, tracking_data = read2025data()
+# def old_main():
+#     games, player_play, players, plays, tracking_data = read2025data()
     
-    # print(games.isna().sum())
-    # print()
-    # print(player_play.isna().sum())
-    # print()
-    # print(players.isna().sum())
-    # print()
-    # print(plays.isna().sum())
-    # print()
-    # print(tracking_data.isna().sum())
-    # print()
+#     # print(games.isna().sum())
+#     # print()
+#     # print(player_play.isna().sum())
+#     # print()
+#     # print(players.isna().sum())
+#     # print()
+#     # print(plays.isna().sum())
+#     # print()
+#     # print(tracking_data.isna().sum())
+#     # print()
     
-    game_id = 2022091110
-    play_id = 55
+#     game_id = 2022091110
+#     play_id = 55
     
-    #* filtering df's
-    game = games[games['gameId'] == game_id]
-    play = plays[(plays['gameId'] == game_id) & (plays['playId'] == play_id)]
-    tracking_data = tracking_data[(tracking_data['gameId'] == game_id) & (tracking_data['playId'] == play_id)]
+#     #* filtering df's
+#     game = games[games['gameId'] == game_id]
+#     play = plays[(plays['gameId'] == game_id) & (plays['playId'] == play_id)]
+#     tracking_data = tracking_data[(tracking_data['gameId'] == game_id) & (tracking_data['playId'] == play_id)]
     
-    yardline_number = play['yardlineNumber'].values[0] #? arrumar aqui caso necessário
+#     yardline_number = play['yardlineNumber'].values[0] #? arrumar aqui caso necessário
     
-    #* getting possession team point diff
-    home_team = games['homeTeamAbbr'].values[0]
-    possession_team = play['possessionTeam'].values[0]
+#     #* getting possession team point diff
+#     home_team = games['homeTeamAbbr'].values[0]
+#     possession_team = play['possessionTeam'].values[0]
     
-    possession_team_point_diff = 0
-    if possession_team == home_team:
-        possession_team_point_diff = play['preSnapHomeScore'].values[0] - play['preSnapVisitorScore'].values[0]
-    else:
-        possession_team_point_diff = play['preSnapVisitorScore'].values[0] - play['preSnapHomeScore'].values[0]
+#     possession_team_point_diff = 0
+#     if possession_team == home_team:
+#         possession_team_point_diff = play['preSnapHomeScore'].values[0] - play['preSnapVisitorScore'].values[0]
+#     else:
+#         possession_team_point_diff = play['preSnapVisitorScore'].values[0] - play['preSnapHomeScore'].values[0]
         
         
-    #* getting pass or rush play type
-    passLocationType = play['passLocationType'].values[0]
-    rushLocationType = play['rushLocationType'].values[0]
+#     #* getting pass or rush play type
+#     passLocationType = play['passLocationType'].values[0]
+#     rushLocationType = play['rushLocationType'].values[0]
     
-    playType = ''
-    if pd.isna(play['passLocationType'].values[0]) and pd.isna(play['rushLocationType'].values[0]):
-        raise ValueError('play does not have passLocationType or rushLocationType')
-    elif not pd.isna(play['passLocationType'].values[0]) and not pd.isna(play['rushLocationType'].values[0]):
-        raise ValueError('play has both passLocationType and rushLocationType')
-    else:
-        playType = 'pass' if pd.isna(play['rushLocationType']).empty else 'rush'
+#     playType = ''
+#     if pd.isna(play['passLocationType'].values[0]) and pd.isna(play['rushLocationType'].values[0]):
+#         raise ValueError('play does not have passLocationType or rushLocationType')
+#     elif not pd.isna(play['passLocationType'].values[0]) and not pd.isna(play['rushLocationType'].values[0]):
+#         raise ValueError('play has both passLocationType and rushLocationType')
+#     else:
+#         playType = 'pass' if pd.isna(play['rushLocationType']).empty else 'rush'
         
-    if not pd.isna(play['qbSpike'].values[0]) and play['qbSpike'].values[0]:
-        playType = 'none'
-    elif not pd.isna(play['qbKneel'].values[0]) and play['qbKneel'].values[0]:
-        playType = 'none'
-    elif not pd.isna(play['qbSneak'].values[0]) and play['qbSneak'].values[0]:
-        playType = 'none'
-    elif play['passResult'].values[0] == 'R':
-        playType = 'none'
-    elif not pd.isna(play['rushLocationType'].values[0]):
-        playType = 'rush'
-    elif not pd.isna(play['passLocationType'].values[0]):
-        playType = 'pass'
-    elif not pd.isna(play['passResult'].values[0]):
-        print("PASS WITHOUT INFO")
-        playType = 'pass'
-    else:
-        print("can't determine play type")
-        playType = 'none'
+#     if not pd.isna(play['qbSpike'].values[0]) and play['qbSpike'].values[0]:
+#         playType = 'none'
+#     elif not pd.isna(play['qbKneel'].values[0]) and play['qbKneel'].values[0]:
+#         playType = 'none'
+#     elif not pd.isna(play['qbSneak'].values[0]) and play['qbSneak'].values[0]:
+#         playType = 'none'
+#     elif play['passResult'].values[0] == 'R':
+#         playType = 'none'
+#     elif not pd.isna(play['rushLocationType'].values[0]):
+#         playType = 'rush'
+#     elif not pd.isna(play['passLocationType'].values[0]):
+#         playType = 'pass'
+#     elif not pd.isna(play['passResult'].values[0]):
+#         print("PASS WITHOUT INFO")
+#         playType = 'pass'
+#     else:
+#         print("can't determine play type")
+#         playType = 'none'
         
-    if playType == 'none':
-        raise ValueError('playType is none')
+#     if playType == 'none':
+#         raise ValueError('playType is none')
     
-    play['playType'] = 0 if playType == 'rush' else 1
-    # play['playType'] = 0 if playType == 'rush' else 1
-    
-    
-    #* adding possession team point diff, dealing with nan values, transforming gameClock to seconds
-    play['possessionTeamPointDiff'] = possession_team_point_diff
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    display(play['possessionTeamPointDiff'])
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------')
-    
-    play.fillna({'receiverAlignment': 'EMPTY'}, inplace=True)
-    play.fillna({'offenseFormation': 'EMPTY'}, inplace=True)
-    play.fillna({'playClockAtSnap': 0}, inplace=True)
+#     play['playType'] = 0 if playType == 'rush' else 1
+#     # play['playType'] = 0 if playType == 'rush' else 1
     
     
-    play['gameClock'] = play['gameClock'].str.split(':').apply(lambda x: int(x[0]) * 60 + int(x[1]))
+#     #* adding possession team point diff, dealing with nan values, transforming gameClock to seconds
+#     play['possessionTeamPointDiff'] = possession_team_point_diff
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+#     display(play['possessionTeamPointDiff'])
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+#     print('------------------------------------------------------------------------')
+    
+#     play.fillna({'receiverAlignment': 'EMPTY'}, inplace=True)
+#     play.fillna({'offenseFormation': 'EMPTY'}, inplace=True)
+#     play.fillna({'playClockAtSnap': 0}, inplace=True)
     
     
-    #* filtering play df for relevant columns
-    play = play[PLAY_RELEVANT_COLUMNS]
+#     play['gameClock'] = play['gameClock'].str.split(':').apply(lambda x: int(x[0]) * 60 + int(x[1]))
+    
+    
+#     #* filtering play df for relevant columns
+#     play = play[PLAY_RELEVANT_COLUMNS]
 
     
-    #* adding play type to play df
-    play['playType'] = playType
+#     #* adding play type to play df
+#     play['playType'] = playType
     
-    #* verifying if there is only one line_set event
-    if tracking_data[(tracking_data['frameType'] != 'AFTER_SNAP') & (tracking_data['event'] == 'line_set')]['frameId'].nunique() != 1:
-        raise ValueError('There is more than one line_set event')
+#     #* verifying if there is only one line_set event
+#     if tracking_data[(tracking_data['frameType'] != 'AFTER_SNAP') & (tracking_data['event'] == 'line_set')]['frameId'].nunique() != 1:
+#         raise ValueError('There is more than one line_set event')
     
-    #* filtering tracking data for events after line_set
-    line_set_frame_id = tracking_data[(tracking_data['frameType'] != 'AFTER_SNAP') & (tracking_data['event'] == 'line_set')]['frameId'].values[0]
-    td_before_snap = tracking_data[(tracking_data['frameType'] != 'AFTER_SNAP')]
-    td_at_snap = td_before_snap[td_before_snap['frameType'] == 'SNAP']
+#     #* filtering tracking data for events after line_set
+#     line_set_frame_id = tracking_data[(tracking_data['frameType'] != 'AFTER_SNAP') & (tracking_data['event'] == 'line_set')]['frameId'].values[0]
+#     td_before_snap = tracking_data[(tracking_data['frameType'] != 'AFTER_SNAP')]
+#     td_at_snap = td_before_snap[td_before_snap['frameType'] == 'SNAP']
     
-    #* getting football info
-    football = td_at_snap[(td_at_snap['displayName'] == 'football')]
+#     #* getting football info
+#     football = td_at_snap[(td_at_snap['displayName'] == 'football')]
     
-    #* transforming players data and adding player info to tracking data
+#     #* transforming players data and adding player info to tracking data
     
-    #* delaing with nan values for 'o' and 'dir' columns
-    td_at_snap['o'] = td_at_snap.apply(lambda row: 90 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] == play['possessionTeam'].values[0] 
-                                            else (270 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] != play['possessionTeam'].values[0]
-                                                else (270 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] == play['possessionTeam'].values[0] 
-                                                    else (90 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] != play['possessionTeam'].values[0]
-                                                        else row['o']))), axis=1)
+#     #* delaing with nan values for 'o' and 'dir' columns
+#     td_at_snap['o'] = td_at_snap.apply(lambda row: 90 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] == play['possessionTeam'].values[0] 
+#                                             else (270 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] != play['possessionTeam'].values[0]
+#                                                 else (270 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] == play['possessionTeam'].values[0] 
+#                                                     else (90 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] != play['possessionTeam'].values[0]
+#                                                         else row['o']))), axis=1)
 
-    td_at_snap['dir'] = td_at_snap.apply(lambda row: 90 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] == play['possessionTeam'].values[0] 
-                                            else (270 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] != play['possessionTeam'].values[0]
-                                                else (270 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] == play['possessionTeam'].values[0] 
-                                                    else (90 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] != play['possessionTeam'].values[0]
-                                                        else row['o']))), axis=1)
+#     td_at_snap['dir'] = td_at_snap.apply(lambda row: 90 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] == play['possessionTeam'].values[0] 
+#                                             else (270 if pd.isna(row['o']) and row['playDirection'] == 'right' and row['club'] != play['possessionTeam'].values[0]
+#                                                 else (270 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] == play['possessionTeam'].values[0] 
+#                                                     else (90 if pd.isna(row['o']) and row['playDirection'] == 'left' and row['club'] != play['possessionTeam'].values[0]
+#                                                         else row['o']))), axis=1)
     
     
-    # #* enconding categorical variables
-    # td_at_snap['playDirection'] = td_at_snap.apply(lambda row: 0 if row['playDirection'] == 'left' else 1, axis=1)
+#     # #* enconding categorical variables
+#     # td_at_snap['playDirection'] = td_at_snap.apply(lambda row: 0 if row['playDirection'] == 'left' else 1, axis=1)
     
-    # le_offenseFormation = LabelEncoder()
-    # le_receiverAlignment = LabelEncoder()
-    # le_possessionTeam = LabelEncoder()
-    # plays["offenseFormation_encoded"] = le_offenseFormation.fit_transform(plays["offenseFormation"])
-    # plays["receiverAlignment_encoded"] = le_receiverAlignment.fit_transform(plays["receiverAlignment"])
-    # plays['possessionTeam_encoded'] = le_possessionTeam.fit_transform(plays['possessionTeam'])
+#     # le_offenseFormation = LabelEncoder()
+#     # le_receiverAlignment = LabelEncoder()
+#     # le_possessionTeam = LabelEncoder()
+#     # plays["offenseFormation_encoded"] = le_offenseFormation.fit_transform(plays["offenseFormation"])
+#     # plays["receiverAlignment_encoded"] = le_receiverAlignment.fit_transform(plays["receiverAlignment"])
+#     # plays['possessionTeam_encoded'] = le_possessionTeam.fit_transform(plays['possessionTeam'])
     
-    # le_club = LabelEncoder()
-    # le_position = LabelEncoder()
-    # td_at_snap['club'] = le_club.fit_transform(td_at_snap['club'])
-    # td_at_snap['position'] = le_position.fit_transform(td_at_snap['position'])
+#     # le_club = LabelEncoder()
+#     # le_position = LabelEncoder()
+#     # td_at_snap['club'] = le_club.fit_transform(td_at_snap['club'])
+#     # td_at_snap['position'] = le_position.fit_transform(td_at_snap['position'])
     
-    #* getting football info
-    football = td_at_snap[(td_at_snap['displayName'] == 'football')]
+#     #* getting football info
+#     football = td_at_snap[(td_at_snap['displayName'] == 'football')]
     
-    #* transforming players data and adding player info to tracking data
-    players['height'] = players['height'].str.split('-').apply(lambda x: round((int(x[0]) * 12 + int(x[1])) * 2.54))
-    players['weight'] = round(players['weight'] * 0.45359237)
+#     #* transforming players data and adding player info to tracking data
+#     players['height'] = players['height'].str.split('-').apply(lambda x: round((int(x[0]) * 12 + int(x[1])) * 2.54))
+#     players['weight'] = round(players['weight'] * 0.45359237)
     
-    players_info = players[['nflId', 'height', 'weight', 'position']]
-    td_at_snap = pd.merge(td_at_snap, players_info, on='nflId')
+#     players_info = players[['nflId', 'height', 'weight', 'position']]
+#     td_at_snap = pd.merge(td_at_snap, players_info, on='nflId')
     
-    #* adding total distance before snap to tracking data
-    distances = td_before_snap.groupby('nflId')['dis'].sum()
-    td_at_snap['totalDis'] = td_at_snap['nflId'].map(distances)
+#     #* adding total distance before snap to tracking data
+#     distances = td_before_snap.groupby('nflId')['dis'].sum()
+#     td_at_snap['totalDis'] = td_at_snap['nflId'].map(distances)
     
-    # creating plot
-    absoluteYardlineNumber = play['absoluteYardlineNumber'].values[0]
-    direction = td_at_snap.iloc[0]['playDirection'] #TODO: fix this because data has been categorized as 0 (left) or 1 (right)
+#     # creating plot
+#     absoluteYardlineNumber = play['absoluteYardlineNumber'].values[0]
+#     direction = td_at_snap.iloc[0]['playDirection'] #TODO: fix this because data has been categorized as 0 (left) or 1 (right)
 
-    if direction == 'left':
-        highlight_line_number = absoluteYardlineNumber - 10
-    else:
-        highlight_line_number = 110 - absoluteYardlineNumber
+#     if direction == 'left':
+#         highlight_line_number = absoluteYardlineNumber - 10
+#     else:
+#         highlight_line_number = 110 - absoluteYardlineNumber
         
-    if highlight_line_number > 50:
-        check_line = 50 - (50 - highlight_line_number)
+#     if highlight_line_number > 50:
+#         check_line = 50 - (50 - highlight_line_number)
         
-    if check_line == yardline_number:
-        raise ValueError('Line of scrimmage is not correct')
+#     if check_line == yardline_number:
+#         raise ValueError('Line of scrimmage is not correct')
     
-    fig, ax = createFootballField(highlight_line=True, highlight_line_number=highlight_line_number)
+#     fig, ax = createFootballField(highlight_line=True, highlight_line_number=highlight_line_number)
     
-    # calculating distances between players, creating a new dataframe for it, sorting it and creating a list
-    coords = td_at_snap[['x', 'y']].values
-    dist_matrix = cdist(coords, coords, metric='euclidean')
+#     # calculating distances between players, creating a new dataframe for it, sorting it and creating a list
+#     coords = td_at_snap[['x', 'y']].values
+#     dist_matrix = cdist(coords, coords, metric='euclidean')
     
-    dist_df = pd.DataFrame(dist_matrix, index=td_at_snap['nflId'], columns=td_at_snap['nflId'])
+#     dist_df = pd.DataFrame(dist_matrix, index=td_at_snap['nflId'], columns=td_at_snap['nflId'])
     
-    sorted_distances = dist_df.apply(lambda row: row.sort_values().values.tolist(), axis=1)
-    sorted_players = dist_df.apply(lambda row: row.sort_values().index.tolist(), axis=1)
+#     sorted_distances = dist_df.apply(lambda row: row.sort_values().values.tolist(), axis=1)
+#     sorted_players = dist_df.apply(lambda row: row.sort_values().index.tolist(), axis=1)
     
-    # for index, value in sorted_distances.items():
-    #     print(f'Player {index}: ', end='')
-    #     for j in range(1, 7):
-    #         print(f'{sorted_players.loc[index][j]:.2f}, ', end='')
-    #     print()
+#     # for index, value in sorted_distances.items():
+#     #     print(f'Player {index}: ', end='')
+#     #     for j in range(1, 7):
+#     #         print(f'{sorted_players.loc[index][j]:.2f}, ', end='')
+#     #     print()
         
-    # closest team players
-    k_players = 5
-    team_dist = {}
-    for index, value in sorted_distances.items():
-        team = td_at_snap[td_at_snap['nflId'] == index]['club'].values[0]
-        closest_players = []
-        for i in range(1, len(sorted_players.loc[index])):
-            if td_at_snap[td_at_snap['nflId'] == sorted_players.loc[index][i]]['club'].values[0] == team:
-                # closest_players.append((sorted_players.loc[index][i], value[i]))
-                closest_players.append({
-                    'nflId': sorted_players.loc[index][i],
-                    'distance': value[i]
-                })
-            if len(closest_players) == k_players:
-                break
+#     # closest team players
+#     k_players = 5
+#     team_dist = {}
+#     for index, value in sorted_distances.items():
+#         team = td_at_snap[td_at_snap['nflId'] == index]['club'].values[0]
+#         closest_players = []
+#         for i in range(1, len(sorted_players.loc[index])):
+#             if td_at_snap[td_at_snap['nflId'] == sorted_players.loc[index][i]]['club'].values[0] == team:
+#                 # closest_players.append((sorted_players.loc[index][i], value[i]))
+#                 closest_players.append({
+#                     'nflId': sorted_players.loc[index][i],
+#                     'distance': value[i]
+#                 })
+#             if len(closest_players) == k_players:
+#                 break
         
-        team_dist[index] = closest_players
+#         team_dist[index] = closest_players
     
-    # closest opponent players
-    opponent_dist = {}
-    for index, value in sorted_distances.items():
-        team = td_at_snap[td_at_snap['nflId'] == index]['club'].values[0]
-        closest_players = []
-        for i in range(1, len(sorted_players.loc[index])):
-            if td_at_snap[td_at_snap['nflId'] == sorted_players.loc[index][i]]['club'].values[0] != team:
-                # closest_players.append((sorted_players.loc[index][i], value[i]))
-                closest_players.append({
-                    'nflId': sorted_players.loc[index][i],
-                    'distance': value[i]
-                })
-            if len(closest_players) == k_players:
-                break
-        opponent_dist[index] = closest_players
+#     # closest opponent players
+#     opponent_dist = {}
+#     for index, value in sorted_distances.items():
+#         team = td_at_snap[td_at_snap['nflId'] == index]['club'].values[0]
+#         closest_players = []
+#         for i in range(1, len(sorted_players.loc[index])):
+#             if td_at_snap[td_at_snap['nflId'] == sorted_players.loc[index][i]]['club'].values[0] != team:
+#                 # closest_players.append((sorted_players.loc[index][i], value[i]))
+#                 closest_players.append({
+#                     'nflId': sorted_players.loc[index][i],
+#                     'distance': value[i]
+#                 })
+#             if len(closest_players) == k_players:
+#                 break
+#         opponent_dist[index] = closest_players
         
-    # closest all players
-    all_dist = {}
-    for index, value in sorted_distances.items():
-        closest_players = []
-        for i in range(1, len(sorted_players.loc[index])):
-            # closest_players.append((sorted_players.loc[index][i], value[i]))
-            closest_players.append({
-                'nflId': sorted_players.loc[index][i],
-                'distance': value[i]
-            })
-            if len(closest_players) == k_players:
-                break
-        all_dist[index] = closest_players
+#     # closest all players
+#     all_dist = {}
+#     for index, value in sorted_distances.items():
+#         closest_players = []
+#         for i in range(1, len(sorted_players.loc[index])):
+#             # closest_players.append((sorted_players.loc[index][i], value[i]))
+#             closest_players.append({
+#                 'nflId': sorted_players.loc[index][i],
+#                 'distance': value[i]
+#             })
+#             if len(closest_players) == k_players:
+#                 break
+#         all_dist[index] = closest_players
         
-    # print(json.dumps(team_dist, indent=4))
+#     # print(json.dumps(team_dist, indent=4))
     
-    # # plotting lines between players
-    # for key, value in team_dist.items():
-    #     key_x = td_at_snap[td_at_snap['nflId'] == key]['x'].values[0]
-    #     key_y = td_at_snap[td_at_snap['nflId'] == key]['y'].values[0]
-    #     for player in value:
-    #         player_x = td_at_snap[td_at_snap['nflId'] == player['nflId']]['x'].values[0]
-    #         player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
-    #         plt.plot([key_x, player_x], [key_y, player_y], color='lightgreen', linewidth=0.5)
+#     # # plotting lines between players
+#     # for key, value in team_dist.items():
+#     #     key_x = td_at_snap[td_at_snap['nflId'] == key]['x'].values[0]
+#     #     key_y = td_at_snap[td_at_snap['nflId'] == key]['y'].values[0]
+#     #     for player in value:
+#     #         player_x = td_at_snap[td_at_snap['nflId'] == player['nflId']]['x'].values[0]
+#     #         player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
+#     #         plt.plot([key_x, player_x], [key_y, player_y], color='lightgreen', linewidth=0.5)
             
-    # for key, value in opponent_dist.items():
-    #     key_x = td_at_snap[td_at_snap['nflId'] == key]['x'].values[0]
-    #     key_y = td_at_snap[td_at_snap['nflId'] == key]['y'].values[0]
-    #     for player in value:
-    #         player_x = td_at_snap[td_at_snap['nflId'] == player['nflId']]['x'].values[0]
-    #         player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
-    #         plt.plot([key_x, player_x], [key_y, player_y], color='lightcoral', linewidth=0.5)
+#     # for key, value in opponent_dist.items():
+#     #     key_x = td_at_snap[td_at_snap['nflId'] == key]['x'].values[0]
+#     #     key_y = td_at_snap[td_at_snap['nflId'] == key]['y'].values[0]
+#     #     for player in value:
+#     #         player_x = td_at_snap[td_at_snap['nflId'] == player['nflId']]['x'].values[0]
+#     #         player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
+#     #         plt.plot([key_x, player_x], [key_y, player_y], color='lightcoral', linewidth=0.5)
             
-    # plotting closest players without team distinction
-    for key, value in all_dist.items():
-        key_x = td_at_snap[td_at_snap['nflId'] == key]['x'].values[0]
-        key_y = td_at_snap[td_at_snap['nflId'] == key]['y'].values[0]
-        for player in value:
-            player_x = td_at_snap[td_at_snap['nflId'] == player['nflId']]['x'].values[0]
-            player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
-            plt.plot([key_x, player_x], [key_y, player_y], color='lightblue', linewidth=0.5)
+#     # plotting closest players without team distinction
+#     for key, value in all_dist.items():
+#         key_x = td_at_snap[td_at_snap['nflId'] == key]['x'].values[0]
+#         key_y = td_at_snap[td_at_snap['nflId'] == key]['y'].values[0]
+#         for player in value:
+#             player_x = td_at_snap[td_at_snap['nflId'] == player['nflId']]['x'].values[0]
+#             player_y = td_at_snap[td_at_snap['nflId'] == player['nflId']]['y'].values[0]
+#             plt.plot([key_x, player_x], [key_y, player_y], color='lightblue', linewidth=0.5)
             
-    # creating network graph with attributes, adding all edges, and then adding node attributes
-    display(play.head(5))
-    graph_attrs = json.loads(play.drop(['gameId', 'playId'], axis=1).to_json(orient='records'))[0]
-    G = nx.Graph(quarter=graph_attrs['quarter'], 
-                down=graph_attrs['down'],
-                yardsToGo=graph_attrs['yardsToGo'],
-                possessionTeam=graph_attrs['possessionTeam'],
-                gameClock=graph_attrs['gameClock'],
-                absoluteYardlineNumber=graph_attrs['absoluteYardlineNumber'],
-                offenseFormation=graph_attrs['offenseFormation'],
-                receiverAlignment=graph_attrs['receiverAlignment'],
-                playClockAtSnap=graph_attrs['playClockAtSnap'],
-                possessionTeamPointDiff=graph_attrs['possessionTeamPointDiff'])
+#     # creating network graph with attributes, adding all edges, and then adding node attributes
+#     display(play.head(5))
+#     graph_attrs = json.loads(play.drop(['gameId', 'playId'], axis=1).to_json(orient='records'))[0]
+#     G = nx.Graph(quarter=graph_attrs['quarter'], 
+#                 down=graph_attrs['down'],
+#                 yardsToGo=graph_attrs['yardsToGo'],
+#                 possessionTeam=graph_attrs['possessionTeam'],
+#                 gameClock=graph_attrs['gameClock'],
+#                 absoluteYardlineNumber=graph_attrs['absoluteYardlineNumber'],
+#                 offenseFormation=graph_attrs['offenseFormation'],
+#                 receiverAlignment=graph_attrs['receiverAlignment'],
+#                 playClockAtSnap=graph_attrs['playClockAtSnap'],
+#                 possessionTeamPointDiff=graph_attrs['possessionTeamPointDiff'])
     
-    for key, value in all_dist.items():
-        for player in value:
-            G.add_edge(key, player['nflId'], weight=player['distance'])
+#     for key, value in all_dist.items():
+#         for player in value:
+#             G.add_edge(key, player['nflId'], weight=player['distance'])
             
-    for key, value in td_at_snap.iterrows():
-        relevant_info = ['club', 'displayName', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
-        info_dict = {k: v for k, v in value.items() if k in relevant_info}
-        nx.set_node_attributes(G, {value['nflId']: info_dict})
+#     for key, value in td_at_snap.iterrows():
+#         relevant_info = ['club', 'displayName', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
+#         info_dict = {k: v for k, v in value.items() if k in relevant_info}
+#         nx.set_node_attributes(G, {value['nflId']: info_dict})
     
-    # print(list(G.nodes(data=True)))
-    # for n, nbrs in G.adj.items():
-    #     for nbr, eattr in nbrs.items():
-    #         wt = eattr['weight']
-    #         print(f"({n}, {nbr}, {wt:.3})")
+#     # print(list(G.nodes(data=True)))
+#     # for n, nbrs in G.adj.items():
+#     #     for nbr, eattr in nbrs.items():
+#     #         wt = eattr['weight']
+#     #         print(f"({n}, {nbr}, {wt:.3})")
     
-    print(G.nodes[42401.0])
-    print(G.graph)
+#     print(G.nodes[42401.0])
+#     print(G.graph)
             
-    # ploting players
-    colors = {'ARI': 'white',
-            'KC': 'red',
-            'football': '#7b3f00'}
+#     # ploting players
+#     colors = {'ARI': 'white',
+#             'KC': 'red',
+#             'football': '#7b3f00'}
     
-    for index, player in td_at_snap.iterrows():
-        x = player['x']
-        y = player['y']
-        s = player['displayName']
-        if s == 'football':
-            continue
-        plt.scatter(x, y, color=colors[player['club']], zorder=2)
+#     for index, player in td_at_snap.iterrows():
+#         x = player['x']
+#         y = player['y']
+#         s = player['displayName']
+#         if s == 'football':
+#             continue
+#         plt.scatter(x, y, color=colors[player['club']], zorder=2)
 
-    plt.scatter(football['x'].values[0], football['y'].values[0], color=colors[football['club'].values[0]])
+#     plt.scatter(football['x'].values[0], football['y'].values[0], color=colors[football['club'].values[0]])
             
     
-    plt.show()
+#     plt.show()
     
     
 print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
