@@ -35,6 +35,8 @@ N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
 NUMBER_OF_ITERS = 2
 
+print('ccccccccccccccccccccccccccccccccccccccccccccc')
+
 CONFIG = {
     'RANDOM_SEED': 0,
     'GNN_EPOCHS': 50,
@@ -53,6 +55,8 @@ CONFIG = {
     'TEST_SPLIT': 0.9,
     'SHOW_INFO': True,
 }
+
+print('dddddddddddddddddddddddddddd')
 
 def main():    
     # weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
