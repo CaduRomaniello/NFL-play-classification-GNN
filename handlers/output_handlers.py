@@ -162,6 +162,11 @@ def save_data_to_json(data, timestamp, n):
     if not os.path.exists(out_path):
         os.makedirs(out_path)
     
+    data['last_gcn_results']['confusion_matrix'] = data['last_gcn_results']['confusion_matrix'].tolist()
+    data['best_gcn_results']['confusion_matrix'] = data['best_gcn_results']['confusion_matrix'].tolist()
+    data['rf_results']['confusion_matrix'] = data['rf_results']['confusion_matrix'].tolist()
+    data['mlp_results']['confusion_matrix'] = data['mlp_results']['confusion_matrix'].tolist()
+
     # Salva o dicionário como JSON
-    with open(out_path, 'w') as json_file:
+    with open(f'{out_path}/results.json', 'w') as json_file:
         json.dump(data, json_file, indent=4)
