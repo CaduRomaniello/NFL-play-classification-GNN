@@ -31,7 +31,7 @@ PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'po
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
-NUMBER_OF_ITERS = 2
+NUMBER_OF_ITERS = 25
 
 CONFIG = {
     'RANDOM_SEED': 0,
@@ -44,7 +44,7 @@ CONFIG = {
     'RF_ESTIMATORS': 100,
     'MLP_HIDDEN_CHANNELS': 64,
     'MLP_HIDDEN_LAYERS': 2,
-    'MLP_MAX_ITER':30,
+    'MLP_MAX_ITER':3000,
     'MLP_LEARNING_RATE': 0.01,
     'MLP_ALPHA': 5e-4,
     'VALIDATION_SPLIT': 0.8,
@@ -53,8 +53,8 @@ CONFIG = {
 }
 
 def main():    
-    # weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    weeks = [1]
+    weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # weeks = [1]
     rush_graphs = []
     pass_graphs = []
     random_seed = 0
@@ -83,7 +83,7 @@ def main():
         print(f"Output file: {output_filename}")
         
         CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
-        CONFIG['GNN_EPOCHS'] = random.choice([10, 20, 30])  # Exemplo: 32, 64 ou 128
+        CONFIG['GNN_EPOCHS'] = random.choice([100, 200, 300])  # Exemplo: 32, 64 ou 128
         CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
         CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
         CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
@@ -527,7 +527,7 @@ def getGraphs(weeks=[1]):
 #     plt.show()
     
 if __name__ == "__main__":
-    for i in range(2, 5):
+    for i in range(2, 11):
         N_CLOSEST_PLAYERS = i
         print(f"-----------> Running main with N_CLOSEST_PLAYERS = {N_CLOSEST_PLAYERS}")
         main()
