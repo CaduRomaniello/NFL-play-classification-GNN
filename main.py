@@ -82,7 +82,7 @@ def main():
         # print(f"Output file: {output_filename}")
         
         CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
-        CONFIG['GNN_EPOCHS'] = random.choice([100, 200, 300])  # Exemplo: 32, 64 ou 128
+        CONFIG['GNN_EPOCHS'] = random.choice([500])  # Exemplo: 32, 64 ou 128
         CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
         CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
         CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
