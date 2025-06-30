@@ -1,35 +1,29 @@
-import numpy as np
+def calc_sq_rt(x, nums, begin, end):
+    if (end - begin + 1) == 2:
+        begin_sq = nums[begin] * nums[begin]
+        end_sq = nums[end] * nums[end]
 
-def gerar_matriz_binaria_numpy(linhas, colunas):
-    return np.random.randint(0, 2, size=(linhas, colunas))
+        if end_sq == x:
+            return nums[end]
+        if begin_sq == x:
+            return nums[begin]
+        if begin_sq < x and end_sq > x:
+            return nums[begin]
 
-def complemento(matriz):
-    return np.array([[1 - elemento for elemento in linha] for linha in matriz])
-
-n = 20
-matriz_gerada = gerar_matriz_binaria_numpy(n, n)
-
-print("\nMatriz binária:")
-print(matriz_gerada)
-
-
-complemento = np.zeros((n, n), dtype=int)
-
-for i in range(n):
-    for j in range(n):
-        if matriz_gerada[i][j] == 0:
-            complemento[i][j] = 1
-
-print("\nComplemento da matriz:")
-print(np.array(complemento))
-
-# matriz_gerada = matriz_gerada / np.sum(matriz_gerada)
-# complemento = complemento / np.sum(complemento)
+    middle = (end + begin) // 2
+    if nums[middle] * nums[middle] > x:
+        return calc_sq_rt(x, nums, begin, middle)
+    else:
+        return calc_sq_rt(x, nums, middle, end)
 
 
-print('\nFrobenius matrix: ')
-frobenius = complemento - matriz_gerada
-frobenius = frobenius/np.sum(frobenius)
+def mySqrt(x: int) -> int:
+    nums = [i for i in range(1, x)]
+    return calc_sq_rt(x, nums, 0, len(nums) - 1)
 
-frobenius_norm = np.linalg.norm(frobenius)
-print(f"\nFrobenius norm: {frobenius_norm}")
+print(mySqrt(8))  # Output: 2
+print(mySqrt(4))  # Output: 2
+print(mySqrt(9))  # Output: 3  
+print(mySqrt(16))  # Output: 4
+print(mySqrt(25))  # Output: 5
+print(mySqrt(35))  # Output: 6

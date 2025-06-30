@@ -27,28 +27,28 @@ def save_confusion_matrix(data, timestamp, n):
 
     # Criar as visualizações das matrizes de confusão
     disp = ConfusionMatrixDisplay(confusion_matrix=best_gcn_matrix, display_labels=["Rush", "Pass"])
-    disp.plot(cmap="Blues", values_format="d")
+    disp.plot(cmap="Blues", values_format="d", text_kw={'fontsize': 16})
     plt.title(f"Confusion Matrix - GCN")
     output_path = f"{out_path}/confusion_matrix_best_gcn.png"
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close()
 
     disp = ConfusionMatrixDisplay(confusion_matrix=last_gcn_matrix, display_labels=["Rush", "Pass"])
-    disp.plot(cmap="Blues", values_format="d")
+    disp.plot(cmap="Blues", values_format="d", text_kw={'fontsize': 16})
     plt.title(f"Confusion Matrix - GCN")
     output_path = f"{out_path}/confusion_matrix_last_gcn.png"
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close()
 
     disp = ConfusionMatrixDisplay(confusion_matrix=rf_matrix, display_labels=["Rush", "Pass"])
-    disp.plot(cmap="Blues", values_format="d")
+    disp.plot(cmap="Blues", values_format="d", text_kw={'fontsize': 16})
     plt.title(f"Confusion Matrix - Random Forest")
     output_path = f"{out_path}/confusion_matrix_rf.png"
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close()
 
     disp = ConfusionMatrixDisplay(confusion_matrix=mlp_matrix, display_labels=["Rush", "Pass"])
-    disp.plot(cmap="Blues", values_format="d")
+    disp.plot(cmap="Blues", values_format="d", text_kw={'fontsize': 16})
     plt.title(f"Confusion Matrix - MLP")
     output_path = f"{out_path}/confusion_matrix_mlp.png"
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
