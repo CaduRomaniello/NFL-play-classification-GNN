@@ -1,0 +1,168 @@
+{
+    "last_gcn_results": {
+        "Rush": {
+            "precision": 0.5097872340425532,
+            "recall": 0.9803600654664485,
+            "f1-score": 0.6707726763717805,
+            "support": 611.0
+        },
+        "Pass": {
+            "precision": 0.7446808510638298,
+            "recall": 0.057283142389525366,
+            "f1-score": 0.10638297872340426,
+            "support": 611.0
+        },
+        "accuracy": 0.5188216039279869,
+        "macro avg": {
+            "precision": 0.6272340425531915,
+            "recall": 0.5188216039279869,
+            "f1-score": 0.3885778275475924,
+            "support": 1222.0
+        },
+        "weighted avg": {
+            "precision": 0.6272340425531915,
+            "recall": 0.5188216039279869,
+            "f1-score": 0.38857782754759235,
+            "support": 1222.0
+        },
+        "confusion_matrix": [
+            [
+                599,
+                12
+            ],
+            [
+                576,
+                35
+            ]
+        ]
+    },
+    "best_gcn_results": {
+        "Rush": {
+            "precision": 0.5097872340425532,
+            "recall": 0.9803600654664485,
+            "f1-score": 0.6707726763717805,
+            "support": 611.0
+        },
+        "Pass": {
+            "precision": 0.7446808510638298,
+            "recall": 0.057283142389525366,
+            "f1-score": 0.10638297872340426,
+            "support": 611.0
+        },
+        "accuracy": 0.5188216039279869,
+        "macro avg": {
+            "precision": 0.6272340425531915,
+            "recall": 0.5188216039279869,
+            "f1-score": 0.3885778275475924,
+            "support": 1222.0
+        },
+        "weighted avg": {
+            "precision": 0.6272340425531915,
+            "recall": 0.5188216039279869,
+            "f1-score": 0.38857782754759235,
+            "support": 1222.0
+        },
+        "confusion_matrix": [
+            [
+                599,
+                12
+            ],
+            [
+                576,
+                35
+            ]
+        ]
+    },
+    "rf_results": {
+        "Rush": {
+            "precision": 0.7123893805309734,
+            "recall": 0.79050736497545,
+            "f1-score": 0.7494181536074477,
+            "support": 611.0
+        },
+        "Pass": {
+            "precision": 0.7647058823529411,
+            "recall": 0.6808510638297872,
+            "f1-score": 0.7203463203463204,
+            "support": 611.0
+        },
+        "accuracy": 0.7356792144026186,
+        "macro avg": {
+            "precision": 0.7385476314419572,
+            "recall": 0.7356792144026186,
+            "f1-score": 0.734882236976884,
+            "support": 1222.0
+        },
+        "weighted avg": {
+            "precision": 0.7385476314419572,
+            "recall": 0.7356792144026186,
+            "f1-score": 0.734882236976884,
+            "support": 1222.0
+        },
+        "confusion_matrix": [
+            [
+                483,
+                128
+            ],
+            [
+                195,
+                416
+            ]
+        ]
+    },
+    "mlp_results": {
+        "Rush": {
+            "precision": 0.6892561983471074,
+            "recall": 0.6824877250409165,
+            "f1-score": 0.6858552631578947,
+            "support": 611.0
+        },
+        "Pass": {
+            "precision": 0.6855753646677472,
+            "recall": 0.6923076923076923,
+            "f1-score": 0.6889250814332247,
+            "support": 611.0
+        },
+        "accuracy": 0.6873977086743044,
+        "macro avg": {
+            "precision": 0.6874157815074273,
+            "recall": 0.6873977086743044,
+            "f1-score": 0.6873901722955598,
+            "support": 1222.0
+        },
+        "weighted avg": {
+            "precision": 0.6874157815074273,
+            "recall": 0.6873977086743044,
+            "f1-score": 0.6873901722955597,
+            "support": 1222.0
+        },
+        "confusion_matrix": [
+            [
+                417,
+                194
+            ],
+            [
+                188,
+                423
+            ]
+        ]
+    },
+    "config": {
+        "RANDOM_SEED": 3,
+        "GNN_EPOCHS": 500,
+        "GNN_HIDDEN_CHANNELS": 16,
+        "GNN_HIDDEN_LAYERS": 1,
+        "GNN_LEARNING_RATE": 0.01,
+        "GNN_DROPOUT": 0.2,
+        "GNN_WEIGHT_DECAY": 0.05,
+        "RF_ESTIMATORS": 150,
+        "MLP_HIDDEN_CHANNELS": 128,
+        "MLP_HIDDEN_LAYERS": 1,
+        "MLP_MAX_ITER": 3000,
+        "MLP_LEARNING_RATE": 0.001,
+        "MLP_ALPHA": 5e-05,
+        "VALIDATION_SPLIT": 0.8,
+        "TEST_SPLIT": 0.9,
+        "SHOW_INFO": true
+    }
+}

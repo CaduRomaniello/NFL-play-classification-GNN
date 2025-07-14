@@ -1,5 +1,6 @@
 from contextlib import redirect_stdout
 from datetime import datetime
+import os
 import time
 import json
 import random
@@ -31,7 +32,7 @@ PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'po
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
-NUMBER_OF_ITERS = 25
+NUMBER_OF_ITERS = 10
 
 CONFIG = {
     'RANDOM_SEED': 0,
@@ -67,46 +68,91 @@ def main():
         pass_graphs.extend(week_pass_graphs)
         rush_graphs.extend(week_rush_graphs)
         print()
-        
-    for i in range(NUMBER_OF_ITERS):
-        start_time = time.time()
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        output_filename = f"output/{timestamp}.txt"
-        random_seed += 1
-        random.seed(random_seed)
-        
-        # with open(output_filename, "w", encoding="utf-8") as output_file:
-        #     # Redirecionar os logs para o arquivo
-        #     with redirect_stdout(output_file):
-        print(f"  Iteration {i + 1}/{NUMBER_OF_ITERS}")
-        # print(f"Output file: {output_filename}")
-        
-        CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
-        CONFIG['GNN_EPOCHS'] = random.choice([500])  # Exemplo: 32, 64 ou 128
-        CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
-        CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
-        CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
-        CONFIG['GNN_DROPOUT'] = random.choice([0.2, 0.3, 0.4, 0.5])
-        CONFIG['GNN_WEIGHT_DECAY'] = random.choice([5e-3, 5e-4, 5e-5])
-        CONFIG['RF_ESTIMATORS'] = random.choice([50, 100, 150])
-        CONFIG['MLP_HIDDEN_CHANNELS'] = random.choice([32, 64, 128]) 
-        CONFIG['MLP_HIDDEN_LAYERS'] = random.choice([1, 2, 3]) 
-        CONFIG['MLP_LEARNING_RATE'] = random.choice([0.01, 0.001, 0.0001]) 
-        CONFIG['MLP_ALPHA'] = random.choice([5e-3, 5e-4, 5e-5])
-        
-        print("    CONFIG values:")
-        for key, value in CONFIG.items():
-            print(f"      {key}: {value}")
 
-        results = model_run(pass_graphs, rush_graphs, config=CONFIG)
+    HIDDEN_LAYERS = [2]
+    HIDDEN_CHANNELS = [16, 32, 64, 128]
+    LEARNING_RATES = [0.01, 0.001, 0.0001, 0.00001]
+    # WEIGHT_DECAYS = [5e-2, 5e-3, 5e-4, 5e-5]
+    # DROPOUTS = [0.2, 0.3, 0.4, 0.5]
 
-        json2csv(results, timestamp, N_CLOSEST_PLAYERS)
-        save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
-        save_data_to_json(results, timestamp, N_CLOSEST_PLAYERS)
-        
-        end_time = time.time()
-        duration = end_time - start_time
-        # print(f"Iteration {i + 1} completed. Logs saved to {output_filename}. Duration: {duration:.2f} seconds")
+    best_acc = -1
+    best_config = None
+    for hidden_layers in HIDDEN_LAYERS:
+        for hidden_channels in HIDDEN_CHANNELS:
+            for learning_rate in LEARNING_RATES:
+                # for weight_decay in WEIGHT_DECAYS:
+                    # for dropout in DROPOUTS:
+                        random_seed = 0
+                        for i in range(NUMBER_OF_ITERS):
+                            start_time = time.time()
+                            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                            output_filename = f"output/{timestamp}.txt"
+                            random_seed += 1
+                            random.seed(random_seed)
+                            
+                            # with open(output_filename, "w", encoding="utf-8") as output_file:
+                            #     # Redirecionar os logs para o arquivo
+                            #     with redirect_stdout(output_file):
+                            print(f"  Iteration {i + 1}/{NUMBER_OF_ITERS}")
+                            # print(f"Output file: {output_filename}")
+                            
+                            CONFIG['RANDOM_SEED'] = random_seed  # Exemplo: entre 10 e 100 épocas
+                            CONFIG['GNN_EPOCHS'] = random.choice([500])  # Exemplo: 32, 64 ou 128
+
+                            # CONFIG['GNN_HIDDEN_CHANNELS'] = random.choice([32, 64, 128])  # Exemplo: entre 0.0001 e 0.01
+                            # CONFIG['GNN_HIDDEN_LAYERS'] = random.choice([1, 2, 3])
+                            # CONFIG['GNN_LEARNING_RATE'] = random.choice([0.001, 0.0001, 0.00001])  # Exemplo: entre 0.0001 e 0.01
+                            CONFIG['GNN_DROPOUT'] = random.choice([0.2, 0.3, 0.4, 0.5])
+                            CONFIG['GNN_WEIGHT_DECAY'] = random.choice([5e-3, 5e-4, 5e-5])
+
+                            CONFIG['GNN_HIDDEN_CHANNELS'] = hidden_channels
+                            CONFIG['GNN_HIDDEN_LAYERS'] = hidden_layers
+                            CONFIG['GNN_LEARNING_RATE'] = learning_rate
+                            # CONFIG['GNN_DROPOUT'] = dropout
+                            # CONFIG['GNN_WEIGHT_DECAY'] = weight_decay
+                            
+                            CONFIG['RF_ESTIMATORS'] = random.choice([50, 100, 150])
+                            CONFIG['MLP_HIDDEN_CHANNELS'] = random.choice([32, 64, 128]) 
+                            CONFIG['MLP_HIDDEN_LAYERS'] = random.choice([1, 2, 3]) 
+                            CONFIG['MLP_LEARNING_RATE'] = random.choice([0.01, 0.001, 0.0001]) 
+                            CONFIG['MLP_ALPHA'] = random.choice([5e-3, 5e-4, 5e-5])
+                            
+                            print("    CONFIG values:")
+                            for key, value in CONFIG.items():
+                                print(f"      {key}: {value}")
+
+                            results = model_run(pass_graphs, rush_graphs, config=CONFIG)
+
+                            if results['best_gcn_results']['accuracy'] > best_acc:
+                                best_acc = results['best_gcn_results']['accuracy']
+                                best_config = {
+                                    'hidden_layers': hidden_layers,
+                                    'hidden_channels': hidden_channels,
+                                    'learning_rate': learning_rate,
+                                    'weight_decay': CONFIG['GNN_WEIGHT_DECAY'],
+                                    'dropout': CONFIG['GNN_DROPOUT'],
+                                    'random_seed': random_seed
+                                }
+                                print(f"    New best accuracy: {best_acc} with config: {best_config}")
+
+                            json2csv(results, timestamp, N_CLOSEST_PLAYERS)
+                            save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
+                            save_data_to_json(results, timestamp, N_CLOSEST_PLAYERS)
+                            
+                            end_time = time.time()
+                            duration = end_time - start_time
+                            # print(f"Iteration {i + 1} completed. Logs saved to {output_filename}. Duration: {duration:.2f} seconds")
+
+    cur_path = os.getcwd()
+    out_path = os.path.abspath(os.path.join(cur_path, f'Mestrado/eniac/n{N_CLOSEST_PLAYERS}'))
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+    
+    with open(f'{out_path}/best_config.json', 'w') as json_file:
+        json.dump({
+            'best_acc': best_acc,
+            'best_config': best_config,
+        }, json_file, indent=4)
         
         
         
@@ -526,9 +572,10 @@ def getGraphs(weeks=[1]):
 #     plt.show()
     
 if __name__ == "__main__":
-    for i in range(2, 11):
-        N_CLOSEST_PLAYERS = i
-        print('**********************************************************************************')
-        print(f"**********  Running main with N_CLOSEST_PLAYERS = {N_CLOSEST_PLAYERS}  **********")
-        print('**********************************************************************************')
-        main()
+    main()
+    # for i in range(2, 11):
+    #     N_CLOSEST_PLAYERS = i
+    #     print('**********************************************************************************')
+    #     print(f"**********  Running main with N_CLOSEST_PLAYERS = {N_CLOSEST_PLAYERS}  **********")
+    #     print('**********************************************************************************')
+    #     main()
