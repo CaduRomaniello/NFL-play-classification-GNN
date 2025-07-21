@@ -69,7 +69,7 @@ def main():
         rush_graphs.extend(week_rush_graphs)
         print()
 
-    HIDDEN_LAYERS = [2]
+    HIDDEN_LAYERS = [3]
     HIDDEN_CHANNELS = [16, 32, 64, 128]
     LEARNING_RATES = [0.01, 0.001, 0.0001, 0.00001]
     # WEIGHT_DECAYS = [5e-2, 5e-3, 5e-4, 5e-5]
