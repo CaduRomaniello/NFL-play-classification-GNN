@@ -1,0 +1,11 @@
+{
+    "best_acc": 0.7945990180032734,
+    "best_config": {
+        "hidden_layers": 2,
+        "hidden_channels": 64,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0005,
+        "dropout": 0.2,
+        "random_seed": 1
+    }
+}
