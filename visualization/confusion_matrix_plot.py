@@ -20,7 +20,7 @@ def save_confusion_matrix(data, timestamp, n):
     mlp_matrix = data['mlp_results']['confusion_matrix']
 
     cur_path = os.getcwd()
-    out_path = os.path.abspath(os.path.join(cur_path, f'Mestrado/eniac/n{n}/{timestamp}'))
+    out_path = os.path.abspath(os.path.join(cur_path, f'Mestrado/results/best_config/{timestamp}'))
 
     if not os.path.exists(out_path):
         os.makedirs(out_path)

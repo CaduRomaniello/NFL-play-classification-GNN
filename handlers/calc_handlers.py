@@ -48,7 +48,7 @@ def calc_total_dis(plays: pd.DataFrame) -> pd.DataFrame:
 
     return plays
 
-def calc_distance_between_players(tracking_data: pd.DataFrame, n: int = 2) -> dict:
+def calc_distance_between_players(tracking_data: pd.DataFrame, players: pd.DataFrame, n: int = 2) -> dict:
     print("    Calculating distance between players...")
     
     distances = {}
@@ -69,7 +69,7 @@ def calc_distance_between_players(tracking_data: pd.DataFrame, n: int = 2) -> di
             distances[game_id][play_id]['sorted_distances'] = distances[game_id][play_id]['dist_df'].apply(lambda row: row.sort_values().values.tolist(), axis=1)
             distances[game_id][play_id]['sorted_players'] = distances[game_id][play_id]['dist_df'].apply(lambda row: row.sort_values().index.tolist(), axis=1)
             
-            distances[game_id][play_id]['n_closest_players'] = calc_n_closest_players(distances[game_id][play_id]['sorted_distances'], distances[game_id][play_id]['sorted_players'], n)
+            distances[game_id][play_id]['n_closest_players'] = calc_n_closest_players(distances[game_id][play_id]['sorted_distances'], distances[game_id][play_id]['sorted_players'], n, players)
         
     return distances
 
@@ -79,7 +79,7 @@ def calc_distance_between_players(tracking_data: pd.DataFrame, n: int = 2) -> di
     dist_df = pd.DataFrame(dist_matrix, index=tracking_data['nflId'], columns=tracking_data['nflId'])
     return dist_df
 
-def calc_n_closest_players(sorted_distances: list, sorted_players: list, n: int) -> dict:
+def calc_n_closest_players(sorted_distances: list, sorted_players: list, n: int, players: pd.DataFrame) -> dict:
     all_dist = {}
     for index, value in sorted_distances.items():
         closest_players = []
@@ -88,8 +88,9 @@ def calc_n_closest_players(sorted_distances: list, sorted_players: list, n: int)
                 'nflId': sorted_players.loc[index][i],
                 'distance': value[i]
             })
-            if len(closest_players) == n:
-                break
+            if (players.loc[players['nflId'] == index]['position'].values[0] != 'QB'):
+                if len(closest_players) == n:
+                    break
         all_dist[index] = closest_players
         
     return all_dist
