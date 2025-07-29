@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from datetime import datetime
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import GCNConv, global_mean_pool
+from torch_geometric.nn import GCNConv, global_mean_pool, global_max_pool, global_add_pool
 
 # MLP and RF
 from sklearn.metrics import accuracy_score, classification_report
@@ -90,12 +90,13 @@ class GCN(torch.nn.Module):
     def forward(self, x, edge_index, batch, config):
         # 1. Obtain node embeddings 
         x = self.conv1(x, edge_index)
+        x = x.relu()
         if config['GNN_HIDDEN_LAYERS'] > 1:
-            x = x.relu()
             x = self.conv2(x, edge_index)
-        if config['GNN_HIDDEN_LAYERS'] > 2:
             x = x.relu()
+        if config['GNN_HIDDEN_LAYERS'] > 2:
             x = self.conv3(x, edge_index)
+            x = x.relu()
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
@@ -240,6 +241,8 @@ def test(loader, model, config):
 def model_run(pass_graphs, rush_graphs, config):
     print("    Running model...")
     
+    config['VALIDATION_SPLIT'] = 0.7
+    config['TEST_SPLIT'] = 0.85
     n_graphs = len(pass_graphs)
     validation_split = int(config['VALIDATION_SPLIT'] * n_graphs)
     train_split = int(config['TEST_SPLIT'] * n_graphs)
