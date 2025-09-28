@@ -47,7 +47,7 @@ class DataPreprocessor:
 
         connections_dict = self.strategy.calculate_connections(tracking_data, players)
 
-        self.strategy.draw(connections_dict, 2022091200, 64, tracking_data[(tracking_data['gameId'] == 2022091200) & (tracking_data['playId'] == 64)], ax=None)
+        # self.strategy.draw(connections_dict, 2022091200, 64, tracking_data[(tracking_data['gameId'] == 2022091200) & (tracking_data['playId'] == 64)], ax=None)
 
         return plays, tracking_data, connections_dict
 

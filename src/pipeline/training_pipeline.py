@@ -58,7 +58,7 @@ class TrainingPipeline:
     def _save_results(self, results):
         """Save training results to file"""
         # Create results directory
-        results_dir = self.config.FILES.RESULTS_PATH
+        results_dir = self.config.FILES.RESULTS_PATH + '/' + self.config.EDGE_STRATEGY
         os.makedirs(results_dir, exist_ok=True)
         
         # Create timestamped filename

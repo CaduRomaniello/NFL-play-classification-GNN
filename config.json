@@ -1,24 +1,24 @@
 {
     "FILES": {
-        "WEEKS_TO_READ": [1],
+        "WEEKS_TO_READ": [1, 2, 3, 4, 5, 6, 7, 8, 9],
         "INPUT_PATH": "data/raw",
         "RESULTS_PATH": "output/results",
         "GRAPHS_PATH": "data/graphs"
     },
     "GCN": {
-        "EPOCHS": 20,
+        "EPOCHS": 500,
         "HIDDEN_CHANNELS": 64,
         "HIDDEN_LAYERS": 2,
         "LEARNING_RATE": 0.001,
         "DROPOUT": 0.2,
         "WEIGHT_DECAY": 0.0005,
         "OPTIMIZER": "adamw",
-        "WARMUP_EPOCHS": 5,
-        "EARLY_STOP_PATIENCE": 50,
+        "WARMUP_EPOCHS": 20,
+        "EARLY_STOP_PATIENCE": 75,
         "MIN_DELTA": 0.001
     },
     "RF": {
-        "N_ESTIMATORS": 100
+        "N_ESTIMATORS": 200
     },
     "MLP": {
         "HIDDEN_CHANNELS": 64,
