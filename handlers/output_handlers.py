@@ -135,7 +135,7 @@ def json2csv(data, timestamp, n):
     ]
 
     cur_path = os.getcwd()
-    out_path = os.path.abspath(os.path.join(cur_path, f'Mestrado/results/best_config/{timestamp}'))
+    out_path = os.path.abspath(os.path.join(cur_path, f'results/best_config/{timestamp}'))
 
     if not os.path.exists(out_path):
         os.makedirs(out_path)
@@ -157,7 +157,7 @@ def save_data_to_json(data, timestamp, n):
     """
     # Cria o diretório se não existir
     cur_path = os.getcwd()
-    out_path = os.path.abspath(os.path.join(cur_path, f'Mestrado/results/best_config/{timestamp}'))
+    out_path = os.path.abspath(os.path.join(cur_path, f'results/best_config/{timestamp}'))
 
     if not os.path.exists(out_path):
         os.makedirs(out_path)

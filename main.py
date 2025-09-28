@@ -33,7 +33,7 @@ PLAY_RELEVANT_COLUMNS = ['gameId', 'playId', 'quarter', 'down', 'yardsToGo', 'po
 TRACKING_RELEVANTCOLUMNS = ['nflId', 'club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
 N_CLOSEST_PLAYERS = 2
 RANDOM_SEED = 1
-NUMBER_OF_ITERS = 2
+NUMBER_OF_ITERS = 1
 
 CONFIG = {
     'RANDOM_SEED': 0,
@@ -115,9 +115,9 @@ def main():
             }
             print(f"    New best accuracy: {best_acc} with config: {best_config}")
 
-        json2csv(results, timestamp, N_CLOSEST_PLAYERS)
-        save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
-        save_data_to_json(results, timestamp, N_CLOSEST_PLAYERS)
+        # json2csv(results, timestamp, N_CLOSEST_PLAYERS)
+        # save_confusion_matrix(results, timestamp, N_CLOSEST_PLAYERS)
+        # save_data_to_json(results, timestamp, N_CLOSEST_PLAYERS)
         
         end_time = time.time()
         duration = end_time - start_time

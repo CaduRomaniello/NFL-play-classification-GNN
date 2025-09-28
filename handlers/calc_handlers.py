@@ -69,7 +69,7 @@ def calc_distance_between_players(tracking_data: pd.DataFrame, players: pd.DataF
             distances[game_id][play_id]['sorted_distances'] = distances[game_id][play_id]['dist_df'].apply(lambda row: row.sort_values().values.tolist(), axis=1)
             distances[game_id][play_id]['sorted_players'] = distances[game_id][play_id]['dist_df'].apply(lambda row: row.sort_values().index.tolist(), axis=1)
             
-            distances[game_id][play_id]['n_closest_players'] = calc_n_closest_players(distances[game_id][play_id]['sorted_distances'], distances[game_id][play_id]['sorted_players'], n, players)
+            distances[game_id][play_id]['n_closest_players'] = calc_n_closest_players(distances[game_id][play_id]['sorted_distances'], distances[game_id][play_id]['sorted_players'], n, players, play_group)
         
     return distances
 
@@ -79,18 +79,40 @@ def calc_distance_between_players(tracking_data: pd.DataFrame, players: pd.DataF
     dist_df = pd.DataFrame(dist_matrix, index=tracking_data['nflId'], columns=tracking_data['nflId'])
     return dist_df
 
-def calc_n_closest_players(sorted_distances: list, sorted_players: list, n: int, players: pd.DataFrame) -> dict:
+# def calc_n_closest_players(sorted_distances: list, sorted_players: list, n: int, players: pd.DataFrame) -> dict:
+#     all_dist = {}
+#     for index, value in sorted_distances.items():
+#         closest_players = []
+#         for i in range(1, len(sorted_players.loc[index])):
+#             closest_players.append({
+#                 'nflId': sorted_players.loc[index][i],
+#                 'distance': value[i]
+#             })
+#             if (players.loc[players['nflId'] == index]['position'].values[0] != 'QB'):
+#                 if len(closest_players) == n:
+#                     break
+#         all_dist[index] = closest_players
+        
+#     return all_dist
+
+def calc_n_closest_players(sorted_distances: list, sorted_players: list, n: int, players: pd.DataFrame, tracking_data:pd.DataFrame) -> dict:
     all_dist = {}
     for index, value in sorted_distances.items():
         closest_players = []
         for i in range(1, len(sorted_players.loc[index])):
-            closest_players.append({
-                'nflId': sorted_players.loc[index][i],
-                'distance': value[i]
-            })
             if (players.loc[players['nflId'] == index]['position'].values[0] != 'QB'):
+                closest_players.append({
+                    'nflId': sorted_players.loc[index][i],
+                    'distance': value[i]
+                })
                 if len(closest_players) == n:
                     break
+            else:
+                if tracking_data[tracking_data['nflId'] == index]['club'].values[0] == tracking_data[tracking_data['nflId'] == sorted_players.loc[index][i]]['club'].values[0]:
+                    closest_players.append({
+                        'nflId': sorted_players.loc[index][i],
+                        'distance': value[i]
+                    })
         all_dist[index] = closest_players
         
     return all_dist

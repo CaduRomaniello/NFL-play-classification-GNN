@@ -370,6 +370,10 @@ def model_run(pass_graphs, rush_graphs, config):
     max_train_acc = 0
     max_train_acc_epoch = 0
     best_model_state = None
+
+    gcnStartTime = datetime.now()
+
+    print(f'[{gcnStartTime}] Training GNN model...')
     
     train_losses = []
     val_losses = []
@@ -417,6 +421,9 @@ def model_run(pass_graphs, rush_graphs, config):
             max_val_acc_epoch = epoch
             best_model_state = model.state_dict()
         
+    gcnEndTime = datetime.now()
+    print(f'[{gcnEndTime}] Training finished in {gcnEndTime - gcnStartTime}')
+
     print()
     print('    ====================')   
     print(f"    Min loss: {min_loss:.4f} at epoch {min_loss_epoch}")
@@ -527,6 +534,8 @@ def run_baselines(train_graphs, test_graphs, config):
     X_test_scaled = scaler.transform(X_test)
 
     # Random Forest
+    rfStartTime = datetime.now()
+
     rf = RandomForestClassifier(n_estimators=config['RF_ESTIMATORS'], random_state=config['RANDOM_SEED'])
     rf.fit(X_train, y_train)
     rf_preds = rf.predict(X_test)
@@ -537,7 +546,12 @@ def run_baselines(train_graphs, test_graphs, config):
     rf_results['confusion_matrix'] = confusion_matrix(y_test, rf_preds)
     # save_confusion_matrix(y_test, rf_preds, model_name="RandomForest")
 
+    rfEndTime = datetime.now()
+    print(f'[{rfEndTime}] Training finished in {rfEndTime - rfStartTime}')
+
     # MLP
+    mlpStartTime = datetime.now()
+
     mlp = MLPClassifier(
         hidden_layer_sizes=[config['MLP_HIDDEN_CHANNELS']] * config['MLP_HIDDEN_LAYERS'],  # Estrutura da rede
         max_iter=config['MLP_MAX_ITER'],                                                   # Número máximo de iterações
@@ -553,6 +567,9 @@ def run_baselines(train_graphs, test_graphs, config):
     mlp_results = classification_report(y_test, mlp_preds, target_names=["Rush", "Pass"], output_dict=True)
     mlp_results['confusion_matrix'] = confusion_matrix(y_test, mlp_preds)
     # save_confusion_matrix(y_test, mlp_preds, model_name="MLP")
+
+    mlpEndTime = datetime.now()
+    print(f'[{mlpEndTime}] Training finished in {mlpEndTime - mlpStartTime}')
     
     # if hasattr(mlp, 'loss_curve_'):
     #     plot_loss_curves(mlp.loss_curve_, model_name="MLP")
