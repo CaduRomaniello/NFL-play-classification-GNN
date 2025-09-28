@@ -1,0 +1,234 @@
+{
+    "last_gcn_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.6578382247673586,
+            "f1-score": 0.7936096718480138,
+            "support": 1397.0
+        },
+        "accuracy": 0.6578382247673586,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.3289191123836793,
+            "f1-score": 0.3968048359240069,
+            "support": 1397.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.6578382247673586,
+            "f1-score": 0.7936096718480138,
+            "support": 1397.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                478,
+                919
+            ]
+        ]
+    },
+    "best_gcn_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.6578382247673586,
+            "f1-score": 0.7936096718480138,
+            "support": 1397.0
+        },
+        "accuracy": 0.6578382247673586,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.3289191123836793,
+            "f1-score": 0.3968048359240069,
+            "support": 1397.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.6578382247673586,
+            "f1-score": 0.7936096718480138,
+            "support": 1397.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                478,
+                919
+            ]
+        ]
+    },
+    "rf_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.6342161775232641,
+            "f1-score": 0.7761717038983793,
+            "support": 1397.0
+        },
+        "accuracy": 0.6342161775232641,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.31710808876163205,
+            "f1-score": 0.38808585194918965,
+            "support": 1397.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.6342161775232641,
+            "f1-score": 0.7761717038983793,
+            "support": 1397.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                511,
+                886
+            ]
+        ]
+    },
+    "mlp_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.6607015032211883,
+            "f1-score": 0.7956896551724137,
+            "support": 1397.0
+        },
+        "accuracy": 0.6607015032211883,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.33035075161059413,
+            "f1-score": 0.3978448275862069,
+            "support": 1397.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.6607015032211883,
+            "f1-score": 0.7956896551724137,
+            "support": 1397.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                474,
+                923
+            ]
+        ]
+    },
+    "train_losses": [
+        0.06993973916276966,
+        0.011428029110117734,
+        0.010743084856379979,
+        0.010640968546930082,
+        0.010546021143393893,
+        0.010465408562480544,
+        0.010375083475063048,
+        0.01030949794666228,
+        0.010202789468142672,
+        0.010179734129929124,
+        0.010054070543249291,
+        0.009974056473814956,
+        0.009856183467321587,
+        0.00979904568605237,
+        0.009741104580845664,
+        0.009637048903329119,
+        0.009489074332875394,
+        0.009487645030305004,
+        0.009324333092014492,
+        0.009247338886571524
+    ],
+    "val_losses": [
+        0.012296169249603556,
+        0.01051963263097284,
+        0.00975290809090682,
+        0.01047878523084549,
+        0.009943310115366385,
+        0.00963618026602328,
+        0.009470253180160468,
+        0.008374256881203239,
+        0.00820483123308945,
+        0.009357398121205073,
+        0.008872374134910217,
+        0.008859680628213356,
+        0.007401722580002475,
+        0.010582193145601769,
+        0.00722672408959997,
+        0.01028696920672057,
+        0.01022204511406256,
+        0.006624728761234707,
+        0.007547818300292248,
+        0.009680660264186545
+    ],
+    "config": {
+        "FILES": {
+            "WEEKS_TO_READ": [
+                1
+            ],
+            "INPUT_PATH": "data/raw",
+            "RESULTS_PATH": "output/results",
+            "GRAPHS_PATH": "data/graphs"
+        },
+        "GCN": {
+            "EPOCHS": 20,
+            "HIDDEN_CHANNELS": 64,
+            "HIDDEN_LAYERS": 2,
+            "LEARNING_RATE": 0.001,
+            "DROPOUT": 0.2,
+            "WEIGHT_DECAY": 0.0005,
+            "OPTIMIZER": "adamw",
+            "WARMUP_EPOCHS": 10,
+            "EARLY_STOP_PATIENCE": 50,
+            "MIN_DELTA": 0.001
+        },
+        "RF": {
+            "N_ESTIMATORS": 100
+        },
+        "MLP": {
+            "HIDDEN_CHANNELS": 64,
+            "HIDDEN_LAYERS": 2,
+            "MAX_ITER": 3000,
+            "LEARNING_RATE": 0.01,
+            "ALPHA": 0.0005
+        },
+        "DATASET": {
+            "VALIDATION_SPLIT": 0.7,
+            "TEST_SPLIT": 0.85
+        },
+        "RANDOM_SEED": 1,
+        "SHOW_INFO": true,
+        "EDGE_STRATEGY": "CLOSEST-2",
+        "DOWN_SAMPLE": false
+    }
+}

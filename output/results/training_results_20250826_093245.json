@@ -1,0 +1,243 @@
+{
+    "last_gcn_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.7074391988555079,
+            "f1-score": 0.82865521575199,
+            "support": 1398.0
+        },
+        "accuracy": 0.7074391988555079,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.35371959942775394,
+            "f1-score": 0.414327607875995,
+            "support": 1398.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.7074391988555079,
+            "f1-score": 0.82865521575199,
+            "support": 1398.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                409,
+                989
+            ]
+        ]
+    },
+    "best_gcn_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.7074391988555079,
+            "f1-score": 0.82865521575199,
+            "support": 1398.0
+        },
+        "accuracy": 0.7074391988555079,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.35371959942775394,
+            "f1-score": 0.414327607875995,
+            "support": 1398.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.7074391988555079,
+            "f1-score": 0.82865521575199,
+            "support": 1398.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                409,
+                989
+            ]
+        ]
+    },
+    "rf_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.6781115879828327,
+            "f1-score": 0.8081841432225064,
+            "support": 1398.0
+        },
+        "accuracy": 0.6781115879828327,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.33905579399141633,
+            "f1-score": 0.4040920716112532,
+            "support": 1398.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.6781115879828327,
+            "f1-score": 0.8081841432225064,
+            "support": 1398.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                450,
+                948
+            ]
+        ]
+    },
+    "mlp_results": {
+        "Rush": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 0.0
+        },
+        "Pass": {
+            "precision": 1.0,
+            "recall": 0.6609442060085837,
+            "f1-score": 0.7958656330749354,
+            "support": 1398.0
+        },
+        "accuracy": 0.6609442060085837,
+        "macro avg": {
+            "precision": 0.5,
+            "recall": 0.33047210300429186,
+            "f1-score": 0.3979328165374677,
+            "support": 1398.0
+        },
+        "weighted avg": {
+            "precision": 1.0,
+            "recall": 0.6609442060085837,
+            "f1-score": 0.7958656330749354,
+            "support": 1398.0
+        },
+        "confusion_matrix": [
+            [
+                0,
+                0
+            ],
+            [
+                474,
+                924
+            ]
+        ]
+    },
+    "train_losses": [
+        0.634922975113877,
+        0.268768184762288,
+        0.11729527550901588,
+        0.04830563527379815,
+        0.025033875445923354,
+        0.02255962793328359,
+        0.02213347064902243,
+        0.02186673000070632,
+        0.021672139728820768,
+        0.021566884843018812,
+        0.02150880398073989,
+        0.02128179920010034,
+        0.021314035898293327,
+        0.02111053872415876,
+        0.020692048653063597,
+        0.020705844726637647,
+        0.02044770132248586,
+        0.020228576523526692,
+        0.02036260770777918,
+        0.02015444950165926
+    ],
+    "val_losses": [
+        0.1731629098733861,
+        0.07865970007943826,
+        0.032540129395107226,
+        0.023067116116152163,
+        0.021314033861150085,
+        0.02201572898957854,
+        0.021037408550771484,
+        0.021025579582661543,
+        0.02087721891227347,
+        0.020828913892630096,
+        0.02065903847811801,
+        0.02135906575963435,
+        0.020714828462794398,
+        0.02021070700500518,
+        0.019872715442167465,
+        0.020027382991200524,
+        0.01990099850980309,
+        0.019701957915017422,
+        0.019701793479256807,
+        0.01969783452239751
+    ],
+    "config": {
+        "FILES": {
+            "WEEKS_TO_READ": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ],
+            "INPUT_PATH": "data/raw",
+            "RESULTS_PATH": "output/results",
+            "GRAPHS_PATH": "data/graphs"
+        },
+        "GCN": {
+            "EPOCHS": 20,
+            "HIDDEN_CHANNELS": 64,
+            "HIDDEN_LAYERS": 2,
+            "LEARNING_RATE": 0.001,
+            "DROPOUT": 0.2,
+            "WEIGHT_DECAY": 0.0005,
+            "OPTIMIZER": "adamw",
+            "WARMUP_EPOCHS": 10,
+            "EARLY_STOP_PATIENCE": 50,
+            "MIN_DELTA": 0.001
+        },
+        "RF": {
+            "N_ESTIMATORS": 100
+        },
+        "MLP": {
+            "HIDDEN_CHANNELS": 64,
+            "HIDDEN_LAYERS": 2,
+            "MAX_ITER": 3000,
+            "LEARNING_RATE": 0.01,
+            "ALPHA": 0.0005
+        },
+        "DATASET": {
+            "VALIDATION_SPLIT": 0.7,
+            "TEST_SPLIT": 0.15,
+            "TRAIN_SPLIT": 0.15
+        },
+        "RANDOM_SEED": 1,
+        "SHOW_INFO": true,
+        "EDGE_STRATEGY": "CLOSEST-2",
+        "DOWN_SAMPLE": false
+    }
+}
