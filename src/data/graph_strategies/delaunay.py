@@ -145,7 +145,6 @@ class DelaunayStrategy(GraphStrategy):
                                     if edge_tuple not in edges:
                                         edges.append(edge_tuple)
                         
-                        Logger.info(f"Added QB connections for QB {qb_id} in Delaunay")
                         break  # Found QB, no need to continue
         
         return connections, edges

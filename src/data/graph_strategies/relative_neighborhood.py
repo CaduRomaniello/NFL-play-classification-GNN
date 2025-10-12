@@ -145,7 +145,6 @@ class RNGStrategy(GraphStrategy):
                                 'distance': distance
                             })
                             edges.append((np.where(player_ids == teammate['nflId'])[0][0], np.where(player_ids == qb_id)[0][0]))
-                    # print(f"Added QB connections for QB {qb_id}")
                     break
 
 
