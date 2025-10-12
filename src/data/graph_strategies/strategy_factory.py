@@ -15,7 +15,7 @@ class GraphStrategyFactory:
         Cria uma estratégia de grafo com base no nome da estratégia.
         
         Args:
-            strategy_name: Nome da estratégia (ex: "CLOSEST-2", "DELAUNAY", "GABRIEL", "RNG", "MST")
+            config: Configuração do projeto
             
         Returns:
             Uma instância da estratégia solicitada
@@ -25,12 +25,12 @@ class GraphStrategyFactory:
         if config.EDGE_STRATEGY.startswith("QB-CLOSEST-"):
             return QBClosestNStrategy(config)
         elif config.EDGE_STRATEGY == "DELAUNAY":
-            return DelaunayStrategy()
+            return DelaunayStrategy(config)  # Adicionar config aqui
         elif config.EDGE_STRATEGY == "GABRIEL":
-            return GabrielStrategy()
+            return GabrielStrategy(config)  # Adicionar config aqui
         elif config.EDGE_STRATEGY == "RNG":
-            return RNGStrategy()
+            return RNGStrategy(config)
         elif config.EDGE_STRATEGY == "MST":
-            return MSTStrategy()
+            return MSTStrategy(config)
         else:
             raise ValueError(f"Strategy {config.EDGE_STRATEGY} not supported")

@@ -9,6 +9,9 @@ from src.utils.visualization import createFootballField
 class DelaunayStrategy(GraphStrategy):
     """Estratégia que conecta jogadores usando triangulação de Delaunay."""
     
+    def __init__(self, config):
+        self.config = config
+    
     def calculate_connections(self, tracking_data: pd.DataFrame, players: pd.DataFrame = None) -> dict:
         Logger.info('Calculating connections using Delaunay triangulation...')
         triangulations = {}
@@ -34,18 +37,35 @@ class DelaunayStrategy(GraphStrategy):
                     triangulations[game_id][play_id]['player_ids'] = player_ids
                     triangulations[game_id][play_id]['triangulation'] = tri
                     
+                    # Extract edges from triangulation
+                    delaunay_edges = []
+                    for simplex in tri.simplices:
+                        for i in range(len(simplex)):
+                            for j in range(i+1, len(simplex)):
+                                edge = tuple(sorted([simplex[i], simplex[j]]))
+                                if edge not in delaunay_edges:
+                                    delaunay_edges.append(edge)
+                    
+                    triangulations[game_id][play_id]['edges'] = delaunay_edges
+                    
                     # Calculate the connections for each player
-                    triangulations[game_id][play_id]['connections'] = self._calc_player_connections(
-                        tri, player_ids, points)
+                    triangulations[game_id][play_id]['connections'], triangulations[game_id][play_id]['edges'] = self._calc_player_connections(
+                        tri, player_ids, points, play_group, players, delaunay_edges)
                 
                 except Exception as e:
                     Logger.error(f"Error computing triangulation for game {game_id}, play {play_id}: {e}")
                     triangulations[game_id][play_id]['connections'] = {}
+                    triangulations[game_id][play_id]['edges'] = []
             
         return triangulations
     
-    def _calc_player_connections(self, tri, player_ids, points):
+    def _calc_player_connections(self, tri, player_ids, points, play_group: pd.DataFrame, players: pd.DataFrame, delaunay_edges: list) -> tuple:
+        """
+        Calculate connections between players based on Delaunay triangulation.
+        Returns a dictionary mapping each player to their connected players and the updated edges list.
+        """
         connections = {}
+        edges = list(delaunay_edges)  # Criar uma cópia da lista de arestas
         
         # Create a dictionary to map from point index to player ID
         idx_to_id = {i: player_ids[i] for i in range(len(player_ids))}
@@ -73,7 +93,62 @@ class DelaunayStrategy(GraphStrategy):
                     'distance': distance
                 })
         
-        return connections
+        # Add QB connections if QB_LINK is enabled
+        if hasattr(self.config, 'QB_LINK') and self.config.QB_LINK and players is not None:
+            # Iterate through all rows from play_group to find the QB
+            for index, player in play_group.iterrows():
+                nflId = player['nflId']
+                player_info = players.loc[players['nflId'] == nflId]
+                
+                if not player_info.empty:
+                    position = player_info['position'].values[0]
+                    
+                    if position == 'QB':
+                        qb_id = player['nflId']
+                        qb_idx = np.where(player_ids == qb_id)[0][0]
+                        
+                        # Connect QB to all other players
+                        for index2, teammate in play_group.iterrows():
+                            teammate_id = teammate['nflId']
+                            
+                            if teammate_id != qb_id:
+                                teammate_idx = np.where(player_ids == teammate_id)[0][0]
+                                
+                                # Calculate distance
+                                distance = np.linalg.norm(
+                                    np.array([player['x'], player['y']]) - 
+                                    np.array([teammate['x'], teammate['y']])
+                                )
+                                
+                                # Check if this connection already exists
+                                already_connected = any(
+                                    conn['nflId'] == teammate_id 
+                                    for conn in connections[qb_id]
+                                )
+                                
+                                if not already_connected:
+                                    # Add QB -> Teammate connection
+                                    connections[qb_id].append({
+                                        'nflId': teammate_id,
+                                        'distance': distance
+                                    })
+                                    
+                                    # Add Teammate -> QB connection
+                                    connections[teammate_id].append({
+                                        'nflId': qb_id,
+                                        'distance': distance
+                                    })
+                                    
+                                    # Add edge to the edges list
+                                    edge_tuple = tuple(sorted([qb_idx, teammate_idx]))
+                                    
+                                    if edge_tuple not in edges:
+                                        edges.append(edge_tuple)
+                        
+                        Logger.info(f"Added QB connections for QB {qb_id} in Delaunay")
+                        break  # Found QB, no need to continue
+        
+        return connections, edges
     
     @staticmethod
     def get_strategy_name() -> str:
@@ -102,27 +177,27 @@ class DelaunayStrategy(GraphStrategy):
         
         graph_data = graph_dict[game_id][play_id]
         
-        if 'triangulation' not in graph_data or graph_data['triangulation'] is None:
-            Logger.warning(f"No triangulation data for game {game_id}, play {play_id}")
+        if 'edges' not in graph_data or not graph_data['edges']:
+            Logger.warning(f"No edges in Delaunay for game {game_id}, play {play_id}")
             return
         
-        # Draw each Delaunay triangle
-        for simplex in graph_data['triangulation'].simplices:
-            # Get player IDs for this triangle
-            players = [graph_data['player_ids'][i] for i in simplex]
-            # Get coordinates for each player
-            coords = []
-            for player_id in players:
-                player_data = tracking_data[tracking_data['nflId'] == player_id]
-                if not player_data.empty:
-                    coords.append((player_data['x'].values[0], player_data['y'].values[0]))
+        # Draw each Delaunay edge
+        for edge in graph_data['edges']:
+            p1_idx, p2_idx = edge
+            p1_id = graph_data['player_ids'][p1_idx]
+            p2_id = graph_data['player_ids'][p2_idx]
             
-            # Draw the triangle if we have all coordinates
-            if len(coords) == 3:
-                ax.plot([coords[0][0], coords[1][0], coords[2][0], coords[0][0]], 
-                        [coords[0][1], coords[1][1], coords[2][1], coords[0][1]], 
-                        'k-', alpha=1.0, linewidth=1.5, zorder=50)
+            # Get player coordinates
+            p1_data = tracking_data[tracking_data['nflId'] == p1_id]
+            p2_data = tracking_data[tracking_data['nflId'] == p2_id]
+            
+            if not p1_data.empty and not p2_data.empty:
+                x1, y1 = p1_data['x'].values[0], p1_data['y'].values[0]
+                x2, y2 = p2_data['x'].values[0], p2_data['y'].values[0]
                 
+                # Draw the edge
+                ax.plot([x1, x2], [y1, y2], 'k-', alpha=1.0, linewidth=1.5, zorder=50)
+
         # Gerar cores para cada time automaticamente
         distinct_colors = [
             '#e6194B',  # Vermelho

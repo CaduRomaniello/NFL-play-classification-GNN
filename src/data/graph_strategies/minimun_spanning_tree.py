@@ -12,6 +12,9 @@ class MSTStrategy(GraphStrategy):
     sem formar ciclos. Utiliza o algoritmo de Kruskal.
     """
     
+    def __init__(self, config):
+        self.config = config
+    
     def calculate_connections(self, tracking_data: pd.DataFrame, players: pd.DataFrame = None) -> dict:
         Logger.info('Calculating connections using Minimum Spanning Tree...')
         mst_graphs = {}
@@ -56,8 +59,8 @@ class MSTStrategy(GraphStrategy):
                     mst_graphs[game_id][play_id]['edges'] = mst_edges
                     
                     # Calculate the connections for each player
-                    mst_graphs[game_id][play_id]['connections'] = self._calc_player_connections(
-                        mst_edges, player_ids, points)
+                    mst_graphs[game_id][play_id]['connections'], mst_graphs[game_id][play_id]['edges'] = self._calc_player_connections(
+                        mst_edges, player_ids, points, play_group, players)
                     
                 except Exception as e:
                     Logger.error(f"Error computing MST for game {game_id}, play {play_id}: {e}")
@@ -76,12 +79,13 @@ class MSTStrategy(GraphStrategy):
         """Union operation for Union-Find data structure."""
         parent[self._find(parent, i)] = self._find(parent, j)
     
-    def _calc_player_connections(self, mst_edges: list, player_ids: np.ndarray, points: np.ndarray) -> dict:
+    def _calc_player_connections(self, mst_edges: list, player_ids: np.ndarray, points: np.ndarray, play_group: pd.DataFrame, players: pd.DataFrame) -> tuple:
         """
         Calculate connections between players based on Minimum Spanning Tree.
-        Returns a dictionary mapping each player to their connected players.
+        Returns a dictionary mapping each player to their connected players and the updated edges list.
         """
         connections = {}
+        edges = list(mst_edges)  # Criar uma cópia da lista de arestas
         
         # Initialize empty lists for each player
         for i, player_id in enumerate(player_ids):
@@ -107,7 +111,63 @@ class MSTStrategy(GraphStrategy):
                 'distance': distance
             })
         
-        return connections
+        # Add QB connections if QB_LINK is enabled
+        if hasattr(self.config, 'QB_LINK') and self.config.QB_LINK and players is not None:
+            # Iterate through all rows from play_group to find the QB
+            for index, player in play_group.iterrows():
+                nflId = player['nflId']
+                player_info = players.loc[players['nflId'] == nflId]
+                
+                if not player_info.empty:
+                    position = player_info['position'].values[0]
+                    
+                    if position == 'QB':
+                        qb_id = player['nflId']
+                        qb_idx = np.where(player_ids == qb_id)[0][0]
+                        
+                        # Connect QB to all other players
+                        for index2, teammate in play_group.iterrows():
+                            teammate_id = teammate['nflId']
+                            
+                            if teammate_id != qb_id:
+                                teammate_idx = np.where(player_ids == teammate_id)[0][0]
+                                
+                                # Calculate distance
+                                distance = np.linalg.norm(
+                                    np.array([player['x'], player['y']]) - 
+                                    np.array([teammate['x'], teammate['y']])
+                                )
+                                
+                                # Check if this connection already exists
+                                already_connected = any(
+                                    conn['nflId'] == teammate_id 
+                                    for conn in connections[qb_id]
+                                )
+                                
+                                if not already_connected:
+                                    # Add QB -> Teammate connection
+                                    connections[qb_id].append({
+                                        'nflId': teammate_id,
+                                        'distance': distance
+                                    })
+                                    
+                                    # Add Teammate -> QB connection
+                                    connections[teammate_id].append({
+                                        'nflId': qb_id,
+                                        'distance': distance
+                                    })
+                                    
+                                    # Add edge to the edges list (both directions for completeness)
+                                    edge_tuple = (qb_idx, teammate_idx)
+                                    reverse_edge = (teammate_idx, qb_idx)
+                                    
+                                    if edge_tuple not in edges and reverse_edge not in edges:
+                                        edges.append(edge_tuple)
+                        
+                        Logger.info(f"Added QB connections for QB {qb_id} in MST")
+                        break  # Found QB, no need to continue
+        
+        return connections, edges
     
     @staticmethod
     def get_strategy_name() -> str:

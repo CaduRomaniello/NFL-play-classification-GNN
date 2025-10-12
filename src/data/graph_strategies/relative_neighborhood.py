@@ -12,7 +12,10 @@ class RNGStrategy(GraphStrategy):
     O RNG é um subgrafo do Gabriel Graph onde uma aresta existe se não houver outro ponto
     que esteja mais próximo de ambos os extremos do que eles estão um do outro.
     """
-    
+
+    def __init__(self, config):
+        self.config = config
+
     def calculate_connections(self, tracking_data: pd.DataFrame, players: pd.DataFrame = None) -> dict:
         Logger.info('Calculating connections using Relative Neighborhood Graph...')
         rng_graphs = {}
@@ -51,8 +54,8 @@ class RNGStrategy(GraphStrategy):
                     rng_graphs[game_id][play_id]['edges'] = rng_edges
                     
                     # Calculate the connections for each player
-                    rng_graphs[game_id][play_id]['connections'] = self._calc_player_connections(
-                        rng_edges, player_ids, points)
+                    rng_graphs[game_id][play_id]['connections'], rng_graphs[game_id][play_id]['edges'] = self._calc_player_connections(
+                        rng_edges, player_ids, points, play_group, players)
                     
                 except Exception as e:
                     Logger.error(f"Error computing RNG for game {game_id}, play {play_id}: {e}")
@@ -87,13 +90,14 @@ class RNGStrategy(GraphStrategy):
         
         # If we get here, no points violated the RNG condition
         return True
-    
-    def _calc_player_connections(self, rng_edges: list, player_ids: np.ndarray, points: np.ndarray) -> dict:
+
+    def _calc_player_connections(self, rng_edges: list, player_ids: np.ndarray, points: np.ndarray, play_group: pd.DataFrame, players: pd.DataFrame) -> dict:
         """
         Calculate connections between players based on RNG.
         Returns a dictionary mapping each player to their connected players.
         """
         connections = {}
+        edges = rng_edges
         
         # Initialize empty lists for each player
         for i, player_id in enumerate(player_ids):
@@ -118,8 +122,34 @@ class RNGStrategy(GraphStrategy):
                 'nflId': p1_id,
                 'distance': distance
             })
-        
-        return connections
+
+        if self.config.QB_LINK:
+            #iterate through all rows from play_group
+            for index, player in play_group.iterrows():
+                # look for the value of column position
+                nflId = player['nflId']
+                position = players.loc[players['nflId'] == nflId]['position'].values[0]
+                if position == 'QB':
+                    qb_id = player['nflId']
+                    for index2, teammate in play_group.iterrows():
+                        if teammate['nflId'] != qb_id:
+                            distance = np.linalg.norm(np.array([player['x'], player['y']]) - np.array([teammate['x'], teammate['y']]))
+                            connections[qb_id].append({
+                                'nflId': teammate['nflId'],
+                                'distance': distance
+                            })
+                            # now i need to add this connection to the edges to
+                            edges.append((np.where(player_ids == qb_id)[0][0], np.where(player_ids == teammate['nflId'])[0][0]))
+                            connections[teammate['nflId']].append({
+                                'nflId': qb_id,
+                                'distance': distance
+                            })
+                            edges.append((np.where(player_ids == teammate['nflId'])[0][0], np.where(player_ids == qb_id)[0][0]))
+                    # print(f"Added QB connections for QB {qb_id}")
+                    break
+
+
+        return connections, edges
     
     @staticmethod
     def get_strategy_name() -> str:
