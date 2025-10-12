@@ -4,16 +4,16 @@ from src.pipeline.data_pipeline import DataPipeline
 from src.pipeline.training_pipeline import TrainingPipeline
 from src.utils.logger import Logger
 
+# EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
 EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
-# EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-"]
 DOWNSAMPLE_FACTORS = [True, False]
 
 def main(config):
     for strategy in EDGE_STRATEGIES:
-        for i in range(1, 11):
+        for i in range(6, 11):
             for downsample in DOWNSAMPLE_FACTORS:
                 config.EDGE_STRATEGY = strategy
-                config.DOWNSAMPLE = downsample
+                config.DOWN_SAMPLE = downsample
                 config.RANDOM_SEED = i
 
                 # Reading data and creating graphs
