@@ -448,6 +448,7 @@
         "EDGE_STRATEGY": "MST",
         "DOWN_SAMPLE": false,
         "FORCE_REBUILD": true,
-        "N": 2
+        "N": 2,
+        "QB_LINK": false
     }
 }

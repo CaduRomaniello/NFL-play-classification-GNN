@@ -238,6 +238,7 @@
         "RANDOM_SEED": 1,
         "SHOW_INFO": true,
         "EDGE_STRATEGY": "CLOSEST-2",
-        "DOWN_SAMPLE": false
+        "DOWN_SAMPLE": false,
+        "QB_LINK": false
     }
 }

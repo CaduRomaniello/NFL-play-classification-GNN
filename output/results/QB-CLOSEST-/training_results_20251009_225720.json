@@ -544,6 +544,7 @@
         "EDGE_STRATEGY": "QB-CLOSEST-",
         "DOWN_SAMPLE": true,
         "FORCE_REBUILD": true,
-        "N": 2
+        "N": 2,
+        "QB_LINK": false
     }
 }
