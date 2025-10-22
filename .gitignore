@@ -5,3 +5,4 @@ distances/*
 
 !distances/distances.csv
 venv
+data/*
