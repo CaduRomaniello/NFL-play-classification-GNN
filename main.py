@@ -4,8 +4,8 @@ from src.pipeline.data_pipeline import DataPipeline
 from src.pipeline.training_pipeline import TrainingPipeline
 from src.utils.logger import Logger
 
-EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
-# EDGE_STRATEGIES = ["DELAUNAY"]
+# EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
+EDGE_STRATEGIES = ["MST", 'RNG']
 DOWNSAMPLE_FACTORS = [True, False]
 
 def main(config):
