@@ -6,5 +6,4 @@ distances/*
 !distances/distances.csv
 venv
 
-data/raw/*
-data/processed/*
+data/*
