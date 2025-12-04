@@ -99,7 +99,7 @@ def compare_graph_strategies(game_id=2022091200, play_id=64, save_path=None):
     games, player_play, players, plays = data_loader.load_auxiliar_nfl_files()
     
     # Carregar apenas a semana que contém o jogo desejado
-    week_to_load = 1  # Ajustar conforme necessário
+    week_to_load = 1
     tracking_data = data_loader.load_week_data(week_to_load)
     
     # Pré-processamento básico necessário
@@ -120,18 +120,35 @@ def compare_graph_strategies(game_id=2022091200, play_id=64, save_path=None):
         print(f"Nenhum dado encontrado para jogo {game_id}, jogada {play_id}")
         return
     
+    # Calculate zoom limits based on player positions
+    player_data = play_tracking_data[play_tracking_data['displayName'] != 'football']
+    if not player_data.empty:
+        x_coords = player_data['x'].values
+        y_coords = player_data['y'].values
+        
+        margin_x = 5
+        margin_y = 3
+        
+        zoom_x_min = max(0, np.min(x_coords) - margin_x)
+        zoom_x_max = min(120, np.max(x_coords) + margin_x)
+        zoom_y_min = max(0, np.min(y_coords) - margin_y)
+        zoom_y_max = min(53.3, np.max(y_coords) + margin_y)
+    else:
+        zoom_x_min, zoom_x_max = 0, 120
+        zoom_y_min, zoom_y_max = 0, 53.3
+    
     # Criar figura para comparação
     fig = plt.figure(figsize=(20, 15))
     gs = GridSpec(2, 3, figure=fig)
     
     # Inicializar estratégias
     strategies = [
-        (DelaunayStrategy(), "Triangulação de Delaunay", gs[0, 0]),
-        (GabrielStrategy(), "Gabriel Graph", gs[0, 1]),
-        (RNGStrategy(), "Relative Neighborhood Graph", gs[0, 2]),
-        (MSTStrategy(), "Minimum Spanning Tree", gs[1, 0]),
-        (ClosestNStrategy(config), f"Closest-{config.N}", gs[1, 1]),
-        (QBClosestNStrategy(config), f"QB-Closest-{config.N}", gs[1, 2])
+        (DelaunayStrategy(config=config), "Triangulação de Delaunay", gs[0, 0]),
+        (GabrielStrategy(config=config), "Gabriel Graph", gs[0, 1]),
+        (RNGStrategy(config=config), "Relative Neighborhood Graph", gs[0, 2]),
+        (MSTStrategy(config=config), "Minimum Spanning Tree", gs[1, 0]),
+        (ClosestNStrategy(config=config), f"Closest-{config.N}", gs[1, 1]),
+        (QBClosestNStrategy(config=config), f"QB-Closest-{config.N}", gs[1, 2])
     ]
     
     # Suprimir exibição plt.show() nas funções draw
@@ -142,36 +159,36 @@ def compare_graph_strategies(game_id=2022091200, play_id=64, save_path=None):
     for strategy, title, position in strategies:
         print(f"Calculando e desenhando {title}...")
         
-        # Criar campo de futebol para esta estratégia
-        football_fig, ax = createFootballField()
-        plt.close(football_fig)  # Fechar figura isolada
-        
         # Calcular conexões
         connections = strategy.calculate_connections(play_tracking_data, players)
         
         # Criar subplot
         ax = fig.add_subplot(position)
         
-        # Recriar campo de futebol no subplot
-        draw_football_field(ax)
-        
         # Modificar temporariamente a função show para não exibir a figura
         original_show = plt.show
         plt.show = lambda: None
         
-        # Desenhar estratégia
+        # Desenhar estratégia (ela já desenha o campo)
         strategy.draw(connections, game_id, play_id, play_tracking_data, ax=ax)
         
         # Restaurar função show
         plt.show = original_show
         
+        # APLICAR ZOOM APENAS NESTE SUBPLOT
+        ax.set_xlim(zoom_x_min, zoom_x_max)
+        ax.set_ylim(zoom_y_min, zoom_y_max)
+        
+        ax.set_xticks([])
+        ax.set_yticks([])
+        
         # Adicionar título
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        ax.set_title(title, fontsize=22, fontweight='bold')
         axes.append(ax)
     
     # Ajustar layout e adicionar título principal
     fig.suptitle(f"Comparação de Estratégias de Grafo - Jogo {game_id}, Jogada {play_id}", 
-                fontsize=20, fontweight='bold', y=0.98)
+                fontsize=22, fontweight='bold', y=0.98)
     fig.tight_layout(rect=[0, 0, 1, 0.96])
     
     # Salvar ou mostrar
@@ -255,11 +272,11 @@ def patch_createFootballField():
                     numb = 120 - x
                 ax.text(x, 5, str(numb - 10),
                         horizontalalignment='center',
-                        fontsize=20,
+                        fontsize=22,
                         color='white')
                 ax.text(x - 0.95, 53.3 - 5, str(numb - 10),
                         horizontalalignment='center',
-                        fontsize=20,
+                        fontsize=22,
                         color='white', rotation=180)
         
         # checking the size of image to plot hash marks for each yd line

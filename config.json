@@ -38,5 +38,5 @@
     "DOWN_SAMPLE": false,
     "FORCE_REBUILD": true,
     "N": 2,
-    "QB_LINK": true
+    "QB_LINK": false
 }

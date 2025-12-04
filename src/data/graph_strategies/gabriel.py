@@ -277,7 +277,7 @@ class GabrielStrategy(GraphStrategy):
                 ax.scatter(x, y, color=colors['football'], marker='o', s=100, zorder=100)
                 continue
                 
-            ax.scatter(x, y, color=colors.get(player['club'], 'black'), zorder=100)
+            ax.scatter(x, y, color=colors.get(player['club'], 'black'), s=200, zorder=100)
             
             # Adicionar rótulo com o número do jogador ou posição (opcional)
             # ax.text(x, y, f"{player['jerseyNumber']}", fontsize=8, ha='center', va='center', color='white')
