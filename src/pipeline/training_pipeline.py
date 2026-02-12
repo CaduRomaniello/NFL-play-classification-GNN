@@ -37,7 +37,7 @@ class TrainingPipeline:
         }
         
         # Save results
-        self._save_results(all_results)
+        # self._save_results(all_results)
         
         Logger.info('Training pipeline completed!')
         

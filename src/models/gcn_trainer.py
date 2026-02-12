@@ -16,6 +16,18 @@ class GNNTrainer:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         Logger.info(f'Using device: {self.device}')
 
+    def set_seed(self, seed: int):
+        """Set all random seeds for reproducibility"""
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        
+        # For cuDNN (GPU) - makes it deterministic but slower
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
     def convert_nx_to_pytorch_geometric(self, graphs, include_labels=True):
         """Convert NetworkX graphs to PyTorch Geometric format"""
         Logger.info(" Converting graphs to PyTorch Geometric format...")
@@ -279,6 +291,7 @@ class GNNTrainer:
 
     def train_model(self, pass_graphs, rush_graphs):
         """Main training method"""
+        self.set_seed(self.config.RANDOM_SEED)
         Logger.info("Running GNN model...")
         # Verificar se os dados de entrada estão balanceados
         if len(pass_graphs) != len(rush_graphs):

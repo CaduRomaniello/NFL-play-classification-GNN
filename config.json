@@ -14,7 +14,7 @@
         "WEIGHT_DECAY": 0.0005,
         "OPTIMIZER": "adamw",
         "WARMUP_EPOCHS": 20,
-        "EARLY_STOP_PATIENCE": 75,
+        "EARLY_STOP_PATIENCE": 20,
         "MIN_DELTA": 0.001
     },
     "RF": {
@@ -35,8 +35,8 @@
     "RANDOM_SEED": 1,
     "SHOW_INFO": true,
     "EDGE_STRATEGY": "RNG",
-    "DOWN_SAMPLE": false,
     "FORCE_REBUILD": true,
     "N": 2,
+    "DOWN_SAMPLE": false,
     "QB_LINK": false
 }
