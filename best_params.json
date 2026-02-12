@@ -1,0 +1,50 @@
+{
+    "DELAUNAY": {
+        "best_accuracy": 0.6970613656006914,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "warmup_epochs": 5
+        }
+    },
+    "CLOSEST-": {
+        "best_accuracy": 0.6996542783059637,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "warmup_epochs": 19
+        }
+    },
+    "QB-CLOSEST-": {
+        "best_accuracy": 0.698789974070873,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "warmup_epochs": 26
+        }
+    },
+    "GABRIEL": {
+        "best_accuracy": 0.698789974070873,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "warmup_epochs": 18
+        }
+    },
+    "RNG": {
+        "best_accuracy": 0.6953327571305099,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "warmup_epochs": 7
+        }
+    },
+    "MST": {
+        "best_accuracy": 0.7074330164217805,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "warmup_epochs": 28
+        }
+    }
+}
