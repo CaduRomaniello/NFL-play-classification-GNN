@@ -1,3 +1,6 @@
+Here i ran the optmizationn for each strategy, fixed the seed and i also included some other parameters as dowm sample and qb link. I used a fixed patience of 50 but i only reached 0.73% of accurracy. I'm going to run more experiments and see if i can reach the old results of 0.78%. I need to find why this value is not reacheable anymore
+
+CNFIG FILE:
 {
     "FILES": {
         "WEEKS_TO_READ": [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -14,7 +17,7 @@
         "WEIGHT_DECAY": 0.0001,
         "OPTIMIZER": "adamw",
         "WARMUP_EPOCHS": 20,
-        "EARLY_STOP_PATIENCE": 75,
+        "EARLY_STOP_PATIENCE": 50,
         "MIN_DELTA": 0.001
     },
     "RF": {

@@ -1,0 +1,1 @@
+This one was the first execution running for each strategy but it wasn't running with fixed seeds and i looked for parameters that didn't matter
