@@ -11,9 +11,9 @@ from src.utils.logger import Logger
 
 
 EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
-N_TRIALS = 200
-N_JOBS_PER_STUDY = 2  # parallel trials within each strategy
-MAX_STRATEGY_WORKERS = 3  # how many strategies to run in parallel
+N_TRIALS = 100
+N_JOBS_PER_STUDY = 5  # parallel trials within each strategy
+MAX_STRATEGY_WORKERS = 2  # how many strategies to run in parallel
 
 
 def create_config_from_trial(base_config, trial, edge_strategy):
@@ -22,12 +22,12 @@ def create_config_from_trial(base_config, trial, edge_strategy):
     config.EDGE_STRATEGY = edge_strategy
 
     # Suggest GCN hyperparameters
-    config.GCN.HIDDEN_CHANNELS = trial.suggest_categorical("hidden_channels", [128, 256])
-    config.GCN.HIDDEN_LAYERS = trial.suggest_int("hidden_layers", 1, 2)
-    config.GCN.LEARNING_RATE = trial.suggest_float("learning_rate", 1e-3, 1e-1, log=True)
+    # config.GCN.HIDDEN_CHANNELS = trial.suggest_categorical("hidden_channels", [128, 256])
+    # config.GCN.HIDDEN_LAYERS = trial.suggest_int("hidden_layers", 1, 2)
+    # config.GCN.LEARNING_RATE = trial.suggest_float("learning_rate", 1e-3, 1e-1, log=True)
     # config.GCN.DROPOUT = trial.suggest_float("dropout", 0.1, 0.5)
     # config.GCN.WEIGHT_DECAY = trial.suggest_float("weight_decay", 1e-6, 1e-3, log=True)
-    config.GCN.WARMUP_EPOCHS = trial.suggest_categorical("warmup_epochs", [10, 20, 30])
+    # config.GCN.WARMUP_EPOCHS = trial.suggest_categorical("warmup_epochs", [10, 20, 30])
     config.DOWN_SAMPLE = trial.suggest_categorical("down_sample", [True, False])
     config.QB_LINK = trial.suggest_categorical("qb_link", [True, False])
 

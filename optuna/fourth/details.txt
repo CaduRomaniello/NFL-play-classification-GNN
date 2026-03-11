@@ -1,0 +1,1 @@
+in this one i set the values for all parameters except qb link and down sample with that i found the best results until now

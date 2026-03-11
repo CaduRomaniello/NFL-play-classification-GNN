@@ -7,14 +7,14 @@
     },
     "GCN": {
         "EPOCHS": 500,
-        "HIDDEN_CHANNELS": 64,
-        "HIDDEN_LAYERS": 2,
-        "LEARNING_RATE": 0.0001,
-        "DROPOUT": 0.35,
-        "WEIGHT_DECAY": 0.0001,
+        "HIDDEN_CHANNELS": 256,
+        "HIDDEN_LAYERS": 1,
+        "LEARNING_RATE": 0.001,
+        "DROPOUT": 0.2,
+        "WEIGHT_DECAY": 0.0005,
         "OPTIMIZER": "adamw",
         "WARMUP_EPOCHS": 20,
-        "EARLY_STOP_PATIENCE": 75,
+        "EARLY_STOP_PATIENCE": 100,
         "MIN_DELTA": 0.001
     },
     "RF": {

@@ -1,0 +1,44 @@
+{
+    "QB-CLOSEST-": {
+        "best_accuracy": 0.7625545851528385,
+        "best_params": {
+            "down_sample": true,
+            "qb_link": true
+        }
+    },
+    "CLOSEST-": {
+        "best_accuracy": 0.7627484874675886,
+        "best_params": {
+            "down_sample": false,
+            "qb_link": false
+        }
+    },
+    "DELAUNAY": {
+        "best_accuracy": 0.7554019014693172,
+        "best_params": {
+            "down_sample": false,
+            "qb_link": true
+        }
+    },
+    "GABRIEL": {
+        "best_accuracy": 0.7663755458515283,
+        "best_params": {
+            "down_sample": true,
+            "qb_link": false
+        }
+    },
+    "RNG": {
+        "best_accuracy": 0.7657735522904062,
+        "best_params": {
+            "down_sample": false,
+            "qb_link": false
+        }
+    },
+    "MST": {
+        "best_accuracy": 0.7623163353500432,
+        "best_params": {
+            "down_sample": false,
+            "qb_link": false
+        }
+    }
+}

@@ -1,0 +1,68 @@
+{
+    "QB-CLOSEST-": {
+        "best_accuracy": 0.722990492653414,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "learning_rate": 0.0012178047310792306,
+            "warmup_epochs": 10,
+            "down_sample": false,
+            "qb_link": true
+        }
+    },
+    "DELAUNAY": {
+        "best_accuracy": 0.7329299913569577,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "learning_rate": 0.0013785409573848684,
+            "warmup_epochs": 30,
+            "down_sample": false,
+            "qb_link": true
+        }
+    },
+    "CLOSEST-": {
+        "best_accuracy": 0.743733794295592,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "learning_rate": 0.0010008486731608566,
+            "warmup_epochs": 20,
+            "down_sample": false,
+            "qb_link": false
+        }
+    },
+    "GABRIEL": {
+        "best_accuracy": 0.743733794295592,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "learning_rate": 0.0010023163689747085,
+            "warmup_epochs": 30,
+            "down_sample": false,
+            "qb_link": false
+        }
+    },
+    "MST": {
+        "best_accuracy": 0.7294727744165946,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "learning_rate": 0.0011996294583876761,
+            "warmup_epochs": 30,
+            "down_sample": false,
+            "qb_link": false
+        }
+    },
+    "RNG": {
+        "best_accuracy": 0.7359550561797753,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "learning_rate": 0.0010017595623373905,
+            "warmup_epochs": 30,
+            "down_sample": false,
+            "qb_link": true
+        }
+    }
+}

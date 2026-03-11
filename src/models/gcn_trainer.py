@@ -151,6 +151,10 @@ class GNNTrainer:
         
         # ===== DIVISÃO CORRETA: DIVIDIR CADA CLASSE SEPARADAMENTE =====
         
+        # Shuffle each class before splitting
+        random.shuffle(pass_graphs)
+        random.shuffle(rush_graphs)
+        
         # Para PASS graphs
         pass_train_end = int(train_split * n_pass)
         pass_val_end = pass_train_end + int(val_split * n_pass)
@@ -177,9 +181,9 @@ class GNNTrainer:
         test_graphs = pass_test + rush_test
         
         # Embaralhar
-        random.shuffle(train_graphs)
-        random.shuffle(validation_graphs) 
-        random.shuffle(test_graphs)
+        # random.shuffle(train_graphs)
+        # random.shuffle(validation_graphs) 
+        # random.shuffle(test_graphs)
         
         Logger.info(f"🔍 Final - Train: {len(train_graphs)}, Val: {len(validation_graphs)}, Test: {len(test_graphs)}")
         
@@ -317,6 +321,9 @@ class GNNTrainer:
         # Initialize model
         model = GCN(train_dataset[0].num_node_features, self.config).to(self.device)
         Logger.info(f'Model parameters: {model.get_num_parameters():,}')
+        
+        # Log config
+        Logger.info(f"Config: {self.config}")
         
         # Initialize optimizer (AdamW)
         if self.config.GCN.OPTIMIZER.lower() == "adamw":
