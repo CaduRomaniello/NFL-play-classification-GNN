@@ -1,0 +1,1 @@
+This one tried to insert the edge data inside the model because apparently the edge data was not being forwarded
