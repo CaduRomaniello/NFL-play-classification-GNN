@@ -1,0 +1,55 @@
+{
+    "FILES": {
+        "WEEKS_TO_READ": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+        ],
+        "INPUT_PATH": "data/raw",
+        "RESULTS_PATH": "output/results",
+        "GRAPHS_PATH": "data/graphs"
+    },
+    "GCN": {
+        "EPOCHS": 500,
+        "HIDDEN_CHANNELS": 256,
+        "HIDDEN_LAYERS": 1,
+        "LEARNING_RATE": 0.0010008486731608566,
+        "DROPOUT": 0.2,
+        "WEIGHT_DECAY": 0.0005,
+        "OPTIMIZER": "adamw",
+        "WARMUP_EPOCHS": 20,
+        "EARLY_STOP_PATIENCE": 100,
+        "MIN_DELTA": 0.001,
+        "DOWN_SAMPLE": false,
+        "QB_LINK": false,
+        "EDGE_STRATEGY": "CLOSEST-"
+    },
+    "RF": {
+        "N_ESTIMATORS": 200
+    },
+    "MLP": {
+        "HIDDEN_CHANNELS": 64,
+        "HIDDEN_LAYERS": 2,
+        "MAX_ITER": 3000,
+        "LEARNING_RATE": 0.01,
+        "ALPHA": 0.0005
+    },
+    "DATASET": {
+        "VALIDATION_SPLIT": 0.7,
+        "TEST_SPLIT": 0.15,
+        "TRAIN_SPLIT": 0.15
+    },
+    "RANDOM_SEED": 1,
+    "SHOW_INFO": true,
+    "EDGE_STRATEGY": "RNG",
+    "FORCE_REBUILD": true,
+    "N": 2,
+    "DOWN_SAMPLE": false,
+    "QB_LINK": false
+}
