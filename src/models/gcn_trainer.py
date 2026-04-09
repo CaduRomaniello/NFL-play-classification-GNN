@@ -244,7 +244,10 @@ class GNNTrainer:
             total_samples += batch_size
             
             optimizer.zero_grad()  # Clear gradients
-            out = model(data.x, data.edge_index, data.batch)  # Forward pass
+            
+            out = model(data.x, data.edge_index, data.batch) # WITHOUT EDGE DATA
+            # out = model(data.x, data.edge_index, data.batch, data.edge_attr)  # WITH EDGE DATA
+            
             loss = criterion(out, data.y)  # Compute loss
             loss.backward()  # Backward pass
             
@@ -254,7 +257,8 @@ class GNNTrainer:
             optimizer.step()  # Update parameters
             total_loss += loss.item()
         
-        return total_loss / total_samples if total_samples > 0 else 0
+        # return total_loss / total_samples if total_samples > 0 else 0
+        return total_loss / len(loader)
 
     def evaluate(self, loader, model):
         """Evaluate model"""
@@ -267,7 +271,10 @@ class GNNTrainer:
         with torch.no_grad():
             for data in loader:
                 data = data.to(self.device)  # Move data to device
-                out = model(data.x, data.edge_index, data.batch)  
+                
+                out = model(data.x, data.edge_index, data.batch) # WITHOUT EDGE DATA    
+                # out = model(data.x, data.edge_index, data.batch, data.edge_attr)  # WITH EDGE DATA
+                
                 pred = out.argmax(dim=1)  # Use the class with highest probability.
                 all_preds.extend(pred.cpu().numpy())  # Store predictions
                 all_labels.extend(data.y.cpu().numpy())  # Store true labels
@@ -287,11 +294,15 @@ class GNNTrainer:
                 data = data.to(self.device)  # Move data to device
                 batch_size = data.y.size(0)
                 val_samples += batch_size
-                out = model(data.x, data.edge_index, data.batch)
+                
+                out = model(data.x, data.edge_index, data.batch) # WITHOUT EDGE DATA
+                # out = model(data.x, data.edge_index, data.batch, data.edge_attr) # WITH EDGE DATA
+                
                 loss = criterion(out, data.y)
                 val_loss += loss.item()
 
-        return val_loss / val_samples if val_samples > 0 else 0
+        # return val_loss / val_samples if val_samples > 0 else 0
+        return val_loss / len(validation_loader)
 
     def train_model(self, pass_graphs, rush_graphs):
         """Main training method"""

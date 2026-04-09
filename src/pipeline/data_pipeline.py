@@ -58,6 +58,7 @@ class DataPipeline:
         return self.pass_graphs, self.rush_graphs
     
     def _graphs_exist(self) -> bool:
+        return False
         """Verifica se os grafos já foram processados e salvos"""
         if self.config.DOWN_SAMPLE:
             pass_file = os.path.join(self.graphs_path, "dowmSampled/pass_graphs.pkl")
@@ -71,25 +72,25 @@ class DataPipeline:
     def _save_graphs(self, pass_graphs: list, rush_graphs: list):
         """Salva os grafos em arquivos pickle"""
         # Criar diretório se não existir
-        os.makedirs(self.graphs_path, exist_ok=True)
+        # os.makedirs(self.graphs_path, exist_ok=True)
 
-        if self.config.DOWN_SAMPLE:
-            pass_file = os.path.join(self.graphs_path, "dowmSampled/pass_graphs.pkl")
-            rush_file = os.path.join(self.graphs_path, "dowmSampled/rush_graphs.pkl")
-        else:
-            pass_file = os.path.join(self.graphs_path, "original/pass_graphs.pkl")
-            rush_file = os.path.join(self.graphs_path, "original/rush_graphs.pkl")
+        # if self.config.DOWN_SAMPLE:
+        #     pass_file = os.path.join(self.graphs_path, "dowmSampled/pass_graphs.pkl")
+        #     rush_file = os.path.join(self.graphs_path, "dowmSampled/rush_graphs.pkl")
+        # else:
+        #     pass_file = os.path.join(self.graphs_path, "original/pass_graphs.pkl")
+        #     rush_file = os.path.join(self.graphs_path, "original/rush_graphs.pkl")
         
-        # Salvar grafos de passe
-        with open(pass_file, 'wb') as f:
-            pickle.dump(pass_graphs, f)
+        # # Salvar grafos de passe
+        # with open(pass_file, 'wb') as f:
+        #     pickle.dump(pass_graphs, f)
         
-        # Salvar grafos de corrida
-        with open(rush_file, 'wb') as f:
-            pickle.dump(rush_graphs, f)
+        # # Salvar grafos de corrida
+        # with open(rush_file, 'wb') as f:
+        #     pickle.dump(rush_graphs, f)
         
-        Logger.info(f'Saved {len(pass_graphs)} pass graphs to {pass_file}')
-        Logger.info(f'Saved {len(rush_graphs)} rush graphs to {rush_file}')
+        # Logger.info(f'Saved {len(pass_graphs)} pass graphs to {pass_file}')
+        # Logger.info(f'Saved {len(rush_graphs)} rush graphs to {rush_file}')
     
     def _load_graphs(self) -> tuple[list[nx.Graph], list[nx.Graph]]:
         """Carrega os grafos salvos"""
@@ -115,20 +116,20 @@ class DataPipeline:
     
     def force_rebuild_graphs(self) -> tuple[list[nx.Graph], list[nx.Graph]]:
         """Força a reconstrução dos grafos, ignorando o cache"""
-        Logger.info('Forcing graphs rebuild...')
+        # Logger.info('Forcing graphs rebuild...')
         
-        # Remover arquivos de cache se existirem
-        if self.config.DOWN_SAMPLE:
-            pass_file = os.path.join(self.graphs_path, "dowmSampled/pass_graphs.pkl")
-            rush_file = os.path.join(self.graphs_path, "dowmSampled/rush_graphs.pkl")
-        else:
-            pass_file = os.path.join(self.graphs_path, "original/pass_graphs.pkl")
-            rush_file = os.path.join(self.graphs_path, "original/rush_graphs.pkl")
+        # # Remover arquivos de cache se existirem
+        # if self.config.DOWN_SAMPLE:
+        #     pass_file = os.path.join(self.graphs_path, "dowmSampled/pass_graphs.pkl")
+        #     rush_file = os.path.join(self.graphs_path, "dowmSampled/rush_graphs.pkl")
+        # else:
+        #     pass_file = os.path.join(self.graphs_path, "original/pass_graphs.pkl")
+        #     rush_file = os.path.join(self.graphs_path, "original/rush_graphs.pkl")
 
-        if os.path.exists(pass_file):
-            os.remove(pass_file)
-        if os.path.exists(rush_file):
-            os.remove(rush_file)
+        # if os.path.exists(pass_file):
+        #     os.remove(pass_file)
+        # if os.path.exists(rush_file):
+        #     os.remove(rush_file)
         
         # Executar o pipeline normalmente
         return self.execute()

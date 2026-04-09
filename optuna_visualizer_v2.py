@@ -1,3 +1,6 @@
+import json
+import os
+
 import optuna
 from optuna.visualization import (
     plot_optimization_history,
@@ -9,7 +12,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
-STORAGE = "sqlite:///optuna_study.db"
+STORAGE = "sqlite:///optuna/fourth/optuna_study.db"
 
 
 def load_studies():
@@ -204,6 +207,47 @@ def print_summary(studies):
     df = pd.DataFrame(rows)
     df.to_csv("optuna_results_all_strategies.csv", index=False)
     print(f"\nResults exported to optuna_results_all_strategies.csv")
+    
+def export_best_overall_config(studies):
+
+    best_strategy = None
+    best_study = None
+    best_accuracy = -1
+    
+    # Find the study with the highest accuracy
+    for strategy, study in studies.items():
+        if study.best_value > best_accuracy:
+            best_accuracy = study.best_value
+            best_strategy = strategy
+            best_study = study
+
+    if best_study:
+        # Load base configuration
+        config_path = "config.json"
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                config = json.load(f)
+        else:
+            config = {}
+
+        if "GCN" not in config:
+            config["GCN"] = {}
+
+        # Merge in the best parameters
+        for key, value in best_study.best_params.items():
+            # Uppercase keys keep it consistent with standard config variables
+            config["GCN"][key.upper()] = value
+
+        # Explicitly save which strategy was the best
+        config["GCN"]["EDGE_STRATEGY"] = best_strategy
+
+        # Ensure directory exists and write new config
+        out_path = "optuna/fourth/best_config.json"
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        with open(out_path, "w") as f:
+            json.dump(config, f, indent=4)
+            
+        print(f"\nSaved overall best config (Accuracy: {best_accuracy:.4f}) to {out_path}.")
 
 
 def main():
@@ -213,6 +257,7 @@ def main():
         return
 
     print_summary(studies)
+    export_best_overall_config(studies)
     plot_best_accuracy_comparison(studies)
     plot_optimization_history_all(studies)
     plot_trial_values_all(studies)

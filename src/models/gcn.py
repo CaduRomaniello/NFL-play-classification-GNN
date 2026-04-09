@@ -42,10 +42,10 @@ class GCN(torch.nn.Module):
                 if module.bias is not None:
                     torch.nn.init.zeros_(module.bias)
     
-    def forward(self, x, edge_index, batch):
+    def forward(self, x, edge_index, batch, edge_attr=None):
         # Apply all conv layers with ReLU activation
         for i, conv in enumerate(self.convs):
-            x = conv(x, edge_index)
+            x = conv(x, edge_index, edge_weight=edge_attr.squeeze(-1) if edge_attr is not None else None)
             x = F.relu(x)
             
             # Optional: Add dropout between layers (not just at the end)

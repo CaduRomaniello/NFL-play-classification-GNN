@@ -12,8 +12,8 @@ from src.utils.logger import Logger
 
 EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
 N_TRIALS = 100
-N_JOBS_PER_STUDY = 5  # parallel trials within each strategy
-MAX_STRATEGY_WORKERS = 2  # how many strategies to run in parallel
+N_JOBS_PER_STUDY = 3  # parallel trials within each strategy
+MAX_STRATEGY_WORKERS = 3  # how many strategies to run in parallel
 
 
 def create_config_from_trial(base_config, trial, edge_strategy):
@@ -47,6 +47,8 @@ def create_objective(edge_strategy):
         # Don't fix the seed — let each trial have natural randomness
         # so Optuna finds hyperparams that are robust across initializations
         config.RANDOM_SEED = trial.number  # different seed per trial
+        
+        trial.set_user_attr("full_config", json.dumps(config.__dict__))
 
         # Build data
         data_pipeline = DataPipeline(config)
