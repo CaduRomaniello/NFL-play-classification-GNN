@@ -1,0 +1,513 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.21 of 2022/01/12
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage[T1]{fontenc}
+% T1 fonts will be used to generate the final print and online PDFs,
+% so please use T1 fonts in your manuscript whenever possible.
+% Other font encondings may result in incorrect characters.
+%
+\usepackage{graphicx}
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following two lines
+% to display URLs in blue roman font according to Springer's eBook style:
+%\usepackage{color}
+%\renewcommand\UrlFont{\color{blue}\rmfamily}
+%\urlstyle{rm}
+%
+
+\usepackage{cite}
+
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{tablefootnote}
+\usepackage{threeparttable}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+
+
+\newcommand{\vf}[1]{\textcolor{blue}{\textbf{(VF: #1)}}}
+\newcommand{\ce}[1]{\textcolor{green}{\textbf{(CE: #1)}}}
+
+\newcommand{\jc}[1]{\textcolor{red}{\textbf{(JC: #1)}}}
+
+\begin{document}
+%
+\title{Modeling Spatial Dependencies Among Players for NFL Play Classification Using GCN}
+
+
+
+% %
+% %\titlerunning{Abbreviated paper title}
+% % If the paper title is too long for the running head, you can set
+% % an abbreviated paper title here
+% %
+% \author{First Author\inst{1}\orcidID{0000-1111-2222-3333} \and
+% Second Author\inst{2,3}\orcidID{1111-2222-3333-4444} \and
+% Third Author\inst{3}\orcidID{2222--3333-4444-5555}}
+% %
+% \authorrunning{F. Author et al.}
+% % First names are abbreviated in the running head.
+% % If there are more than two authors, 'et al.' is used.
+% %
+% \institute{Princeton University, Princeton NJ 08544, USA \and
+% Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
+% \email{lncs@springer.com}\\
+% \url{http://www.springer.com/gp/computer-science/lncs} \and
+% ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
+% \email{\{abc,lncs\}@uni-heidelberg.de}}
+% %
+
+
+
+
+\maketitle              % typeset the header of the contribution
+%
+
+
+\begin{abstract}
+The increasing availability of high-precision tracking data has transformed tactical analysis in sports, enabling detailed investigations into complex dynamics, such as those found in American football. This work introduces a methodology based on Graph Neural Networks (GNNs) to categorize offensive plays in the National Football League (NFL) into run or pass plays. The central hypothesis of this research is that positioning relationships and on-field interactions harbor crucial patterns that often escape conventional predictive models. Using data from the 2022-2023 season, each play was structured as a graph, evaluating different topologies to define the connections between athletes, including Delaunay Triangulation, Gabriel Graph, Relative Neighborhood Graph, Minimum Spanning Tree (MST), and k-Nearest Neighbors (kNN). The study compared the performance of a Graph Convolutional Network (GCN) with classical machine learning algorithms (Random Forest and Multilayer Perceptron), with hyperparameters obtained via Optuna. Experimental evaluations, supported by statistical significance tests, evidenced the advantage of the relational structure. The GCN architecture achieved superior performance, reaching a maximum F1-Score of 0.789. These results show that the extraction of spatial dependencies is highly effective for the identification and prediction of tactical strategies in the NFL, outperforming traditional modeling approaches.
+
+\keywords{GNN \and GCN \and NFL \and Classification \and Machine Learning}
+\end{abstract}
+%
+%
+%
+
+\section{Introduction}
+\label{sec:introduction}
+
+Professional sports have undergone a quiet but profound transformation over the past few decades. What once depended almost entirely on intuition and accumulated experience has steadily given way to quantitative analysis, reshaping how teams prepare, compete, and evaluate performance \cite{Alamar2013}. The \textit{National Football League} (NFL) sits at the forefront of this shift — not merely as one of the world's most-watched competitions, but as a prolific source of structured, high-resolution data that invites rigorous analytical inquiry \cite{Leeds2013}.
+
+American football is, at its core, a game of spatial chess. Every play begins with two opposing units arranged in formation, each trying to read and exploit the other before a single step is taken \cite{Guttmann2004}. This tension peaks in the \textit{pre-snap} moment: the brief window between alignment and execution during which formation, personnel, and positioning may betray strategic intent. Identifying whether the offense will pass or run the ball based solely on this pre-snap configuration is a problem that is simultaneously well-defined and genuinely difficult, making it a natural testbed for machine learning methods 
+%\cite{Fernandes2020}\cite{Otting2021}.
+\cite{Fernandes2020,Otting2021}
+
+The broader literature reflects growing interest in this direction. Recent systematic reviews document a rapid expansion in artificial intelligence methods applied to real-time sports contexts \cite{vec2024trends}, with notable work spanning pass prediction in soccer \cite{rico2023machine} and outcome forecasting in basketball via graph convolutional networks \cite{zhao2023enhancing}. Within the NFL specifically, the \textit{Big Data Bowl} initiative has democratized access to player tracking data, enabling a new generation of spatially-aware models \cite{Lopez2020}. Prior work by Xenopoulos et al. \cite{Xenopoulos2021} leverages tracking data to build graph representations focused on yards-gained prediction. Yet whether graph-based models can consistently outperform classical baselines in play-type classification remains an open question. Recent studies, such as the work by Souza et al. \cite{souza2025nfl}, have demonstrated that Graph Neural Networks (GNNs) are effective at capturing the relational geometry of pre-snap formations. However, existing approaches often lack comprehensive baseline comparisons and rely on manually tuned connectivity rules for graph construction. 
+
+To address the aforementioned gaps, this paper expands upon the current literature in three concrete ways. First, we apply systematic hyperparameter optimization across both GNN architectures and classical baselines, ensuring that comparisons reflect each model's actual capacity rather than incidental configuration choices. Second, we expand the graph construction pipeline by exploring parameter-free methods, namely Delaunay triangulation, Gabriel Graphs, Relative Neighborhood Graphs, and Minimum Spanning Trees, which produce geometrically grounded structures without relying on arbitrary distance thresholds or manually tuned connectivity rules. Third, we strengthen the evaluation process by incorporating the Nemenyi post-hoc statistical test, confirming that observed performance differences between models are statistically significant rather than byproducts of randomness or specific data splits. Together, these additions advance the field from proof-of-concept applications toward a more rigorous and reproducible benchmark.
+
+The central question guiding this research is: \textit{can GNNs, fed by player tracking data, consistently outperform traditional machine learning classifiers in NFL play-type prediction (pass vs.\ run)?} By answering this question, this work offers several key contributions to the field of sports analytics. Primarily, it introduces a robust methodology for representing NFL plays as graph structures, utilizing tracking data to model spatial interactions between players as edges and nodes with positional features. Building upon this foundation, the study provides a comprehensive comparative evaluation of GNN architectures against fully optimized classical machine learning algorithms. Furthermore, it offers a detailed analysis of how different parameter-free graph topology choices impact predictive performance. By employing systematic hyperparameter tuning across all models and validating the results with rigorous statistical testing, this research ensures fair, meaningful, and highly reproducible comparisons.
+
+
+\section{Related Works}
+\label{sec:related_works}
+
+Predictive analytics has become a cornerstone of strategic planning in modern American football. Because NFL games progress through distinct territorial phases like pre-snap, snap, and post-snap, the initial pre-snap alignment offers a critical window into an offense's strategic intent. Recognizing whether a team intends to execute a passing or rushing play allows defenses to optimize their coverage and pressure packages, prompting a wealth of research into pre-snap play classification.
+
+Consequently, predicting play types from pre-snap indicators has been extensively explored using traditional machine learning algorithms. Table \ref{table:ref_summary} summarizes several key contributions in this space. For instance, decision trees and artificial neural networks have shown robust performance in identifying play types based on static features and game context \cite{Fernandes2020,Teich2016,Goyal2020}. Alternative methodologies have also been proposed to handle the dynamic nature of the sport; Otting et al. \cite{Otting2021} applied Hidden Markov Models (HMMs) to capture the sequential nature of play-calling, while Biro et al. \cite{Biro2022} modeled the problem through reinforcement learning frameworks.
+
+\begin{table}[h]
+    \centering
+    \caption{Summary of related works detailing the predictive methods, datasets utilized, and corresponding classification accuracy.}
+    \label{table:ref_summary}
+    \begin{tabular}{c|p{4.5cm}|c|p{3.5cm}}
+        \hline
+        \textbf{Study} & \textbf{Method} & \textbf{Accuracy} & \textbf{Dataset} \\ 
+        \hline
+        \multirow{2}{*}{\cite{Fernandes2020}} & \multirow{2}{*}{Decision Trees} & \multirow{2}{*}{72.3\%} & 2013-2017\tablefootnote{\url{www.nflsavant.com}} \\ 
+         & & & Madden ratings\tablefootnote{\url{www.maddenratings.weebly.com}} \\  
+        \hline
+        \cite{Otting2021} & HMM & 71.6\% & 2009-2018 \tablefootnote{\url{www.kaggle.com}} \\ 
+        \hline
+        \multirow{4}{*}{\cite{Goyal2020}} & Logistic Regression & 71.1\% & \multirow{4}{*}{2009-2018\textsuperscript{3}} \\ 
+            & Neural Networks & 75.7\% & \\
+            & Decision Trees & 71.5\% & \\
+            & Random Forest & 75.3\% & \\
+        \hline
+        \cite{Heiny2011} & Discriminant Analysis & 40.38\% & 2005-2006\tablefootnote{\url{www.footballoutsiders.com}} \\
+        \hline
+        \multirow{2}{*}{\cite{Biro2022}} & \multirow{2}{*}{Reinforcement Learning} & \multirow{2}{*}{-} & 2017-2018\tablefootnote{\url{www.github.com/maksimhorowitz/nflscrapR}} \\
+         & & & 2019 \tablefootnote{\url{www.espn.com/nfl/stats}} \\
+        \hline
+        \cite{souza2025nfl} & Graph Convolutional Network (GCN) & 78.2\% & 2022-2023\tablefootnote{\url{www.kaggle.com/competitions/nfl-big-data-bowl-2025}} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The introduction of high-fidelity tracking data, largely driven by the NFL's \textit{Big Data Bowl} initiative, has shifted the analytical focus toward spatial and relational modeling. While tracking data has been successfully leveraged to evaluate quarterback decision-making \cite{Reyers2023} and create novel player evaluation metrics \cite{Eager2022}, graph-based representations of the field are still an emerging frontier. Early graph applications in football primarily mapped macro-level relationships, such as team performance outcomes \cite{Xia2018} or quarterback-team interactions \cite{Salim2018}. Advancing to the micro-level, Xenopoulos et al. \cite{Xenopoulos2021} utilized Graph Neural Networks (GNNs) on tracking data, though their focus remained on forecasting yards gained rather than play-type classification.
+
+Bridging the gap between play-type classification and spatial graph modeling, recent work by Souza et al. \cite{souza2025nfl} proposed a framework representing pre-snap formations as proximity-based graphs. By connecting players to their k-nearest neighbors (specifically k=2) and applying a Graph Convolutional Network (GCN), they achieved a 78.2\% accuracy. This approach successfully outperformed traditional flat-feature baselines like Multi-Layer Perceptrons and Random Forests, proving that relational modeling captures complex interactions better than standard models. However, the author relied on manually defined, arbitrary distance thresholds for graph connectivity (k-NN) and lacked formal statistical significance testing to validate the performance differences. The present study directly addresses these limitations. By introducing parameter-free geometric graph topologies such as Delaunay triangulations and Relative Neighborhood Graphs, and applying post-hoc statistical tests (Nemenyi), we aim to establish a more robust, geometrically sound, and rigorously validated benchmark for GNN-based play prediction. Table \ref{table:comparison} provides a comprehensive summary of how this current work addresses the distinct methodological gaps left by prior literature.
+
+\begin{table}[h!]
+    \centering
+    \caption{Comparison between related literature and this work}
+    \label{table:comparison}
+    \begin{tabular}{p{4.5cm}|c|c|c|c|c|c|c}
+        \hline
+        \textbf{Feature} & \textbf{\cite{Fernandes2020}} & \textbf{\cite{Otting2021}} & \textbf{\cite{Goyal2020}} & \textbf{\cite{Xia2018}} & \textbf{\cite{Xenopoulos2021}} & \textbf{\cite{souza2025nfl}} & \textbf{This work} \\
+        \hline
+        Play classification & \checkmark & \checkmark & \checkmark & \texttimes & \texttimes & \checkmark & \checkmark \\
+        \hline
+        Graph neural networks & \texttimes & \texttimes & \texttimes & \texttimes & \checkmark & \checkmark & \checkmark \\
+        \hline
+        MLP & \checkmark & \texttimes & \checkmark & \texttimes & \checkmark & \checkmark & \checkmark \\
+        \hline
+        RF & \checkmark & \texttimes & \checkmark & \texttimes & \texttimes & \checkmark & \checkmark \\
+        \hline
+        Automated hyperparameter optimization & \texttimes & \texttimes & \texttimes & \texttimes & \texttimes & \texttimes & \checkmark \\
+        \hline
+        Parameter-free graph topologies & \texttimes & \texttimes & \texttimes & \texttimes & \texttimes & \texttimes & \checkmark \\
+        \hline
+        Statistical significance testing & \texttimes & \texttimes & \texttimes & \texttimes & \checkmark & \texttimes & \checkmark \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{Problem Definition}
+\label{sec:problem_def}
+
+We address the binary classification of NFL offensive plays as \textit{pass} or \textit{rush} using pre-snap player tracking data. 
+This task is particularly challenging due to the large number of variables that may provide hints about the nature of the play. Factors such as the number of specific role players in the field, offensive formation, defensive coverage, on-field player statistics, current score, remaining time on the clock, player motion, and many other features must be taken into account to make an informed prediction.
+
+Here we hypothesize that the relationships between players on the field, not only the static game statistics, are a fundamental aspect influencing the offensive strategy. The quarterback, often regarded as the tactical leader of the offensive unit, is responsible for making rapid and accurate decisions in high-pressure situations. To do so, he must assess the defensive alignment and anticipate the opposing team’s strategy in a process known as the \textit{pre-snap read}. In the brief moments before the snap, the quarterback evaluates critical aspects such as the defensive coverage, the players on the field, potential blitzes, and how defenders are matching up against wide receivers, in addition to contextual game information.
+
+To incorporate these dynamics into the modeling process, we propose representing the play as a graph, as we formally define below.
+
+\subsection{Input Representation}
+A play \( P \) is modeled as a graph \( G = (V, E) \), where: nodes \( V \) are players on the field, each with a feature vector \( \mathbf{x}_i \in \mathbb{R}^d \). Features include position \((x, y)\), speed \( s \), acceleration \( a \), orientation \( o \), and metadata (e.g., position role, height). The graph edges \( E \) represent spatial connections between players. An edge \( e_{ij} \) exists if it satisfies a pre-established condition based on the chosen graph construction strategy (e.g., \( k \)-nearest neighbors, Gabriel graph, Delaunay triangulation, as described in Section \ref{subsec:graph_construction}) pre-snap. Finally, we also consider a global context \( \mathbf{g} \) consisting of game state features (quarter, down, yards to go, score difference).
+
+\subsection{Output and Objective}
+The model predicts a binary label \( y \in \{0, 1\} \), where \( y = 1 \) denotes a pass play and \( y = 0 \) a rush play. The objective is to learn a function \( f: G \rightarrow \{0, 1\} \) that leverages graph structure, node features, and global context for classification.
+
+\subsection{Assumptions}
+
+The main assumptions are that only pre-snap data is used, as it encodes strategic intent. Moreover, ambiguous plays (e.g., scrambles, spikes) are discarded to ensure label reliability, and localized player relationships (e.g., blocks, coverage) are critical for classification.
+
+\subsection{Formalization}
+Given a dataset \( \mathcal{D} = \{(G_1, y_1), \ldots, (G_N, y_N)\} \), we train a model \( f_\theta \) parameterized by \( \theta \) to minimize the cross-entropy loss:
+\begin{equation}
+    \mathcal{L}(\theta) = -\frac{1}{N} \sum_{i=1}^N \left[ y_i \log f_\theta(G_i) + (1 - y_i) \log (1 - f_\theta(G_i)) \right].
+\end{equation}
+
+This formulation models spatial interactions through graph connectivity, in contrast to prior work that flattens features into vectors. By integrating relational and contextual dynamics, the framework aims to uncover discriminative patterns between play types.
+
+\section{Materials and Methods}
+\label{sec:methodology}
+
+\subsection{Dataset and Preprocessing}
+\label{subsec:data_preprocessing}
+
+The experiments in this study rely on the high-resolution player tracking dataset provided by the NFL's 2025 Big Data Bowl, which covers the 2022--2023 season. This rich dataset captures player kinematics (position, speed, acceleration, orientation) alongside contextual play and game data. 
+
+To ensure the models capture pre-snap strategic intent rather than reactive post-snap behaviors, we strictly utilized data from the moments preceding the snap. We rigorously filtered the dataset to prevent target leakage, discarding post-play metrics such as yards gained or pass completion status. Ambiguous plays, such as quarterback kneels, spikes, and scrambles, were removed to maintain clear binary boundaries between designed \textit{pass} and \textit{rush} plays. Missing values in fields such as \textit{receiverAlignment}, \textit{offenseFormation}, and \textit{playClockAtSnap} were imputed with standard baseline values (e.g., \textit{"EMPTY"} or 0). Additionally, various data transformations were applied to standardize the inputs, such as converting \textit{playDirection} to angles, \textit{gameClock} to total seconds, and physical metrics into standard metric units (e.g., converting player height to centimeters and weight to kilograms).
+
+To comprehensively evaluate the model's robustness and assess how class distribution impacts predictive performance, we designed our experiments around two distinct dataset conditions. First, we utilized the original, unaltered dataset, which inherently features a natural class imbalance favoring passing plays (approximately 60.4\% passes to 39.6\% rushes). Second, to test if this imbalance introduced a predictive bias, we created a perfectly balanced 50/50 dataset by randomly downsampling the majority class. For both the imbalanced and downsampled configurations, the resulting data was stratified and split into training (70\%), validation (15\%), and testing (15\%) subsets. We utilized a fixed random seed throughout this process to guarantee complete reproducibility across all splits.
+
+\subsection{Graph Representation Pipeline}
+\label{subsec:graph_construction}
+
+American football is fundamentally relational; the spatial geometry between players dictates the feasibility of any given play. To model this, we translated each pre-snap formation into a spatial graph $G = (V, E)$. 
+
+Each node $v \in V$ represents an individual player on the field. Node features were populated with a combination of physical attributes (height, weight, position) and kinematic tracking data (coordinates, speed, acceleration, body orientation, and total distance traveled pre-snap). To enrich the local node representations with macro-level context, global game state variables such as the current quarter, down, yards to go, clock times, and point differentials were appended to every node's feature vector.
+
+To capture the underlying tactical topology, we constructed the edge sets ($E$) using several distinct geometric and proximity-based strategies, allowing us to evaluate how different interaction assumptions impact model performance. It is important to note that the edges are established based exclusively on the 2D spatial coordinates $(x,y)$ of each player on the field. Instead of using the entire multidimensional feature vector $\mathbf{x}_i$, we calculate the Euclidean distance $d(u,v)$ between the coordinates of nodes $u$ and $v$ to define connectivity. This ensures that the graph structures genuinely reflect the physical and tactical proximity of the athletes. We evaluated the following approaches:
+
+\begin{itemize}
+    \item \textbf{Delaunay Triangulation (DT) \cite{delaunay1934sphere,elshakhs2024comprehensive}:} This approach constitutes a fundamental basis for topological modeling by satisfying the Empty Circle Property. For any triangle $\Delta_{uvw}$ formed by players $u, v, w \in V$, let $C_{uvw}$ be its circumscribed circle with radius $R$ and center $c$. The triangulation is valid if and only if:
+\begin{equation}
+    d(c, k) \ge R, \quad \forall k \in V \setminus \{u, v, w\}
+\end{equation}
+This inequality ensures that no other player $k$ falls within the circumcircle of any formed triangle. Geometrically, this avoids excessively elongated "needle" triangles, partitioning the field into a robust, well-balanced spatial mesh of influence zones.
+
+    \item \textbf{Gabriel Graph (GG) \cite{gabriel1969new}:} A tighter subgraph of the DT defined by the Empty Disk Criterion. An edge $(u, v)$ exists if and only if the closed disk having the segment $\overline{uv}$ as its diameter contains no other player $k \in V$. Formally:
+\begin{equation}
+    d(u, v)^2 \le d(u, k)^2 + d(v, k)^2, \quad \forall k \in V \setminus \{u, v\}
+\end{equation}
+In the NFL context, this topology effectively models immediate, localized tactical duels without the direct physical interference of a third player.
+
+    \item \textbf{Relative Neighborhood Graph (RNG) \cite{toussaint1980relative}:} A sparser topology that maps reciprocal proximity by imposing a stricter criterion. An edge $(u, v)$ exists if no third player is simultaneously closer to both $u$ and $v$ than the distance between them:
+\begin{equation}
+    d(u, v) \le \max \{d(u, k), d(v, k)\}, \quad \forall k \in V \setminus \{u, v\}
+\end{equation}
+Geometrically, the lune-shaped intersection between two circles centered at $u$ and $v$ must be empty. This filter is particularly effective at removing spatial noise, preserving only the most significant local interactions. Note that these proximity graphs follow a strict hierarchy: $G_{RNG} \subseteq G_{GG} \subseteq G_{DT}$.
+
+    \item \textbf{Minimum Spanning Tree (MST) \cite{Prim1957,Kruskal1956}:} A fundamental acyclic subgraph $T \subseteq G$ that connects all players such that the total sum of the edge distances is minimized:
+\begin{equation}
+    w(T) = \sum_{(u,v) \in T} d(u,v)
+\end{equation}
+Solved greedily in polynomial time, the MST simulates the "tactical backbone" of the formation, revealing the most efficient structural coordination among all players on the field.
+
+    \item \textbf{$k$-Nearest Neighbors ($k$-NNG) \cite{cover1967nearest,fukunaga1975estimation}:} Unlike the geometric approaches above, this strategy is purely distance-based and lacks "empty region" constraints. A directed edge $(u, v)$ is drawn if $v$ belongs to the set of the $k$ closest points to $u$. While simple, it explicitly defines the density of interaction, empirically connecting each player to their closest counterparts regardless of team affiliation.
+
+    \item \textbf{QB-Centric $k$-NNG:} A hierarchical variation reflecting the quarterback's central command role. The QB is fully connected to all on-field players, acting as a global node, while the remaining athletes follow standard $k$-NN connections.
+\end{itemize}
+
+\subsection{Model Architectures}
+\label{subsec:architectures}
+
+The core predictive engine of our study is a GCN \cite{Kipf2016}. The optimal architecture employs multiple graph convolutional layers to iteratively aggregate features from neighboring nodes. Each convolutional operation is followed by a ReLU activation function. To transition from node-level embeddings to a unified play-level prediction, we apply a global mean pooling (readout) operation. This aggregated vector is then passed through a fully connected classification head with a dropout layer to yield the final two-dimensional pass/rush logit.
+
+To baseline our spatial approach, we implemented two traditional machine learning architectures: a Multi-Layer Perceptron (MLP) and a Random Forest (RF) classifier. Because these classical models cannot natively process graph topologies, the node and global features for each play were flattened into a single, high-dimensional continuous vector. 
+
+\subsection{Hyperparameter Optimization via Optuna}
+\label{subsec:optuna_optimization}
+
+Rather than relying on manual, trial-and-error grid searches, we employed Optuna, an open-source hyperparameter optimization framework, to systematically navigate the search space using the Tree-structured Parzen Estimator (TPE) algorithm. This automated Bayesian approach ensures that all models are evaluated at their true optimal capacity, allowing for a strictly fair comparison between the GCN and the baselines.
+
+To isolate the most critical parameters and efficiently refine our architecture, we executed the optimization process in three distinct, sequential phases targeting validation loss. In the first phase, we conducted a broad search across the discrete hyperparameter space. The evaluated values were: learning rate $\in \{10^{-1}, 10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}\}$, weight decay $\in \{5 \times 10^{-1}, 5 \times 10^{-2}, 5 \times 10^{-3}, 5 \times 10^{-4}, 5 \times 10^{-5}\}$, dropout $\in \{0.1, 0.2, 0.3, 0.4, 0.5\}$, hidden layers $\in \{1, 2, 3\}$, and finally, hidden channels $\in \{32, 64, 128, 256\}$. Using Optuna's parameter importance evaluation, we identified that the number of hidden layers and hidden channels were the primary drivers of model performance. Consequently, we locked these highly influential structural parameters to their optimally discovered values at 1 and 256, respectively. 
+
+In the second phase, we launched a new optimization trial focused solely on the remaining unfixed hyperparameters. This round revealed that the learning rate was the next most impactful variable, which we subsequently locked at $0.001$. Concurrently, we identified optimal convergence patterns for the regularization parameters, fixing the dropout rate at $0.2$ and weight decay at $5 \times 10^{-4}$. Finally, we repeated this process for a third phase, optimizing broader data and structural configurations. These final trials indicated that employing the quarterback-centric graph modification (\textit{qb\_link}) and class downsampling (\textit{downsample}) actually hindered validation performance, prompting us to lock both of these configuration parameters to \textit{False}.
+
+After completing this comprehensive three-phase optimization, the optimal GCN architecture was successfully established. It utilized 1 hidden layer with 256 hidden channels, a learning rate of $0.001$, a dropout rate of $0.2$, and a weight decay of $5 \times 10^{-4}$. Similarly, the optimized MLP settled on a learning rate of $0.01$ with $2$ hidden layers with $64$ hidden channels, while the Random Forest achieved peak validation performance using $200$ trees with no depth limit.
+
+During the training of the neural architectures, we utilized the AdamW optimizer with a batch size of $32$. To stabilize convergence, we implemented a learning rate warmup over the first 20 epochs, alongside an early stopping callback triggered after 100 epochs without significant validation improvement.
+
+\subsection{Evaluation Metrics}
+\label{subsec:metrics}
+
+To assess the predictive capabilities of the optimized models, we recorded three standard classification metrics on the hold-out test set: Precision (the reliability of positive predictions), Recall (the model's sensitivity in capturing actual positive instances), and the Macro F1-Score. Because we opted to maintain the natural class imbalance of the dataset (approximately 60\% passes to 40\% rushes) rather than applying artificial downsampling, we specifically focused on the Macro F1-Score as our primary evaluation criterion. By calculating the harmonic mean of precision and recall independently for each class and computing their unweighted average, the Macro F1-Score prevents the majority class from dominating the results. This ensures that the metric provides the most rigorous, reliable, and unbiased view of the models' true predictive performance across all play types.
+
+\section{Results and Discussion}
+\label{sec:results}
+
+All computational experiments and model training phases were executed on a dedicated local workstation equipped with an AMD Ryzen 7 9800X3D 8-Core Processor, 32 GB of system RAM, and an NVIDIA GeForce RTX 5070 GPU (12 GB VRAM). To guarantee full transparency and facilitate future reproducibility, the complete source code, including data preprocessing and model weights, has been made publicly accessible via GitHub\footnote{Anonymous GitHub repository for blind peer review: \url{https://anonymous.4open.science/r/7C1E/}}.
+%\href{https://anonymous.4open.science/r/7C1E/}{Anonymous GitHub}
+
+\subsection{Performance Comparison and Graph Topology Impact}
+
+%To ensure a rigorous and unbiased evaluation across the classification tasks, we adopted the macro-average F1-score as our primary metric. This metric provides a balanced assessment of the model's predictive power, accounting for the support of each individual class independently. 
+
+Our empirical findings strongly indicate that leveraging spatial data through 
+%Graph Neural Networks 
+GNNs provides a distinct advantage over classical machine learning approaches. To ensure robustness and account for random initialization variance, each model and graph strategy configuration was independently executed 20 times. As detailed in Table \ref{tab:f1_score_results}, which displays the maximum and mean metrics across these 20 trials, the GNN architectures consistently outperformed both the Multi-Layer Perceptron (MLP) and Random Forest (RF) baselines across the evaluated metrics.
+
+
+% \begin{table*}[h!]
+%     \centering
+%     \label{tab:f1_score_results}
+%     \caption{Performance Results (F1-Score) by Graph Strategy and Model Architecture.}
+%         \begin{tabular}{l ccc ccc c}
+%             \toprule
+%             & \multicolumn{2}{c}{\textbf{GNN}} & \multicolumn{2}{c}{\textbf{MLP}} & \multicolumn{2}{c}{\textbf{RF}} \\
+%             \textbf{Edge Strategy} & \textbf{Max} & \textbf{Mean} & \textbf{Max} & \textbf{Mean} & \textbf{Max} & \textbf{Mean} \\
+%             \midrule
+%             \textbf{CLOSEST} & 0.7686 & 0.7431 & 0.6961 & 0.6790 & 0.7335 & 0.7149 \\
+%             \textbf{DELAUNAY} & 0.7505 & 0.7157 & 0.6961 & 0.6790 & 0.7335 & 0.7149 \\
+%             \textbf{GABRIEL} & 0.7573 & 0.7288 & 0.6961 & 0.6790 & 0.7335 & 0.7149 \\
+%             \textbf{MST} & \textbf{0.7894} & \textbf{0.7563} & 0.6961 & 0.6790 & 0.7335 & 0.7149 \\
+%             \textbf{QB-CLOSEST} & 0.7527 & 0.7246 & 0.6961 & 0.6790 & 0.7335 & 0.7149 \\
+%             \textbf{RNG} & 0.7748 & 0.7525 & 0.6961 & 0.6790 & 0.7335 & 0.7149 \\
+%             \bottomrule
+%         \end{tabular}
+% \end{table*}
+
+
+\begin{table*}[h!]
+    \centering
+    \caption{Performance Results (F1-Score) across Graph Strategies and Models based on 20 independent runs.}
+    \label{tab:f1_score_results}
+    \begin{tabular}{l cc}
+        \toprule
+        \textbf{Strategy / Model} & \textbf{Max F1} & \textbf{Mean F1} \\
+        \midrule
+        GNN - CLOSEST      & 0.7686 & 0.7431 \\
+        GNN - DELAUNAY     & 0.7505 & 0.7157 \\
+        GNN - GABRIEL      & 0.7573 & 0.7288 \\
+        GNN - MST          & \textbf{0.7894} & \textbf{0.7563} \\
+        GNN - QB-CLOSEST   & 0.7527 & 0.7246 \\
+        GNN - RNG          & 0.7748 & 0.7525 \\
+        \midrule
+        Non-Graph Model - MLP            & 0.6961 & 0.6790 \\
+        Non-Graph Model - Random Forest  & 0.7335 & 0.7149 \\
+        \bottomrule
+    \end{tabular}
+\end{table*}
+
+When analyzing the impact of different edge construction strategies, the Minimum Spanning Tree (MST) topology achieved the highest absolute performance peak, registering a maximum F1-score of 0.7894. When evaluating overall stability, the MST proved to be the most consistent, yielding the highest mean F1-score of 0.7563 across all 20 test runs. In contrast, the baseline models—which inherently lack the mechanism to process relational inductive biases—exhibited lower overall scores and minimal performance variance, regardless of the underlying structural strategy applied to the data.
+
+Visualized in Figure \ref{fig:overall-results}, the overarching trend confirms that modeling the relative spatial relationships between players on the field directly enhances the capacity to forecast NFL play types. Furthermore, as illustrated in Figure \ref{fig:classes-f1-score}, the GNN did not simply excel in identifying one specific type of play; rather, using the peak values reached by the top-performing MST strategy, it demonstrated superior classification capabilities for both passing and rushing plays simultaneously when compared to the flat-feature baseline models. 
+
+\begin{figure}[h!]
+    \centering
+    \caption{Maximum and Mean Macro F1-Scores across all tested strategies and models over 20 independent executions.}
+    \label{fig:overall-results}
+    \includegraphics[width=1\textwidth]{images/fig1_gcn_vs_baselines.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \caption{Peak F1-Scores categorized by model architecture and specific play class (Rush vs. Pass). For the GNN, the reported values reflect the peak performance achieved using the optimal Minimum Spanning Tree (MST) edge strategy.}
+    \label{fig:classes-f1-score}
+    \includegraphics[width=0.5\textwidth]{images/fig2_rush_vs_pass.png}
+\end{figure}
+
+\subsection{Statistical Significance Analysis}
+
+To move beyond empirical observation and rigorously validate our performance gains, we applied the Friedman test followed by the Nemenyi post-hoc statistical test across all model architectures and graph topology strategies simultaneously (Figure \ref{fig:nemeniy}). Specifically, the statistical comparison was computed using the vectors of Macro F1-scores obtained from the 20 independent execution rounds for each model and strategy configuration. The statistical ranking confirms the superiority of the spatial approach, provided that an optimal graph structure is utilized. The test identified the Minimum Spanning Tree (GCN-MST, rank 1.93), the Relative Neighborhood Graph (GCN-RNG, rank 2.03), and the $k$-nearest neighbors strategy (GCN-CLOSEST, rank 3.10) as the top-tier configurations. Crucially, the Nemenyi test reveals that this top-performing cluster outperforms both traditional baselines—the Random Forest (rank 6.10) and the MLP (rank 7.83)—proving that the GNN's improvement is a genuine algorithmic advantage rather than a byproduct of random variance.
+
+Furthermore, the post-hoc analysis highlights the critical importance of edge selection within the GNN framework. While MST, RNG, and CLOSEST form a statistically equivalent top group, denser or more arbitrary geometric representations failed to completely separate themselves from the classical models. Specifically, while the Gabriel Graph (rank 4.31), QB-Centric approach (rank 5.03), and Delaunay Triangulation (rank 5.66) all outperformed the MLP, they showed no statistically significant difference when compared to the Random Forest baseline. This statistical validation strongly reinforces our earlier observation \vf{Onde essa ``earlier observation'' foi feita? Além disso, uma forma de quantificar essa afirmação seria mostrar qual o número de arestas de cada estratégia, para ficar claro quais são as que geram grafos com menos conexões.}: leaner, highly efficient geometric representations provide the optimal relational context for play classification, whereas over-saturating the network with redundant spatial noise dilutes the GNN's advantage down to the level of standard flat-feature classifiers.
+
+\begin{figure}[h!]
+    \centering
+    \caption{Nemenyi test results over the Macro F1-score vectors from 20 independent execution rounds. Best models are on the left, and connected models by a horizontal line are statistically equivalent.}
+    \label{fig:nemeniy}
+    \includegraphics[width=1\textwidth]{images/nemenyi_gcn_strategies_vs_baselines.png}
+\end{figure}
+
+\section{Conclusion and Future Work}
+\label{sec:conclusion-future-works}
+
+In this study, we addressed the complex task of predicting NFL offensive play types (pass vs. rush) from pre-snap player tracking data by modeling the on-field formations as spatial graphs. Moving beyond early proof-of-concept applications, we established a rigorous benchmark by systematically evaluating multiple geometric graph topologies, employing an automated, three-phase hyperparameter optimization pipeline via Optuna, and validating our empirical findings with statistical testing.
+
+Our results establish the superiority of relational modeling for capturing the tactical nuances of American football. The Graph Convolutional Network (GCN) outperformed traditional flat-feature baselines, namely the Multi-Layer Perceptron and Random Forest classifiers. The Nemenyi post-hoc statistical test confirmed that this performance gap was not a byproduct of random variance, but a genuine algorithmic advantage derived from the GNN's ability to interpret the spatial geometry and mutual influence of players on the field. 
+
+Furthermore, our exploration of different graph construction strategies revealed that leaner, highly efficient topologies are the most effective. The Minimum Spanning Tree (MST), Relative Neighborhood Graph (RNG), and $k$-nearest neighbors (CLOSEST) approaches clustered together as the top-performing structures, achieving statistical parity. These strategies successfully preserved critical tactical relationships while filtering out the redundant spatial noise that hindered denser architectures, such as the Delaunay Triangulation or the fully-connected Quarterback-centric graph.
+
+These findings underscore the immense potential of graph-based methodologies in modern sports analytics. By successfully translating raw kinematic data into structured geometric intelligence, this framework provides a reliable method for anticipating strategic intent. 
+
+Building upon this foundation, several promising avenues for future research emerge. First, while our current model relies on a static snapshot of the pre-snap formation, integrating spatio-temporal architectures, such as Spatio-Temporal Graph Convolutional Networks (ST-GCNs), would allow the model to capture the dynamic sequence of player motion leading up to the snap. Second, expanding the binary classification task to predict more granular play attributes, like specific run gaps, receiver target probabilities, or route combinations, would provide deeper tactical value. Finally, validating this methodology across multiple seasons or adapting it to defensive coverage classification will further solidify the role of geometric deep learning in real-time sports intelligence. \jc{Não rola criar um dashboard para prever as jogadas?}
+
+% \section*{Acknowledgments}
+% \label{sec:acknowledgments}
+
+\begin{thebibliography}{8}
+
+\bibitem{Fernandes2020}
+Fernandes, C.J., Yakubov, R., Li, Y., Prasad, A.K., Chan, T.C.: Predicting plays in the national football league. Journal of Sports Analytics \textbf{6}(1), 35--43 (2020)
+
+\bibitem{Otting2021}
+Ötting, M.: Predicting play calls in the National Football League using hidden Markov models. IMA Journal of Management Mathematics \textbf{32}(4), 535--545 (2021). \doi{10.1093/imaman/dpab005}
+
+\bibitem{Teich2016}
+Teich, B., Lutz, R., Kassarnig, V.: NFL play prediction. arXiv preprint arXiv:1601.00574 (2016)
+
+\bibitem{Goyal2020}
+Goyal, U.: Leveraging machine learning to predict playcalling tendencies in the NFL. Doctoral dissertation, Massachusetts Institute of Technology (2020)
+
+\bibitem{Heiny2011}
+Heiny, E.L., Blevins, D.: Predicting the atlanta falcons play-calling using discriminant analysis. Journal of Quantitative Analysis in Sports \textbf{7}(3) (2011)
+
+\bibitem{Reyers2023}
+Reyers, M., Swartz, T.B.: Quarterback evaluation in the national football league using tracking data. AStA Advances in Statistical Analysis \textbf{107}(1), 327--342 (2023)
+
+\bibitem{Eager2022}
+Eager, E., Brown, B., Chahrouri, G., Riske, T., Spielberger, B., Yui, L.S., Seth, T.: Using Tracking and Charting Data to Better Evaluate NFL Players: A Review. In: 2022 MIT Sloan Sports Analytics Conference (2022)
+
+\bibitem{Xia2018}
+Xia, V., Jain, K., Krishna, A., Brinton, C.G.: A network-driven methodology for sports ranking and prediction. In: 2018 52nd Annual Conference on Information Sciences and Systems (CISS), pp. 1--6. IEEE (2018)
+
+\bibitem{Salim2018}
+Salim, M.O., Brandao, W.C.: Predicting the Success of NFL Teams using Complex Network Analysis. In: International Conference on Enterprise Information Systems (ICEIS), vol. 1, pp. 135--142 (2018)
+
+\bibitem{Xenopoulos2021}
+Xenopoulos, P., Silva, C.: Graph neural networks to predict sports outcomes. In: 2021 IEEE International Conference on Big Data (Big Data), pp. 1757--1763. IEEE (2021)
+
+\bibitem{Biro2022}
+Biro, P., Walker, S.G.: A reinforcement learning based approach to play calling in football. Journal of Quantitative Analysis in Sports \textbf{18}(2), 97--112 (2022)
+
+% \bibitem{Cormen2022}
+% Cormen, T.H., Leiserson, C.E., Rivest, R.L., Stein, C.: Introduction to algorithms. MIT press (2022)
+
+\bibitem{Kipf2016}
+Kipf, T.N., Welling, M.: Semi-supervised classification with graph convolutional networks. arXiv preprint arXiv:1609.02907 (2016)
+
+% \bibitem{Bunker2022}
+% Bunker, R., Susnjak, T.: The application of machine learning techniques for predicting match results in team sport: A review. Journal of Artificial Intelligence Research \textbf{73}, 1285--1322 (2022)
+
+\bibitem{Lopez2020}
+Lopez, M.J.: Bigger data, better questions, and a return to fourth down behavior: an introduction to a special issue on tracking datain the National Football League. Journal of Quantitative Analysis in Sports \textbf{16}(2), 73--79 (2020)
+
+\bibitem{elshakhs2024comprehensive}
+Elshakhs, Y.S., Deliparaschos, K.M., Charalambous, T., Oliva, G., Zolotas, A.: A comprehensive survey on Delaunay triangulation: applications, algorithms, and implementations over CPUs, GPUs, and FPGAs. IEEE Access \textbf{12}, 12562--12585 (2024)
+
+\bibitem{delaunay1934sphere}
+Delaunay, B.: Sur la sphère vide. A la mémoire de Georges Voronoï. Izvestiya Rossiiskoi akademii nauk. Seriya matematicheskaya (6), 793--800 (1934)
+
+\bibitem{gabriel1969new}
+Gabriel, K.R., Sokal, R.R.: A new statistical approach to geographic variation analysis. Systematic zoology \textbf{18}(3), 259--278 (1969)
+
+% \bibitem{jaromczyk2002relative}
+% Jaromczyk, J.W., Toussaint, G.T.: Relative neighborhood graphs and their relatives. Proceedings of the IEEE \textbf{80}(9), 1502--1517 (2002)
+
+\bibitem{fukunaga1975estimation}
+Fukunaga, K., Hostetler, L.: The estimation of the gradient of a density function, with applications in pattern recognition. IEEE Transactions on information theory \textbf{21}(1), 32--40 (1975)
+
+\bibitem{cover1967nearest}
+Cover, T., Hart, P.: Nearest neighbor pattern classification. IEEE transactions on information theory \textbf{13}(1), 21--27 (1967)
+
+% \bibitem{preparata2012computational}
+% Preparata, F.P., Shamos, M.I.: Computational geometry: an introduction. Springer Science \& Business Media (2012)
+
+% \bibitem{breiman2001random}
+% Breiman, L.: Random forests. Machine learning \textbf{45}(1), 5--32 (2001)
+
+% \bibitem{bishop1995neural}
+% Bishop, C.M.: Neural networks for pattern recognition. Oxford university press (1995)
+
+% \bibitem{gori2005new}
+% Gori, M., Monfardini, G., Scarselli, F.: A new model for learning in graph domains. In: Proceedings. 2005 IEEE international joint conference on neural networks, vol. 2, pp. 729--734. IEEE (2005)
+
+% \bibitem{wu2020comprehensive}
+% Wu, Z., Pan, S., Chen, F., Long, G., Zhang, C., Yu, P.S.: A comprehensive survey on graph neural networks. IEEE transactions on neural networks and learning systems \textbf{32}(1), 4--24 (2020)
+
+\bibitem{Guttmann2004}
+Guttmann, A.: Sports: The First Five Millennia. University of Massachusetts Press, Amherst (2004)
+
+\bibitem{Alamar2013}
+Alamar, B.C.: Sports Analytics: A Guide for Coaches, Managers, and Other Decision Makers. Columbia University Press, New York (2013)
+
+\bibitem{Leeds2013}
+Leeds, M., von Allmen, P.: The Economics of Sports. 5th edn. Routledge (2013)
+
+\bibitem{vec2024trends}
+Vec, V., Tomažič, S., Kos, Anton, Umek, A.: Trends in real-time artificial intelligence methods in sports: a systematic review. Journal of Big Data \textbf{11}(1), 148 (2024)
+
+\bibitem{rico2023machine}
+Rico-González, M., Pino-Ortega, J., Méndez, A., Clemente, F., Baca, A.: Machine learning application in soccer: a systematic review. Biology of sport \textbf{40}(1), 249--263 (2023)
+
+\bibitem{zhao2023enhancing}
+Zhao, K., Du, C., Tan, G.: Enhancing basketball game outcome prediction through fused graph convolutional networks and random forest algorithm. Entropy \textbf{25}(5), 765 (2023)
+
+% \bibitem{NFLRules2024}
+% National Football League: 2024 Official Playing Rules of the National Football League. NFL Football Operations (2024). Disponível em: operations.nfl.com
+
+% \bibitem{Kirwan2015}
+% Kirwan, P., Seigerman, D.: Take Your Eye Off the Ball 2.0: How to Watch Football by Knowing Where to Look. Triumph Books, Chicago (2015)
+
+% \bibitem{Brown2012}
+% Brown, C.B.: The Essential Smart Football. CreateSpace Independent Publishing Platform, New York (2012)
+
+\bibitem{Prim1957}
+Prim, R.C.: Shortest connection networks and some generalizations. Bell System Technical Journal \textbf{36}(6), 1389--1401 (1957)
+
+\bibitem{Kruskal1956}
+Kruskal, J.B.: On the shortest spanning subtree of a graph and the traveling salesman problem. Proceedings of the American Mathematical society \textbf{7}(1), 48--50 (1956)
+
+\bibitem{toussaint1980relative}
+Toussaint, G.T.: The relative neighbourhood graph of a finite planar set. Pattern recognition \textbf{12}(4), 261--268 (1980)
+
+% \bibitem{bishop2006pattern}
+% Bishop, C.M.: Pattern Recognition and Machine Learning. Springer (2006)
+
+% \bibitem{goodfellow2016deep}
+% Goodfellow, I., Bengio, Y., Courville, A.: Deep Learning. MIT press (2016)
+
+% \bibitem{scarselli2008graph}
+% Scarselli, F., Gori, M., Tsoi, A.C., Hagenbuchner, M., Monfardini, G.: The graph neural network model. IEEE transactions on neural networks \textbf{20}(1), 61--80 (2008)
+
+% \bibitem{gilmer2017neural}
+% Gilmer, J., Schoenholz, S.S., Riley, P.F., Vinyals, O., Dahl, G.E.: Neural message passing for quantum chemistry. In: International conference on machine learning, pp. 1263--1272. PMLR (2017)
+
+\bibitem{souza2025nfl}
+Souza, C.E.G.R., Luz, E.J.S., Freitas, V.L.S.: NFL Play Classification Using GNN and Player Tracking Data. In: Encontro Nacional de Inteligência Artificial e Computacional (ENIAC), pp. 807--818. SBC (2025)
+
+% \bibitem{demsar2006statistical}
+% Demšar, J.: Statistical comparisons of classifiers over multiple data sets. The Journal of Machine Learning Research \textbf{7}, 1--30 (2006)
+
+% \bibitem{friedman1937use}
+% Friedman, M.: The use of ranks to avoid the assumption of normality implicit in the analysis of variance. Journal of the american statistical association \textbf{32}(200), 675--701 (1937)
+
+% \bibitem{nemenyi1963distribution}
+% Nemenyi, P.B.: Distribution-free multiple comparisons. Doctoral dissertation, Princeton University (1963)
+
+\end{thebibliography}
+\end{document}
