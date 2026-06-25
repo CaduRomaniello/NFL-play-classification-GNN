@@ -28,9 +28,9 @@
         "ALPHA": 5e-4
     },
     "DATASET": {
-        "VALIDATION_SPLIT": 0.7,
+        "VALIDATION_SPLIT": 0.15,
         "TEST_SPLIT": 0.15,
-        "TRAIN_SPLIT": 0.15
+        "TRAIN_SPLIT": 0.7
     },
     "RANDOM_SEED": 1,
     "SHOW_INFO": true,

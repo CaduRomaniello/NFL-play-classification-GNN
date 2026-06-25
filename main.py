@@ -62,7 +62,7 @@ def main(config):
     # 2. Execute them in parallel
     # NOTE: Adjust max_workers based on your CPU cores and available RAM/GPU Memory
     # A safe starting point is usually 2 or 4 for heavy ML workloads.
-    max_parallel_jobs = 2
+    max_parallel_jobs = 3
     
     with ProcessPoolExecutor(max_workers=max_parallel_jobs) as executor:
         # Submit all tasks to the executor
