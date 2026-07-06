@@ -12,8 +12,8 @@ from src.utils.logger import Logger
 
 EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
 N_TRIALS = 50
-N_JOBS_PER_STUDY = 3  # parallel trials within each strategy
-MAX_STRATEGY_WORKERS = 2  # how many strategies to run in parallel
+N_JOBS_PER_STUDY = 1  # parallel trials within each strategy
+MAX_STRATEGY_WORKERS = 1  # how many strategies to run in parallel
 
 
 def namespace_to_dict(obj):

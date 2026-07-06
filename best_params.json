@@ -43,5 +43,14 @@
             "down_sample": false,
             "qb_link": false
         }
+    },
+    "MST": {
+        "best_accuracy": 0.8262748487467588,
+        "best_params": {
+            "hidden_channels": 256,
+            "hidden_layers": 1,
+            "down_sample": false,
+            "qb_link": false
+        }
     }
 }
