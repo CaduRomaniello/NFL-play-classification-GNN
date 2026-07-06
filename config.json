@@ -6,7 +6,7 @@
         "GRAPHS_PATH": "data/graphs"
     },
     "GCN": {
-        "EPOCHS": 500,
+        "EPOCHS": 250,
         "HIDDEN_CHANNELS": 256,
         "HIDDEN_LAYERS": 1,
         "LEARNING_RATE": 0.001,
@@ -14,7 +14,7 @@
         "WEIGHT_DECAY": 0.0005,
         "OPTIMIZER": "adamw",
         "WARMUP_EPOCHS": 20,
-        "EARLY_STOP_PATIENCE": 100,
+        "EARLY_STOP_PATIENCE": 50,
         "MIN_DELTA": 0.001
     },
     "RF": {

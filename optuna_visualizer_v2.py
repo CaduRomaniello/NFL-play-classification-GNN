@@ -12,7 +12,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
-STORAGE = "sqlite:///optuna/fourth/optuna_study.db"
+# STORAGE = "sqlite:///optuna/fourth/optuna_study.db"
+STORAGE = "sqlite:///optuna_study.db"
 
 
 def load_studies():

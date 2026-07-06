@@ -7,6 +7,20 @@ from sklearn.ensemble import RandomForestClassifier
 
 from src.utils.logger import Logger
 
+# ============================================================
+# MEAN_AGGREGATION: averages all node features into a single
+#   representative vector. Recommended for academic comparison.
+#
+# FLATTEN: concatenates all node features into a fixed-size
+#   vector (MAX_NODES * N_NODE_FEATURES).
+# ============================================================
+AGGREGATION_STRATEGY = "MEAN_AGGREGATION"
+# AGGREGATION_STRATEGY = "FLATTEN"
+
+MAX_NODES = 22
+N_NODE_FEATURES = 13
+
+
 class BaselineModels:
     def __init__(self, config):
         self.config = config
@@ -33,7 +47,16 @@ class BaselineModels:
             node_features.append(features)
 
         node_features = np.array(node_features)
-        mean_node_features = node_features.mean(axis=0)
+
+        if AGGREGATION_STRATEGY == "MEAN_AGGREGATION":
+            aggregated_node_features = node_features.mean(axis=0)
+        elif AGGREGATION_STRATEGY == "FLATTEN":
+            padded = np.zeros((MAX_NODES, N_NODE_FEATURES))
+            n = min(len(node_features), MAX_NODES)
+            padded[:n] = node_features[:n]
+            aggregated_node_features = padded.flatten()
+        else:
+            raise ValueError(f"Unknown aggregation strategy: {AGGREGATION_STRATEGY}")
 
         graph_features = [
             float(G.graph.get('quarter', 0)),
@@ -48,7 +71,7 @@ class BaselineModels:
             float(G.graph.get('receiverAlignment', 0)),
         ]
 
-        full_vector = np.concatenate([mean_node_features, graph_features])
+        full_vector = np.concatenate([aggregated_node_features, graph_features])
         label = 1 if G.graph['playResult'] == 1 else 0
 
         return full_vector, label

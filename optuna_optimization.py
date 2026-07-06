@@ -11,9 +11,21 @@ from src.utils.logger import Logger
 
 
 EDGE_STRATEGIES = ["CLOSEST-", "QB-CLOSEST-", "DELAUNAY", "GABRIEL", "RNG", "MST"]
-N_TRIALS = 100
+N_TRIALS = 50
 N_JOBS_PER_STUDY = 3  # parallel trials within each strategy
-MAX_STRATEGY_WORKERS = 3  # how many strategies to run in parallel
+MAX_STRATEGY_WORKERS = 2  # how many strategies to run in parallel
+
+
+def namespace_to_dict(obj):
+    """Recursively convert a SimpleNamespace (including nested ones) into a plain dict."""
+    if isinstance(obj, SimpleNamespace):
+        return {k: namespace_to_dict(v) for k, v in vars(obj).items()}
+    elif isinstance(obj, list):
+        return [namespace_to_dict(v) for v in obj]
+    elif isinstance(obj, dict):
+        return {k: namespace_to_dict(v) for k, v in obj.items()}
+    else:
+        return obj
 
 
 def create_config_from_trial(base_config, trial, edge_strategy):
@@ -22,8 +34,8 @@ def create_config_from_trial(base_config, trial, edge_strategy):
     config.EDGE_STRATEGY = edge_strategy
 
     # Suggest GCN hyperparameters
-    # config.GCN.HIDDEN_CHANNELS = trial.suggest_categorical("hidden_channels", [128, 256])
-    # config.GCN.HIDDEN_LAYERS = trial.suggest_int("hidden_layers", 1, 2)
+    config.GCN.HIDDEN_CHANNELS = trial.suggest_categorical("hidden_channels", [128, 256])
+    config.GCN.HIDDEN_LAYERS = trial.suggest_int("hidden_layers", 1, 3)
     # config.GCN.LEARNING_RATE = trial.suggest_float("learning_rate", 1e-3, 1e-1, log=True)
     # config.GCN.DROPOUT = trial.suggest_float("dropout", 0.1, 0.5)
     # config.GCN.WEIGHT_DECAY = trial.suggest_float("weight_decay", 1e-6, 1e-3, log=True)
@@ -47,8 +59,11 @@ def create_objective(edge_strategy):
         # Don't fix the seed — let each trial have natural randomness
         # so Optuna finds hyperparams that are robust across initializations
         config.RANDOM_SEED = trial.number  # different seed per trial
-        
-        trial.set_user_attr("full_config", json.dumps(config.__dict__))
+
+        # FIX: SimpleNamespace objects can be nested (e.g. config.GCN is itself a
+        # SimpleNamespace), so config.__dict__ alone is not JSON-serializable.
+        # Convert recursively before dumping.
+        trial.set_user_attr("full_config", json.dumps(namespace_to_dict(config)))
 
         # Build data
         data_pipeline = DataPipeline(config)
@@ -66,7 +81,6 @@ def create_objective(edge_strategy):
 
 
 def run_strategy(strategy):
-    """Run optimization for a single edge strategy (executed in a separate process)"""
     print(f"\n{'='*60}")
     print(f"[PID {os.getpid()}] Optimizing edge strategy: {strategy}")
     print(f"{'='*60}")
@@ -78,9 +92,21 @@ def run_strategy(strategy):
         load_if_exists=True
     )
 
+    completed = len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE])
+    remaining = N_TRIALS - completed
+
+    if remaining <= 0:
+        print(f"Strategy {strategy} already completed {completed} trials. Skipping.")
+        return strategy, {
+            "best_accuracy": study.best_trial.value,
+            "best_params": study.best_trial.params
+        }
+
+    print(f"  Resuming {strategy}: {completed} done, {remaining} remaining.")
+
     study.optimize(
         create_objective(strategy),
-        n_trials=N_TRIALS,
+        n_trials=remaining,       # ← only the delta
         n_jobs=N_JOBS_PER_STUDY,
         show_progress_bar=True
     )
