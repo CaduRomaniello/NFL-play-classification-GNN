@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+    \centering
+    \caption{Macro F1-Score no conjunto de teste por modelo e topologia de grafo (GCN e RF: 29 execu\c{c}\~oes; MLP: 174 execu\c{c}\~oes, somando as seis topologias).}
+    \label{tab:resultados_f1}
+    \begin{tabular}{lcccc}
+        \hline
+        Modelo / topologia & M\'edia & Desvio-padr\~ao & M\'inimo & M\'aximo \\
+        \hline
+        GCN - MST & 0,7925 & 0,0102 & 0,7751 & 0,8138 \\
+        GCN - RNG & 0,7916 & 0,0090 & 0,7637 & 0,8158 \\
+        GCN - CLOSEST & 0,7812 & 0,0124 & 0,7439 & 0,7995 \\
+        GCN - GABRIEL & 0,7731 & 0,0134 & 0,7349 & 0,7922 \\
+        GCN - QB-CLOSEST & 0,7720 & 0,0117 & 0,7392 & 0,7935 \\
+        GCN - DELAUNAY & 0,7628 & 0,0128 & 0,7371 & 0,7850 \\
+        RF & 0,7319 & 0,0082 & 0,7184 & 0,7492 \\
+        MLP & 0,6785 & 0,0092 & 0,6572 & 0,7039 \\
+        \hline
+    \end{tabular}
+\end{table}

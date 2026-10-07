@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+    \centering
+    \caption{Espa\c{c}o de busca de hiperpar\^ametros da GCN no Optuna.}
+    \label{tab:espaco_busca}
+    \begin{tabular}{ll}
+        \hline
+        Hiperpar\^ametro & Valores \\
+        \hline
+        Canais ocultos & \{128, 256\} \\
+        Camadas ocultas & \{1, 2, 3\} \\
+        Taxa de aprendizado & $10^{-3}$ a $10^{-1}$ (escala logar\'itmica) \\
+        Dropout & 0,1 a 0,5 \\
+        \textit{Weight decay} & $10^{-6}$ a $10^{-3}$ (escala logar\'itmica) \\
+        \'Epocas de \textit{warmup} & \{10, 20, 30\} \\
+        Subamostragem (\textit{down sample}) & \{sim, n\~ao\} \\
+        Liga\c{c}\~ao do QB (\textit{qb link}) & \{sim, n\~ao\} \\
+        \hline
+    \end{tabular}
+\end{table}
