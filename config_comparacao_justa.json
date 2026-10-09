@@ -17,6 +17,13 @@
         "EARLY_STOP_PATIENCE": 100,
         "MIN_DELTA": 0.001
     },
+    "GNN_V2": {
+        "EPOCHS": 500,
+        "WARMUP_EPOCHS": 20,
+        "EARLY_STOP_PATIENCE": 30,
+        "MIN_DELTA": 0.001,
+        "BATCH_SIZE": 32
+    },
     "RF": {
         "N_ESTIMATORS": 200
     },

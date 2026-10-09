@@ -28,7 +28,8 @@ from src.utils.logger import Logger
 plt.rcParams.update({"font.family": "serif", "font.size": 10, "savefig.bbox": "tight", "savefig.dpi": 300,
                      "axes.spines.top": False, "axes.spines.right": False})
 
-FAMILY_COLOR = {"GCN": "#2a78d6", "DeepSets": "#8e44ad", "RF": "#eb6834", "MLP": "#1baf7a"}
+FAMILY_COLOR = {"GCN": "#2a78d6", "GraphSAGE": "#0f4c8a", "DeepSets": "#8e44ad", "RF": "#eb6834", "MLP": "#1baf7a"}
+OLD_TAGS = ("(texto)", "(antigo)")  # resultados do protocolo antigo da GCN/DeepSets
 
 
 def br(x, d=4):
@@ -37,12 +38,18 @@ def br(x, d=4):
 
 def load_runs(out_dir, old_gcn_dir=None):
     rows, preds = [], {}
-    for f in sorted(glob.glob(os.path.join(out_dir, "runs", "*", "seed_*.json"))):
+    files = sorted(glob.glob(os.path.join(out_dir, "runs", "*", "seed_*.json")))
+    files_v2 = sorted(glob.glob(os.path.join(out_dir, "runs_v2", "*", "seed_*.json")))
+    for f in files + files_v2:
         with open(f) as fh:
             j = json.load(fh)
         rep = j["report"]
+        name = j["model"]
+        # Com o protocolo v2 presente, os modelos em PyTorch do protocolo anterior viram "(antigo)"
+        if files_v2 and j.get("protocol") != "v2" and j["family"] in ("GCN", "DeepSets"):
+            name = f"{name} (antigo)"
         rows.append({
-            "model": j["model"], "family": j["family"], "seed": j["seed"],
+            "model": name, "family": j["family"], "seed": j["seed"], "protocol": j.get("protocol", "v1"),
             "representation": j.get("representation"), "variant": j.get("variant"),
             "macro_f1": j["macro_f1"], "accuracy": j["accuracy"],
             "f1_rush": rep["Rush"]["f1-score"], "f1_pass": rep["Pass"]["f1-score"],
@@ -52,7 +59,7 @@ def load_runs(out_dir, old_gcn_dir=None):
             "train_time_s": j.get("train_time_s", np.nan),
             "cm": np.array(j["confusion_matrix"], dtype=float),
         })
-        preds[(j["model"], j["seed"])] = (j.get("test_keys"), j.get("test_labels"), j.get("test_preds"))
+        preds[(name, j["seed"])] = (j.get("test_keys"), j.get("test_labels"), j.get("test_preds"))
 
     # Resultados antigos da GCN (output/results). A divisao usada pela GCN no texto e a
     # mesma reproduzida aqui (ver common.make_split), entao sao pareaveis por semente.
@@ -64,7 +71,7 @@ def load_runs(out_dir, old_gcn_dir=None):
                 g = j["best_gcn_results"]
                 name = f"GCN-{j['config']['EDGE_STRATEGY'].rstrip('-')} (texto)"
                 rows.append({
-                    "model": name, "family": "GCN", "seed": j["config"]["RANDOM_SEED"],
+                    "model": name, "family": "GCN", "seed": j["config"]["RANDOM_SEED"], "protocol": "texto",
                     "representation": "graph", "variant": "texto",
                     "macro_f1": g["macro avg"]["f1-score"], "accuracy": g["accuracy"],
                     "f1_rush": g["Rush"]["f1-score"], "f1_pass": g["Pass"]["f1-score"],
@@ -319,18 +326,25 @@ def analyze(args):
 
     # Para os testes estatisticos usamos, por padrao, todas as configuracoes exceto as GCN "(texto)"
     # importadas, que duplicam as GCN reexecutadas quando ambas existem.
-    test_models = [m for m in summ.index if not (m.endswith("(texto)") and m.replace(" (texto)", "") in summ.index)]
+    # Testes estatisticos: sem duplicar configuracoes. Se ha resultados do protocolo v2, as GCN/DeepSets
+    # do protocolo antigo ("(texto)", "(antigo)") ficam so na tabela; senao, "(texto)" sai apenas quando
+    # a mesma topologia foi reexecutada.
+    has_v2 = (df.protocol == "v2").any()
+    if args.include_old_in_tests or not has_v2:
+        test_models = [m for m in summ.index if not (m.endswith("(texto)") and m.replace(" (texto)", "") in summ.index)]
+    else:
+        test_models = [m for m in summ.index if not m.endswith(OLD_TAGS)]
     wide, fr_text = friedman_nemenyi(df, test_models, out_dir)
     with open(os.path.join(out_dir, "friedman_nemenyi.txt"), "w") as f:
         f.write(fr_text + "\n")
 
-    ref = args.reference or next((m for m in test_models if summ.loc[m, "family"] == "GCN"), test_models[0])
+    ref = args.reference or next((m for m in test_models if summ.loc[m, "family"] in ("GCN", "GraphSAGE")), test_models[0])
     wil = wilcoxon_vs_ref(df, ref, test_models)
     wil.to_csv(os.path.join(out_dir, "wilcoxon_vs_ref.csv"), index=False, float_format="%.5f")
 
     # Matrizes de confusao: melhor de cada familia + configuracoes "texto"
     cm_models = []
-    for fam in ["GCN", "DeepSets", "RF", "MLP"]:
+    for fam in ["GCN", "GraphSAGE", "DeepSets", "RF", "MLP"]:
         cm_models += list(summ[summ.family == fam].index[:2])
     confusion_matrices(df, cm_models, os.path.join(out_dir, "matrizes_confusao"))
 

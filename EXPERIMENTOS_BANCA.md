@@ -2,6 +2,8 @@
 
 Branch: `experimentos-comparacao-justa`
 
+> **Atualização (09/10/2026):** a GCN e o DeepSets estão sendo reexecutados em condições iguais (arestas nos dois sentidos, peso pela distância, tuning na validação, checkpoint correto, atributos padronizados), junto com a GraphSAGE. Veja o [EXPERIMENTOS_GNN_JUSTA.md](EXPERIMENTOS_GNN_JUSTA.md), na branch `experimentos-gnn-justa`. RF e MLP continuam valendo como estão aqui.
+
 Estes experimentos respondem às críticas do Prof. Marcos Quiles sobre a comparação entre a GCN e as baselines.
 
 **Nada muda nos experimentos da GCN.** As instruções abaixo executam **só as baselines** (DeepSets, RF e MLP). Os resultados da GCN usados no texto (`output/results`) entram direto na análise, sem rodar nada de novo. As alterações em `src/data` e `src/models/gcn_trainer.py` não mudam a entrada nem o treino da GCN (validado: os tensores de entrada são idênticos aos do pipeline original).

@@ -6,4 +6,5 @@ distances/*
 !distances/distances.csv
 venv
 
+*.lock
 data/*
