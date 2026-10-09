@@ -546,7 +546,9 @@ class GNNTrainer:
         """Mede o tempo de inferencia: por jogada (lote de 1) e no conjunto de teste inteiro"""
         model.eval()
         sync = torch.cuda.synchronize if self.device.type == 'cuda' else (lambda: None)
-        sample = dataset[:n_samples]
+        # Data.to() do PyG altera o objeto no lugar: copia para nao deixar parte do
+        # dataset na GPU e parte na CPU (o DataLoader abaixo falharia ao montar os lotes)
+        sample = [d.clone() for d in dataset[:n_samples]]
         with torch.no_grad():
             for data in sample[:20]:  # aquecimento
                 data = data.to(self.device)

@@ -84,6 +84,72 @@
                 "validation_fraction": 0.1,
                 "n_iter_no_change": 20,
                 "max_iter": 1000
+            },
+            "concat_raw": {
+                "hidden_layer_sizes": [
+                    64
+                ],
+                "alpha": 0.001077429201337593,
+                "learning_rate_init": 0.004544838607385499,
+                "batch_size": 128,
+                "early_stopping": true,
+                "validation_fraction": 0.1,
+                "n_iter_no_change": 20,
+                "max_iter": 1000
+            },
+            "concat_xy": {
+                "hidden_layer_sizes": [
+                    128,
+                    128,
+                    128
+                ],
+                "alpha": 4.909627346500103e-06,
+                "learning_rate_init": 0.006869704867179911,
+                "batch_size": 256,
+                "early_stopping": true,
+                "validation_fraction": 0.1,
+                "n_iter_no_change": 20,
+                "max_iter": 1000
+            },
+            "stats_team": {
+                "hidden_layer_sizes": [
+                    256,
+                    256
+                ],
+                "alpha": 0.023124627702639556,
+                "learning_rate_init": 0.005939445748831797,
+                "batch_size": 32,
+                "early_stopping": true,
+                "validation_fraction": 0.1,
+                "n_iter_no_change": 20,
+                "max_iter": 1000
+            },
+            "concat_team_y": {
+                "hidden_layer_sizes": [
+                    64,
+                    64
+                ],
+                "alpha": 0.0010874764686864878,
+                "learning_rate_init": 0.0006105735839243476,
+                "batch_size": 32,
+                "early_stopping": true,
+                "validation_fraction": 0.1,
+                "n_iter_no_change": 20,
+                "max_iter": 1000
+            },
+            "concat_team_role": {
+                "hidden_layer_sizes": [
+                    128,
+                    128,
+                    128
+                ],
+                "alpha": 0.04566014527249203,
+                "learning_rate_init": 0.009717113481470148,
+                "batch_size": 256,
+                "early_stopping": true,
+                "validation_fraction": 0.1,
+                "n_iter_no_change": 20,
+                "max_iter": 1000
             }
         }
     },
@@ -96,6 +162,20 @@
             "DROPOUT": 0.2,
             "LEARNING_RATE": 0.001,
             "WEIGHT_DECAY": 0.0005,
+            "OPTIMIZER": "adamw",
+            "WARMUP_EPOCHS": 20,
+            "EPOCHS": 500,
+            "EARLY_STOP_PATIENCE": 100,
+            "MIN_DELTA": 0.001
+        },
+        "tuned": {
+            "HIDDEN_CHANNELS": 128,
+            "PHI_LAYERS": 3,
+            "RHO_LAYERS": 1,
+            "POOLING": "mean",
+            "DROPOUT": 0.012825940100735178,
+            "LEARNING_RATE": 0.006536264082965742,
+            "WEIGHT_DECAY": 9.285500464218935e-06,
             "OPTIMIZER": "adamw",
             "WARMUP_EPOCHS": 20,
             "EPOCHS": 500,
@@ -182,7 +262,7 @@
             "optuna_version": "4.7.0",
             "study_name": "tuning_MLP-mean_seed0",
             "storage": "sqlite:///optuna_baselines.db",
-            "updated_at": "2026-10-08T17:42:01"
+            "updated_at": "2026-10-08T23:18:57"
         },
         "MLP-stats": {
             "best_val_macro_f1": 0.7604836261248418,
@@ -192,7 +272,67 @@
             "optuna_version": "4.7.0",
             "study_name": "tuning_MLP-stats_seed0",
             "storage": "sqlite:///optuna_baselines.db",
-            "updated_at": "2026-10-08T17:42:01"
+            "updated_at": "2026-10-08T23:18:57"
+        },
+        "MLP-concat_raw": {
+            "best_val_macro_f1": 0.7169620916874051,
+            "n_trials": 50,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "tuning_MLP-concat_raw_seed0",
+            "storage": "sqlite:///optuna_baselines.db",
+            "updated_at": "2026-10-08T23:23:01"
+        },
+        "MLP-concat_xy": {
+            "best_val_macro_f1": 0.8052131960335622,
+            "n_trials": 50,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "tuning_MLP-concat_xy_seed0",
+            "storage": "sqlite:///optuna_baselines.db",
+            "updated_at": "2026-10-08T23:25:48"
+        },
+        "MLP-stats_team": {
+            "best_val_macro_f1": 0.7978223336192706,
+            "n_trials": 50,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "tuning_MLP-stats_team_seed0",
+            "storage": "sqlite:///optuna_baselines.db",
+            "updated_at": "2026-10-08T23:30:25"
+        },
+        "MLP-concat_team_y": {
+            "best_val_macro_f1": 0.8029416506979715,
+            "n_trials": 50,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "tuning_MLP-concat_team_y_seed0",
+            "storage": "sqlite:///optuna_baselines.db",
+            "updated_at": "2026-10-08T23:32:54"
+        },
+        "MLP-concat_team_role": {
+            "best_val_macro_f1": 0.8309803119696608,
+            "n_trials": 50,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "tuning_MLP-concat_team_role_seed0",
+            "storage": "sqlite:///optuna_baselines.db",
+            "updated_at": "2026-10-08T23:34:59"
+        },
+        "DEEPSETS": {
+            "best_val_macro_f1": 0.8432288319606385,
+            "n_trials": 30,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "tuning_DEEPSETS_seed0",
+            "storage": "sqlite:///optuna_baselines.db",
+            "updated_at": "2026-10-09T03:03:38"
         }
     }
 }
