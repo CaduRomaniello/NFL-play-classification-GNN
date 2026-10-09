@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import random
+import time
 from datetime import datetime
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
@@ -314,7 +315,23 @@ class GNNTrainer:
 
         # Split data
         train_graphs, validation_graphs, test_graphs = self.split_and_prepare_data(pass_graphs, rush_graphs)
-        
+
+        return self.train_on_split(train_graphs, validation_graphs, test_graphs)
+
+    def train_on_split(self, train_graphs, validation_graphs, test_graphs, model_factory=None, train_params=None):
+        """Treina e avalia um modelo em uma divisao ja definida.
+
+        model_factory: funcao (num_node_features, config) -> torch.nn.Module com a
+            mesma assinatura forward(x, edge_index, batch) da GCN. Padrao: GCN.
+        train_params: namespace com EPOCHS, LEARNING_RATE, WEIGHT_DECAY, OPTIMIZER,
+            WARMUP_EPOCHS, EARLY_STOP_PATIENCE e MIN_DELTA. Padrao: config.GCN.
+        """
+        self.set_seed(self.config.RANDOM_SEED)
+        if model_factory is None:
+            model_factory = GCN
+        if train_params is None:
+            train_params = self.config.GCN
+
         # Convert to PyTorch Geometric format
         train_dataset = self.convert_nx_to_pytorch_geometric(train_graphs, include_labels=True)
         validation_dataset = self.convert_nx_to_pytorch_geometric(validation_graphs, include_labels=True)
@@ -330,18 +347,18 @@ class GNNTrainer:
         test_loader_with_labels = DataLoader(test_dataset_with_labels, batch_size=batch_size, shuffle=False)
         
         # Initialize model
-        model = GCN(train_dataset[0].num_node_features, self.config).to(self.device)
+        model = model_factory(train_dataset[0].num_node_features, self.config).to(self.device)
         Logger.info(f'Model parameters: {model.get_num_parameters():,}')
         
         # Log config
         Logger.info(f"Config: {self.config}")
         
         # Initialize optimizer (AdamW)
-        if self.config.GCN.OPTIMIZER.lower() == "adamw":
+        if train_params.OPTIMIZER.lower() == "adamw":
             optimizer = torch.optim.AdamW(
                 model.parameters(),
-                lr=self.config.GCN.LEARNING_RATE,
-                weight_decay=self.config.GCN.WEIGHT_DECAY,
+                lr=train_params.LEARNING_RATE,
+                weight_decay=train_params.WEIGHT_DECAY,
                 betas=(0.9, 0.999),
                 eps=1e-8
             )
@@ -349,14 +366,14 @@ class GNNTrainer:
         else:
             optimizer = torch.optim.Adam(
                 model.parameters(), 
-                lr=self.config.GCN.LEARNING_RATE, 
-                weight_decay=self.config.GCN.WEIGHT_DECAY
+                lr=train_params.LEARNING_RATE, 
+                weight_decay=train_params.WEIGHT_DECAY
             )
             Logger.info("Using Adam optimizer")
         
         # Initialize scheduler with warmup + cosine annealing
-        warmup_epochs = self.config.GCN.WARMUP_EPOCHS
-        total_epochs = self.config.GCN.EPOCHS
+        warmup_epochs = train_params.WARMUP_EPOCHS
+        total_epochs = train_params.EPOCHS
         
         # Warmup scheduler
         warmup_scheduler = torch.optim.lr_scheduler.LinearLR(
@@ -383,8 +400,8 @@ class GNNTrainer:
         criterion = torch.nn.CrossEntropyLoss()
         
         # Early stopping parameters
-        patience = self.config.GCN.EARLY_STOP_PATIENCE
-        min_delta = self.config.GCN.MIN_DELTA
+        patience = train_params.EARLY_STOP_PATIENCE
+        min_delta = train_params.MIN_DELTA
         best_val_loss = float('inf')
         patience_counter = 0
         
@@ -488,6 +505,10 @@ class GNNTrainer:
         
         Logger.info('    ====================')
         Logger.info("")
+
+        # Predicoes por jogada e tempo de inferencia (modelo no estado final avaliado acima)
+        test_preds, test_labels, test_proba = self.predict(test_loader_with_labels, model)
+        inference = self.measure_inference_time(model, test_dataset_with_labels)
         
         return {
             'last_gcn_results': last_gcn_results,
@@ -498,5 +519,53 @@ class GNNTrainer:
             'model': model,
             'best_model_state': best_model_state,
             'early_stopped': patience_counter >= patience,
-            'stopped_epoch': min(epoch, total_epochs)
+            'stopped_epoch': min(epoch, total_epochs),
+            'train_time_s': (gcn_end_time - gcn_start_time).total_seconds(),
+            'test_keys': [(g.graph.get('gameId'), g.graph.get('playId')) for g in test_graphs],
+            'test_labels': test_labels,
+            'test_preds': test_preds,
+            'test_proba': test_proba,
+            'inference': inference,
         }
+
+    def predict(self, loader, model):
+        """Retorna predicoes, rotulos e probabilidade da classe passe, na ordem do loader"""
+        model.eval()
+        preds, labels, proba = [], [], []
+        with torch.no_grad():
+            for data in loader:
+                data = data.to(self.device)
+                out = model(data.x, data.edge_index, data.batch)
+                p = F.softmax(out, dim=1)[:, 1]
+                preds.extend(out.argmax(dim=1).cpu().tolist())
+                labels.extend(data.y.cpu().tolist())
+                proba.extend(p.cpu().tolist())
+        return preds, labels, proba
+
+    def measure_inference_time(self, model, dataset, n_samples=200, batch_size=32):
+        """Mede o tempo de inferencia: por jogada (lote de 1) e no conjunto de teste inteiro"""
+        model.eval()
+        sync = torch.cuda.synchronize if self.device.type == 'cuda' else (lambda: None)
+        sample = dataset[:n_samples]
+        with torch.no_grad():
+            for data in sample[:20]:  # aquecimento
+                data = data.to(self.device)
+                model(data.x, data.edge_index, torch.zeros(data.num_nodes, dtype=torch.long, device=self.device))
+            sync()
+            start = time.perf_counter()
+            for data in sample:
+                data = data.to(self.device)
+                model(data.x, data.edge_index, torch.zeros(data.num_nodes, dtype=torch.long, device=self.device))
+            sync()
+            per_play_ms = (time.perf_counter() - start) * 1000 / len(sample)
+
+            loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+            sync()
+            start = time.perf_counter()
+            for data in loader:
+                data = data.to(self.device)
+                model(data.x, data.edge_index, data.batch)
+            sync()
+            full_test_s = time.perf_counter() - start
+        return {'per_play_ms': per_play_ms, 'full_test_s': full_test_s,
+                'n_test': len(dataset), 'device': self.device.type}

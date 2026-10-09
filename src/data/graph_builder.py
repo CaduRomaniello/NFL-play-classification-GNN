@@ -24,7 +24,9 @@ class GraphBuilder:
             playId = play['playId']
             
             graph_attrs = json.loads(play.drop(['gameId', 'playId']).to_json())
-            G = nx.Graph(quarter=graph_attrs['quarter'], 
+            G = nx.Graph(gameId=int(gameId),
+                playId=int(playId),
+                quarter=graph_attrs['quarter'],
                 down=graph_attrs['down'],
                 yardsToGo=graph_attrs['yardsToGo'],
                 possessionTeam=graph_attrs['possessionTeam'],
@@ -43,7 +45,7 @@ class GraphBuilder:
                     
             iterator = tracking_data[(tracking_data['gameId'] == gameId) & (tracking_data['playId'] == playId)]
             for key, value in iterator.iterrows():
-                relevant_info = ['club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis']
+                relevant_info = ['club', 'playDirection', 'x', 'y', 's', 'a', 'dis', 'o', 'dir', 'height', 'weight', 'position', 'totalDis', 'isOffense', 'positionName']
                 info_dict = {k: v for k, v in value.items() if k in relevant_info}
                 nx.set_node_attributes(G, {value['nflId']: info_dict})
                 

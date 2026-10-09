@@ -33,6 +33,13 @@ class DataPreprocessor:
         plays = plays.dropna(subset=['playResult']).copy()
         tracking_data['playDirection'] = tracking_data.apply(lambda row: 0 if row['playDirection'] == 'left' else 1, axis=1)
 
+        # Atributos auxiliares usados apenas pelas representacoes das baselines
+        # (ordenacao dos jogadores); nao entram no vetor de atributos da GCN.
+        possession = plays.set_index(['gameId', 'playId'])['possessionTeam']
+        play_keys = pd.MultiIndex.from_frame(tracking_data[['gameId', 'playId']])
+        tracking_data['isOffense'] = (tracking_data['club'].values == possession.reindex(play_keys).values).astype(int)
+        tracking_data['positionName'] = tracking_data['position'].astype(str)
+
         le_offenseFormation = LabelEncoder()
         le_receiverAlignment = LabelEncoder()
         le_possessionTeam = LabelEncoder()
