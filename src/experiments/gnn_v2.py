@@ -10,7 +10,6 @@ Tuning (igual ao das baselines RF/MLP):
 Arquivos proprios para nao conflitar com o protocolo anterior:
   gnn_params.json, optuna_gnn.db e <out>/runs_v2/.
 """
-import fcntl
 import json
 import os
 from contextlib import contextmanager
@@ -19,6 +18,7 @@ from types import SimpleNamespace
 
 import optuna
 import torch
+from filelock import FileLock  # trava entre processos que funciona no Linux e no Windows (fcntl e so Unix)
 
 from src.experiments import common
 from src.models.trainer_v2 import graphs_to_data, train_v2
@@ -34,12 +34,10 @@ DEEPSETS_STRATEGY = "MST"  # o DeepSets ignora as arestas; o cache so serve para
 # ----------------------------------------------------------------------------
 @contextmanager
 def _locked_params(path):
-    with open(path + ".lock", "w") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
+    with FileLock(path + ".lock"):
         params = common.load_params(path)
         yield params
         common.save_params(path, params)
-        fcntl.flock(lock, fcntl.LOCK_UN)
 
 
 def train_cfg(config):
@@ -131,8 +129,7 @@ def tune(args):
     for conv, strategy in parse_targets(args.targets):
         name = "DeepSets" if conv == "none" else f"{CONVS[conv]}-{strategy}"
         # Trava: varios processos criando o mesmo banco SQLite ao mesmo tempo dao conflito de esquema
-        with open(args.params + ".lock", "w") as lock:
-            fcntl.flock(lock, fcntl.LOCK_EX)
+        with FileLock(args.params + ".lock"):
             study = optuna.create_study(
                 direction="maximize",
                 study_name=f"gnn_{name}_seed{args.tuning_seed}",
@@ -140,7 +137,6 @@ def tune(args):
                 sampler=optuna.samplers.TPESampler(seed=args.sampler_seed),
                 load_if_exists=True,
             )
-            fcntl.flock(lock, fcntl.LOCK_UN)
         done = len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE])
         remaining = args.trials - done
         Logger.info(f"Tuning {name}: {done} trials done, {max(remaining, 0)} remaining")
