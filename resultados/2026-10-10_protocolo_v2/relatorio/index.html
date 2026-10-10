@@ -1,0 +1,382 @@
+<title>Benchmark Passe × Corrida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: relatório de coluna única (~72ch), figuras como "pranchas" impressas em fundo branco, tabelas roláveis */
+:root {
+  --bg: #f6f7f5;
+  --surface: #ffffff;
+  --fg: #16201c;
+  --fg-2: #4b5651;
+  --rule: #d9ded9;
+  --accent: #2f5d50;        /* verde de gramado, discreto */
+  --accent-soft: #e3ece8;
+  --good: #1f6f4a;
+  --bad: #9b3b2a;
+  --plate: #ffffff;
+  --fam-gcn: #2a78d6; --fam-sage: #4a3aa7; --fam-ds: #e87ba4; --fam-rf: #eda100; --fam-mlp: #1baf7a; --fam-old: #9a9890;
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121715; --surface: #1a201d; --fg: #e8ece9; --fg-2: #a9b3ae; --rule: #2e3833;
+    --accent: #8cc5b0; --accent-soft: #1f2d28; --good: #7fd1a6; --bad: #f0a08f; --plate: #ffffff;
+    --fam-gcn: #3987e5; --fam-sage: #9085e9; --fam-ds: #d55181; --fam-rf: #c98500; --fam-mlp: #199e70; --fam-old: #8a887f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121715; --surface: #1a201d; --fg: #e8ece9; --fg-2: #a9b3ae; --rule: #2e3833;
+  --accent: #8cc5b0; --accent-soft: #1f2d28; --good: #7fd1a6; --bad: #f0a08f; --plate: #ffffff;
+  --fam-gcn: #3987e5; --fam-sage: #9085e9; --fam-ds: #d55181; --fam-rf: #c98500; --fam-mlp: #199e70; --fam-old: #8a887f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 880px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 72px; display: grid; gap: 56px; }
+header { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--f-display); font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 27px; line-height: 1.2; margin: 0; text-wrap: balance; }
+h3 { font-family: var(--f-body); font-weight: 600; font-size: 16px; margin: 0; }
+p, li { max-width: 68ch; }
+p { margin: 0; }
+.lede { font-size: 18px; color: var(--fg-2); }
+section { display: grid; gap: 18px; min-width: 0; }
+.meta { font-size: 14px; color: var(--fg-2); display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.meta span b { color: var(--fg); font-weight: 600; }
+code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* achados principais */
+.findings { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.findings li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--rule); max-width: none; }
+.findings .fig { font-family: var(--f-display); font-size: 30px; font-weight: 600; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.findings .fig small { display: block; font-family: var(--f-mono); font-size: 11px; font-weight: 400; color: var(--fg-2); margin-top: 6px; letter-spacing: 0.02em; }
+.findings p { max-width: 62ch; }
+@media (max-width: 560px) { .findings li { grid-template-columns: 1fr; gap: 6px; } }
+
+/* figuras */
+figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
+.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; overflow-x: auto; }
+.plate img { display: block; width: 100%; max-width: 100%; height: auto; }
+.plate.tall img { max-width: 620px; margin: 0 auto; }
+figcaption { font-size: 14px; color: var(--fg-2); max-width: 72ch; }
+figcaption b { color: var(--fg); }
+
+/* tabelas */
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-weight: 600; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-2); background: var(--accent-soft); }
+tbody tr:last-child td { border-bottom: none; }
+td.l, th.l { text-align: left; white-space: normal; min-width: 14rem; }
+tr.hl td { background: var(--accent-soft); font-weight: 600; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; }
+.fam-GCN { background: var(--fam-gcn); } .fam-GraphSAGE { background: var(--fam-sage); } .fam-DeepSets { background: var(--fam-ds); }
+.fam-RF { background: var(--fam-rf); } .fam-MLP { background: var(--fam-mlp); } .fam-old { background: var(--fam-old); }
+.pos { color: var(--good); } .neg { color: var(--bad); }
+.ns { color: var(--fg-2); }
+details { border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+details summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
+details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details .tbl { border: none; border-top: 1px solid var(--rule); border-radius: 0 0 6px 6px; }
+
+/* listas de texto */
+.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; }
+.callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; display: grid; gap: 8px; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+.two > div { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.rewrite { display: grid; gap: 14px; }
+.rewrite > div { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+.rewrite > div:last-child { border-bottom: none; }
+.rewrite .was { color: var(--fg-2); }
+.rewrite .lab { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-2); display: block; margin-bottom: 4px; }
+@media (max-width: 640px) { .rewrite > div { grid-template-columns: 1fr; } }
+footer { font-size: 13px; color: var(--fg-2); border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 6px; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Dissertação · correções da banca · protocolo v2</div>
+  <h1>Benchmark passe × corrida com GNN, DeepSets e baselines</h1>
+  <p class="lede">Resultado das 29 sementes com a mesma divisão de dados para todos os modelos, depois das correções na GCN (arestas nos dois sentidos, peso pela distância, tuning na validação, checkpoint correto e atributos padronizados) e da inclusão da GraphSAGE.</p>
+  <div class="meta">
+    <span><b>38</b> configurações</span>
+    <span><b>29</b> sementes (1–29)</span>
+    <span><b>2.314</b> jogadas de teste por semente</span>
+    <span>Métrica: <b>Macro F1</b> no teste</span>
+  </div>
+</header>
+
+<section>
+  <h2>O que os números dizem</h2>
+  <ul class="findings">
+    <li><div class="fig">0,8404<small>DeepSets otimizado</small></div>
+      <p><b>O melhor modelo não usa arestas.</b> O DeepSets otimizado e a melhor GraphSAGE (RNG, 0,8386) empatam: a diferença é de 0,0017, a GraphSAGE vence em 10 de 29 sementes e o Wilcoxon com Holm dá p = 0,26.</p></li>
+    <li><div class="fig">+0,115<small>média → concatenação</small></div>
+      <p><b>A crítica do Prof. Marcos se confirmou.</b> Trocar a média dos jogadores pela concatenação ordenada levou o MLP de 0,6738 para 0,7884. Grande parte da vantagem da GCN no texto vinha da informação que a média descartava.</p></li>
+    <li><div class="fig">+0,023<small>GCN corrigida</small></div>
+      <p><b>As correções melhoraram a GCN em todas as topologias.</b> A GCN-MST foi de 0,7925 para 0,8159 e venceu a versão do texto em 29 de 29 sementes. Na DELAUNAY, o ganho foi de 0,050.</p></li>
+    <li><div class="fig">−0,005<small>arestas na GCN</small></div>
+      <p><b>Mesmo corrigida, a GCN fica abaixo de si mesma sem arestas.</b> Com os mesmos hiperparâmetros, tirar as arestas leva a 0,8206 (a GCN vence em só 6 de 29 sementes; p de Holm = 0,006). A GCN mistura cada jogador com os vizinhos e perde informação individual.</p></li>
+    <li><div class="fig">+0,022<small>GraphSAGE × GCN</small></div>
+      <p><b>A forma de agregar os vizinhos importa.</b> A GraphSAGE, que dá pesos separados ao próprio jogador e aos vizinhos, supera a GCN em todas as 6 topologias (29 de 29 sementes na RNG). Ela chega ao nível do DeepSets, mas não passa dele.</p></li>
+    <li><div class="fig">≈ 0,004<small>entre topologias</small></div>
+      <p><b>A escolha da topologia quase não importa mais.</b> No texto, a MST superava a DELAUNAY por 0,030. Na v2, todas as GCN ficam entre 0,8128 e 0,8167, e todas as GraphSAGE entre 0,8348 e 0,8386. A vantagem das topologias enxutas era, em boa parte, efeito das arestas em um sentido só.</p></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Da média dos jogadores ao melhor modelo</h2>
+  <figure>
+    <div class="plate"><img src="fig1_progressao.png" alt="Gráfico de pontos com o Macro F1 de dez configurações, da média dos jogadores (0,67 a 0,73) até o DeepSets otimizado (0,84)."></div>
+    <figcaption><b>Figura 1.</b> Macro F1 no teste em 29 sementes. Cada ponto pequeno é uma semente; o ponto grande é a média e a barra, ±1 desvio-padrão. O asterisco marca a única representação que usa informação de lado de campo (ataque ou defesa) para ordenar os jogadores.</figcaption>
+  </figure>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Modelo</th><th>Macro F1</th><th>F1 corrida</th><th>F1 passe</th><th>Rank médio</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td><span class="dot fam-DeepSets"></span>DeepSets otimizado (v2)</td><td>0,8404 ± 0,0080</td><td>0,8144</td><td>0,8664</td><td>2,62</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-RNG (v2)</td><td>0,8386 ± 0,0073</td><td>0,8130</td><td>0,8643</td><td>3,62</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-DELAUNAY (v2)</td><td>0,8383 ± 0,0087</td><td>0,8135</td><td>0,8630</td><td>3,72</td></tr>
+        <tr><td><span class="dot fam-DeepSets"></span>GCN-MST v2 sem arestas (DeepSets-matched)</td><td>0,8206 ± 0,0085</td><td>0,7966</td><td>0,8447</td><td>9,05</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN-RNG (v2)</td><td>0,8167 ± 0,0077</td><td>0,7872</td><td>0,8462</td><td>10,90</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN-MST (v2)</td><td>0,8159 ± 0,0070</td><td>0,7900</td><td>0,8418</td><td>11,45</td></tr>
+        <tr><td><span class="dot fam-MLP"></span>MLP, ordenado por lado e função*</td><td>0,8138 ± 0,0087</td><td>0,7843</td><td>0,8433</td><td>12,55</td></tr>
+        <tr><td><span class="dot fam-old"></span>GCN-MST do texto</td><td>0,7925 ± 0,0102</td><td>0,7529</td><td>0,8321</td><td>—</td></tr>
+        <tr><td><span class="dot fam-MLP"></span>MLP, concatenação ordenada por x,y</td><td>0,7884 ± 0,0105</td><td>0,7534</td><td>0,8233</td><td>18,45</td></tr>
+        <tr><td><span class="dot fam-RF"></span>RF, média dos jogadores (texto)</td><td>0,7281 ± 0,0102</td><td>0,6683</td><td>0,7880</td><td>26,48</td></tr>
+        <tr><td><span class="dot fam-MLP"></span>MLP, média dos jogadores (texto)</td><td>0,6738 ± 0,0088</td><td>0,6061</td><td>0,7415</td><td>29,93</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>O RF e o MLP com a média, agora na mesma divisão da GCN, ficaram em 0,7281 e 0,6738, próximos dos 0,7319 e 0,6785 da Tabela 4.1. O rank médio vem do teste de Friedman com as 30 configurações do protocolo atual (as versões do texto e do protocolo anterior não entram, para não contar a mesma configuração duas vezes).</p>
+  <details>
+    <summary>Tabela completa: as 38 configurações</summary>
+    <div class="tbl">
+      <table><thead><tr><th>Configuração</th><th>Macro F1</th><th>Mín.</th><th>Máx.</th><th>F1 corrida</th><th>F1 passe</th><th>ms/jogada</th></tr></thead><tbody><tr><td><span class="dot fam-DeepSets"></span>DeepSets-tuned</td><td>0,8404 ± 0,0080</td><td>0,8285</td><td>0,8619</td><td>0,8144</td><td>0,8664</td><td>0,95</td></tr>
+<tr><td><span class="dot fam-GraphSAGE"></span>SAGE-RNG</td><td>0,8386 ± 0,0073</td><td>0,8264</td><td>0,8581</td><td>0,8130</td><td>0,8643</td><td>1,18</td></tr>
+<tr><td><span class="dot fam-GraphSAGE"></span>SAGE-DELAUNAY</td><td>0,8383 ± 0,0087</td><td>0,8248</td><td>0,8587</td><td>0,8135</td><td>0,8630</td><td>1,32</td></tr>
+<tr><td><span class="dot fam-GraphSAGE"></span>SAGE-QB-CLOSEST</td><td>0,8380 ± 0,0072</td><td>0,8216</td><td>0,8506</td><td>0,8134</td><td>0,8625</td><td>1,24</td></tr>
+<tr><td><span class="dot fam-GraphSAGE"></span>SAGE-CLOSEST</td><td>0,8373 ± 0,0082</td><td>0,8176</td><td>0,8522</td><td>0,8129</td><td>0,8618</td><td>1,62</td></tr>
+<tr><td><span class="dot fam-GraphSAGE"></span>SAGE-GABRIEL</td><td>0,8354 ± 0,0087</td><td>0,8197</td><td>0,8506</td><td>0,8094</td><td>0,8613</td><td>1,17</td></tr>
+<tr><td><span class="dot fam-GraphSAGE"></span>SAGE-MST</td><td>0,8348 ± 0,0087</td><td>0,8191</td><td>0,8498</td><td>0,8085</td><td>0,8611</td><td>1,41</td></tr>
+<tr><td><span class="dot fam-DeepSets"></span>DeepSets-tuned (antigo)</td><td>0,8316 ± 0,0080</td><td>0,8159</td><td>0,8459</td><td>0,8062</td><td>0,8570</td><td>0,42</td></tr>
+<tr><td><span class="dot fam-DeepSets"></span>DeepSets-matched</td><td>0,8206 ± 0,0085</td><td>0,8040</td><td>0,8377</td><td>0,7966</td><td>0,8447</td><td>0,79</td></tr>
+<tr><td><span class="dot fam-DeepSets"></span>DeepSets-matched (antigo)</td><td>0,8186 ± 0,0128</td><td>0,7935</td><td>0,8382</td><td>0,7868</td><td>0,8505</td><td>0,37</td></tr>
+<tr><td><span class="dot fam-GCN"></span>GCN-RNG</td><td>0,8167 ± 0,0077</td><td>0,7993</td><td>0,8352</td><td>0,7872</td><td>0,8462</td><td>3,11</td></tr>
+<tr><td><span class="dot fam-GCN"></span>GCN-MST</td><td>0,8159 ± 0,0070</td><td>0,8033</td><td>0,8331</td><td>0,7900</td><td>0,8418</td><td>1,97</td></tr>
+<tr><td><span class="dot fam-GCN"></span>GCN-GABRIEL</td><td>0,8158 ± 0,0083</td><td>0,8014</td><td>0,8332</td><td>0,7859</td><td>0,8457</td><td>1,89</td></tr>
+<tr><td><span class="dot fam-GCN"></span>GCN-QB-CLOSEST</td><td>0,8158 ± 0,0077</td><td>0,7999</td><td>0,8324</td><td>0,7863</td><td>0,8452</td><td>1,82</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-concat_team_role-tuned</td><td>0,8138 ± 0,0087</td><td>0,7964</td><td>0,8342</td><td>0,7843</td><td>0,8433</td><td>0,05</td></tr>
+<tr><td><span class="dot fam-GCN"></span>GCN-CLOSEST</td><td>0,8132 ± 0,0070</td><td>0,7982</td><td>0,8254</td><td>0,7873</td><td>0,8391</td><td>3,30</td></tr>
+<tr><td><span class="dot fam-GCN"></span>GCN-DELAUNAY</td><td>0,8128 ± 0,0084</td><td>0,7919</td><td>0,8303</td><td>0,7828</td><td>0,8427</td><td>1,57</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-concat_team_role-tuned</td><td>0,8055 ± 0,0095</td><td>0,7870</td><td>0,8327</td><td>0,7758</td><td>0,8351</td><td>2,31</td></tr>
+<tr><td><span class="dot fam-old"></span>GCN-MST (texto)</td><td>0,7925 ± 0,0102</td><td>0,7751</td><td>0,8138</td><td>0,7529</td><td>0,8321</td><td>—</td></tr>
+<tr><td><span class="dot fam-old"></span>GCN-RNG (texto)</td><td>0,7916 ± 0,0090</td><td>0,7637</td><td>0,8158</td><td>0,7529</td><td>0,8303</td><td>—</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-concat_xy-tuned</td><td>0,7884 ± 0,0105</td><td>0,7678</td><td>0,8089</td><td>0,7534</td><td>0,8233</td><td>0,05</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-concat_team_y-tuned</td><td>0,7875 ± 0,0091</td><td>0,7673</td><td>0,8076</td><td>0,7475</td><td>0,8276</td><td>0,04</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-stats_team-tuned</td><td>0,7873 ± 0,0136</td><td>0,7547</td><td>0,8108</td><td>0,7515</td><td>0,8232</td><td>0,05</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-stats_team-tuned</td><td>0,7853 ± 0,0109</td><td>0,7671</td><td>0,8058</td><td>0,7449</td><td>0,8258</td><td>2,39</td></tr>
+<tr><td><span class="dot fam-old"></span>GCN-CLOSEST (texto)</td><td>0,7812 ± 0,0124</td><td>0,7439</td><td>0,7995</td><td>0,7392</td><td>0,8231</td><td>—</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-concat_xy-tuned</td><td>0,7763 ± 0,0098</td><td>0,7580</td><td>0,7942</td><td>0,7406</td><td>0,8121</td><td>2,44</td></tr>
+<tr><td><span class="dot fam-old"></span>GCN-GABRIEL (texto)</td><td>0,7731 ± 0,0134</td><td>0,7349</td><td>0,7922</td><td>0,7284</td><td>0,8179</td><td>—</td></tr>
+<tr><td><span class="dot fam-old"></span>GCN-QB-CLOSEST (texto)</td><td>0,7720 ± 0,0117</td><td>0,7392</td><td>0,7935</td><td>0,7264</td><td>0,8176</td><td>—</td></tr>
+<tr><td><span class="dot fam-old"></span>GCN-DELAUNAY (texto)</td><td>0,7628 ± 0,0128</td><td>0,7371</td><td>0,7850</td><td>0,7173</td><td>0,8082</td><td>—</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-concat_team_y-tuned</td><td>0,7568 ± 0,0114</td><td>0,7336</td><td>0,7786</td><td>0,7084</td><td>0,8052</td><td>2,33</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-stats-tuned</td><td>0,7485 ± 0,0100</td><td>0,7339</td><td>0,7722</td><td>0,7037</td><td>0,7934</td><td>0,06</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-stats-tuned</td><td>0,7393 ± 0,0096</td><td>0,7163</td><td>0,7601</td><td>0,6828</td><td>0,7959</td><td>2,34</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-mean-tuned</td><td>0,7328 ± 0,0128</td><td>0,7067</td><td>0,7655</td><td>0,6766</td><td>0,7890</td><td>0,03</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-mean-default</td><td>0,7281 ± 0,0102</td><td>0,7093</td><td>0,7450</td><td>0,6683</td><td>0,7880</td><td>2,43</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-mean-tuned</td><td>0,7280 ± 0,0106</td><td>0,7064</td><td>0,7530</td><td>0,6663</td><td>0,7896</td><td>5,56</td></tr>
+<tr><td><span class="dot fam-RF"></span>RF-concat_raw-tuned</td><td>0,7250 ± 0,0117</td><td>0,6995</td><td>0,7513</td><td>0,6623</td><td>0,7876</td><td>2,33</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-concat_raw-tuned</td><td>0,6931 ± 0,0103</td><td>0,6652</td><td>0,7092</td><td>0,6220</td><td>0,7642</td><td>0,03</td></tr>
+<tr><td><span class="dot fam-MLP"></span>MLP-mean-default</td><td>0,6738 ± 0,0088</td><td>0,6560</td><td>0,6954</td><td>0,6061</td><td>0,7415</td><td>0,04</td></tr></tbody></table>
+    </div>
+  </details>
+</section>
+
+<section>
+  <h2>Ablações pareadas por semente</h2>
+  <p>Como todos os modelos usam a mesma divisão em cada semente, dá para comparar dois modelos semente a semente. Cada comparação abaixo isola uma única mudança.</p>
+  <figure>
+    <div class="plate"><img src="fig3_diferencas_pareadas.png" alt="Diferenças de Macro F1 por semente em quatro comparações; correções e GraphSAGE contra GCN ficam bem à direita de zero, arestas na GCN fica levemente à esquerda e GraphSAGE contra DeepSets fica em torno de zero."></div>
+    <figcaption><b>Figura 2.</b> Diferença de Macro F1 (A − B) em cada uma das 29 sementes. Pontos à direita da linha vertical são sementes em que A venceu.</figcaption>
+  </figure>
+  <div class="tbl">
+    <table>
+      <thead><tr><th class="l">Comparação (A × B)</th><th>Dif. média</th><th>A vence</th><th>p (Holm)</th></tr></thead>
+      <tbody>
+        <tr><td class="l">GCN-MST v2 × GCN-MST do texto <span class="ns">(correções)</span></td><td class="pos">+0,0234</td><td>29/29</td><td>1,0e−7</td></tr>
+        <tr><td class="l">GCN-MST v2 × mesma rede sem arestas <span class="ns">(arestas na GCN)</span></td><td class="neg">−0,0048</td><td>6/29</td><td>0,006</td></tr>
+        <tr><td class="l">GraphSAGE-RNG × GCN-RNG <span class="ns">(tipo de agregação)</span></td><td class="pos">+0,0219</td><td>29/29</td><td>1,0e−7</td></tr>
+        <tr><td class="l">GraphSAGE-RNG × DeepSets otimizado <span class="ns">(arestas, ambos otimizados)</span></td><td class="ns">−0,0017</td><td>10/29</td><td class="ns">0,26</td></tr>
+        <tr><td class="l">GraphSAGE-MST × DeepSets otimizado</td><td class="neg">−0,0055</td><td>5/29</td><td>0,0009</td></tr>
+        <tr><td class="l">DeepSets v2 × DeepSets do protocolo anterior</td><td class="pos">+0,0088</td><td>26/29</td><td>1,7e−5</td></tr>
+        <tr><td class="l">DeepSets × MLP-concat_xy <span class="ns">(melhor baseline estritamente justa)</span></td><td class="pos">+0,0520</td><td>29/29</td><td>1,0e−7</td></tr>
+        <tr><td class="l">DeepSets × MLP-concat_team_role <span class="ns">(melhor baseline, com lado de campo)</span></td><td class="pos">+0,0266</td><td>29/29</td><td>1,0e−7</td></tr>
+        <tr><td class="l">GCN-RNG v2 × MLP-concat_team_role</td><td class="ns">+0,0029</td><td>20/29</td><td class="ns">0,19</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Wilcoxon pareado por semente, com correção de Holm sobre as 27 comparações calculadas (9 gerais e 3 por topologia: correções, GraphSAGE × GCN e GraphSAGE × DeepSets). Com 29 sementes, o menor p possível no Wilcoxon exato é da ordem de 10<sup>−9</sup>; o 1,0e−7 é esse piso multiplicado pelo número de testes.</p>
+  <div class="callout">
+    <p><b>Leitura.</b> Ver cada jogador individualmente é o que mais importa. A troca de mensagens, do jeito que foi testada, não acrescenta nada além disso: a GCN perde informação ao misturar e a GraphSAGE, que pode controlar o quanto usa dos vizinhos, só empata com o DeepSets.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Topologias</h2>
+  <figure>
+    <div class="plate"><img src="fig2_topologias.png" alt="Macro F1 por topologia para GCN do texto, GCN v2 e GraphSAGE v2, com uma faixa marcando o DeepSets otimizado."></div>
+    <figcaption><b>Figura 3.</b> Média ± desvio-padrão por topologia. A faixa rosa é o DeepSets otimizado, que não usa arestas. Na v2, as diferenças entre topologias quase desaparecem.</figcaption>
+  </figure>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Topologia</th><th>GCN do texto</th><th>GCN v2</th><th>Ganho</th><th>GraphSAGE v2</th><th>GraphSAGE × DeepSets (p Holm)</th></tr></thead>
+      <tbody>
+        <tr><td>MST</td><td>0,7925</td><td>0,8159</td><td class="pos">+0,023</td><td>0,8348</td><td class="neg">−0,006 (0,0009)</td></tr>
+        <tr><td>RNG</td><td>0,7916</td><td>0,8167</td><td class="pos">+0,025</td><td>0,8386</td><td class="ns">−0,002 (0,26)</td></tr>
+        <tr><td>CLOSEST</td><td>0,7812</td><td>0,8132</td><td class="pos">+0,032</td><td>0,8373</td><td class="ns">−0,003 (0,17)</td></tr>
+        <tr><td>GABRIEL</td><td>0,7731</td><td>0,8158</td><td class="pos">+0,043</td><td>0,8354</td><td class="neg">−0,005 (0,034)</td></tr>
+        <tr><td>QB-CLOSEST</td><td>0,7720</td><td>0,8158</td><td class="pos">+0,044</td><td>0,8380</td><td class="ns">−0,002 (0,26)</td></tr>
+        <tr><td>DELAUNAY</td><td>0,7628</td><td>0,8128</td><td class="pos">+0,050</td><td>0,8383</td><td class="ns">−0,002 (0,26)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>As topologias que mais ganharam com as correções são as mais densas (DELAUNAY, QB-CLOSEST, GABRIEL). Com cada aresta em um sentido só, um grafo denso passava muitas mensagens numa direção arbitrária. Nenhuma GraphSAGE supera o DeepSets; em MST e GABRIEL ela fica significativamente abaixo.</p>
+</section>
+
+<section>
+  <h2>Hiperparâmetros escolhidos</h2>
+  <p>Tuning com Optuna 4.7.0, <code>TPESampler(seed=42)</code>, 20 tentativas por estudo, divisão da semente 0 e objetivo igual ao Macro F1 na validação. O teste não foi usado. O mesmo espaço de busca valeu para os três modelos.</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Configuração</th><th>Canais</th><th>Camadas</th><th>Pooling</th><th>Pós-pooling</th><th>Peso nas arestas</th><th>F1 validação</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot fam-GCN"></span>GCN-MST</td><td>256</td><td>1</td><td>média</td><td>2</td><td>1/(1+d)</td><td>0,8317</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN-RNG</td><td>64</td><td>2</td><td>média+máx.</td><td>1</td><td>1/(1+d)</td><td>0,8331</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN-CLOSEST</td><td>64</td><td>2</td><td>média+máx.</td><td>1</td><td>1/(1+d)</td><td>0,8303</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN-GABRIEL</td><td>64</td><td>1</td><td>média</td><td>1</td><td>1/(1+d)</td><td>0,8318</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN-QB-CLOSEST</td><td>64</td><td>1</td><td>média</td><td>1</td><td>1/(1+d)</td><td>0,8288</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN-DELAUNAY</td><td>64</td><td>1</td><td>média</td><td>1</td><td>1/(1+d)</td><td>0,8272</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-MST</td><td>128</td><td>2</td><td>média+máx.</td><td>0</td><td>1/(1+d)</td><td>0,8484</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-RNG</td><td>128</td><td>2</td><td>máx.</td><td>0</td><td>1/(1+d)</td><td>0,8527</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-CLOSEST</td><td>64</td><td>3</td><td>média+máx.</td><td>1</td><td>1/(1+d)</td><td>0,8521</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-GABRIEL</td><td>128</td><td>2</td><td>máx.</td><td>1</td><td>1/(1+d)</td><td>0,8493</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-QB-CLOSEST</td><td>128</td><td>2</td><td>máx.</td><td>1</td><td>1/(1+d)</td><td>0,8499</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE-DELAUNAY</td><td>64</td><td>3</td><td>média+máx.</td><td>0</td><td>1/(1+d)</td><td>0,8562</td></tr>
+        <tr><td><span class="dot fam-DeepSets"></span>DeepSets</td><td>256</td><td>3</td><td>média+máx.</td><td>0</td><td>—</td><td>0,8516</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>O tuning escolheu o peso <code>1/(1+d)</code> nas 12 configurações com arestas: quando a rede usa os vizinhos, vale ponderar pela distância. O pooling com máximo aparece em 9 das 13 escolhas. O melhor modelo foi o da época de maior Macro F1 na validação; a mediana dessa época ficou entre 30 e 135, e a paciência do early stopping foi de 30 épocas.</p>
+</section>
+
+<section>
+  <h2>Visão geral e teste de Friedman</h2>
+  <p>Friedman: χ² = 811,92, p = 3,6 × 10<sup>−152</sup> (30 configurações, 29 sementes). No Nemenyi, a diferença crítica é de 8,67 posições: o DeepSets e as 6 GraphSAGE formam o grupo do topo. Por esse teste, que é conservador com 30 configurações, o DeepSets ainda não se separa da GCN-RNG (8,3 posições de distância). Os Wilcoxon pareados acima são mais sensíveis para as comparações de interesse.</p>
+  <figure>
+    <div class="plate"><img src="nemenyi_cd.png" alt="Diagrama de diferença crítica de Nemenyi com as 30 configurações ordenadas por rank médio."></div>
+    <figcaption><b>Figura 4.</b> Diagrama de diferença crítica (Nemenyi, α = 0,05). Configurações ligadas por uma barra não diferem significativamente.</figcaption>
+  </figure>
+  <figure>
+    <div class="plate tall"><img src="boxplot_macro_f1.png" alt="Boxplot do Macro F1 das 38 configurações, uma linha por configuração, com os pontos de cada semente."></div>
+    <figcaption><b>Figura 5.</b> Distribuição do Macro F1 das 38 configurações, com um ponto por semente. Atende ao pedido do Prof. Jadson de mostrar a dispersão da Tabela 4.1.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Análise de erros por tipo de jogada</h2>
+  <p>Pedido do Prof. Jadson: separar jogadas triviais de jogadas difíceis. Juntei a predição de cada jogada de teste (gameId, playId) com os dados do <code>plays.csv</code> para cinco modelos: DeepSets, GraphSAGE-RNG, GCN-MST v2, MLP-concat_xy e o RF-média do texto. Cada jogada cai no teste em cerca de 4 das 29 sementes, então os totais abaixo contam predições (jogada × semente).</p>
+  <figure>
+    <div class="plate"><img src="fig4_erros_por_tipo.png" alt="Taxa de acerto por tipo de jogada e por formação ofensiva para cinco modelos; passes com play action ficam perto de 40 a 50 por cento."></div>
+    <figcaption><b>Figura 6.</b> Taxa de acerto por tipo de jogada (esquerda) e por formação ofensiva (direita). O <i>n</i> é o número de predições.</figcaption>
+  </figure>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Grupo de jogadas</th><th>DeepSets</th><th>GraphSAGE-RNG</th><th>GCN-MST v2</th><th>MLP-concat_xy</th><th>RF-média (texto)</th></tr></thead>
+      <tbody>
+        <tr><td>Corrida</td><td>86,1%</td><td>86,4%</td><td>85,8%</td><td>79,5%</td><td>65,8%</td></tr>
+        <tr><td>Passe sem play action</td><td>94,7%</td><td>94,3%</td><td>92,4%</td><td>91,9%</td><td>93,1%</td></tr>
+        <tr class="hl"><td>Passe com play action</td><td>50,1%</td><td>49,5%</td><td>41,4%</td><td>42,7%</td><td>39,9%</td></tr>
+        <tr><td>RPO (opção corrida/passe)</td><td>63,1%</td><td>62,5%</td><td>61,6%</td><td>56,8%</td><td>41,9%</td></tr>
+        <tr><td>Não RPO</td><td>87,0%</td><td>86,8%</td><td>84,3%</td><td>82,1%</td><td>77,9%</td></tr>
+        <tr><td>1ª descida</td><td>81,2%</td><td>81,0%</td><td>78,0%</td><td>75,1%</td><td>68,2%</td></tr>
+        <tr><td>3ª descida</td><td>93,2%</td><td>93,2%</td><td>92,6%</td><td>90,4%</td><td>87,3%</td></tr>
+        <tr><td>Formação EMPTY</td><td>96,8%</td><td>96,6%</td><td>96,3%</td><td>95,6%</td><td>96,5%</td></tr>
+        <tr><td>Formação SINGLEBACK</td><td>78,1%</td><td>78,0%</td><td>74,4%</td><td>71,2%</td><td>67,2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="two">
+    <div>
+      <h3>Jogadas triviais</h3>
+      <p>Passes sem play action, formação EMPTY (sem ninguém no backfield) e 3ª descida. Todos os modelos, até o RF com a média, acertam mais de 87%. A formação já denuncia a jogada.</p>
+      <p>Das 15.285 jogadas, 51,6% foram acertadas por todos os 5 modelos em todas as sementes em que caíram no teste.</p>
+    </div>
+    <div>
+      <h3>Jogadas difíceis</h3>
+      <p>Passes com <b>play action</b> são desenhados para parecer corrida no snap, e os melhores modelos acertam cerca de metade. As <b>RPO</b> deixam a decisão para depois do snap. Nenhuma das duas é decidível pela formação, nem por um especialista.</p>
+      <p>As 2,9% de jogadas que os 5 modelos erram sempre são 57% passes com play action (contra 15% no total), 19% RPO (contra 10,5%) e 47% SINGLEBACK (contra 25%).</p>
+    </div>
+  </div>
+  <p>A diferença entre os modelos aparece onde a formação carrega informação, mas é preciso ver os jogadores individualmente para extraí-la: nas corridas, o RF-média acerta 65,8% e o DeepSets, 86,1%.</p>
+  <figure>
+    <div class="plate"><img src="matrizes_confusao.png" alt="Matrizes de confusão de dez configurações, com porcentagens por linha."></div>
+    <figcaption><b>Figura 7.</b> Matrizes de confusão (contagens médias das 29 sementes; porcentagem por linha).</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Tempo de inferência</h2>
+  <p>Pergunta do Prof. Jadson sobre o uso em tempo real. Tempo por jogada com lote de 1 (mediana das 29 sementes).</p>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Modelo</th><th>ms por jogada</th><th>Dispositivo</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot fam-MLP"></span>MLP (qualquer representação)</td><td>0,02–0,05</td><td>CPU</td></tr>
+        <tr><td><span class="dot fam-DeepSets"></span>DeepSets otimizado</td><td>0,90</td><td>GPU</td></tr>
+        <tr><td><span class="dot fam-GraphSAGE"></span>GraphSAGE (6 topologias)</td><td>1,1–1,6</td><td>GPU</td></tr>
+        <tr><td><span class="dot fam-GCN"></span>GCN v2 (6 topologias)</td><td>1,6–3,4</td><td>GPU</td></tr>
+        <tr><td><span class="dot fam-RF"></span>RF</td><td>2,2–2,5</td><td>CPU</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Todos ficam milhares de vezes abaixo dos até 40 segundos entre jogadas. A inferência não limita o uso durante a partida; o limite é usar só o quadro do snap. Os tempos foram medidos com três processos rodando ao mesmo tempo, então são valores conservadores.</p>
+</section>
+
+<section>
+  <h2>O que muda no texto</h2>
+  <div class="rewrite">
+    <div><p class="was"><span class="lab">Hoje no texto</span>“superioridade da modelagem relacional”; a vantagem da GCN derivaria “da capacidade da GNN de interpretar a geometria espacial e a influência mútua dos jogadores”.</p>
+      <p><span class="lab">O que os dados sustentam</span>Representar os jogadores individualmente é o fator decisivo (+0,11 a +0,17 sobre a média). A troca de mensagens não trouxe ganho além do DeepSets nas condições testadas.</p></div>
+    <div><p class="was"><span class="lab">Hoje no texto</span>“topologias mais enxutas são as mais eficazes” e filtram “o ruído espacial redundante”.</p>
+      <p><span class="lab">O que os dados sustentam</span>Com as arestas corrigidas, as topologias ficam a menos de 0,004 umas das outras. A diferença do texto vinha, em boa parte, das arestas em um sentido só.</p></div>
+    <div><p class="was"><span class="lab">Hoje no texto</span>Só GCN; baselines com a média; tuning da GCN pela acurácia no teste.</p>
+      <p><span class="lab">O que os dados sustentam</span>GCN, GraphSAGE e DeepSets com o mesmo protocolo e o mesmo orçamento de tuning na validação; baselines com sete representações. A forma de agregação importa: a GraphSAGE supera a GCN em todas as topologias.</p></div>
+    <div><p class="was"><span class="lab">Hoje no texto</span>Análise de erros só por classe.</p>
+      <p><span class="lab">O que os dados sustentam</span>Os erros restantes se concentram em play action e RPO, jogadas feitas para enganar no snap. Isso dá um teto natural para qualquer modelo que use só a formação.</p></div>
+  </div>
+  <h3>Limitações para declarar</h3>
+  <ul class="plain">
+    <li>Tuning com 20 tentativas em uma única divisão (semente 0); o resultado na validação é levemente otimista por pegar o máximo do Macro F1, sem efeito no teste.</li>
+    <li>Atributos categóricos (<code>position</code>, <code>club</code>, formação) codificados com <code>LabelEncoder</code> semana a semana; afeta todos os modelos igualmente.</li>
+    <li>Uma temporada (semanas 1–9 de 2022) e só o quadro do snap.</li>
+    <li>Grafos construídos só com a geometria; outras definições de vizinhança (por função, por marcação) e arquiteturas como GAT e GIN ficam para trabalho futuro.</li>
+    <li>O texto diz 30 execuções, mas existem 29 sementes.</li>
+  </ul>
+</section>
+
+<footer>
+  <p>Fontes: <code>output/comparacao_justa/runs/</code> (RF, MLP e protocolo anterior), <code>runs_v2/</code> (GCN, GraphSAGE e DeepSets v2), <code>output/results/</code> (GCN do texto), <code>gnn_params.json</code>, <code>fair_params.json</code> e <code>data/raw/plays.csv</code>.</p>
+  <p>Figuras em PNG e PDF em <code>output/comparacao_justa/analise/</code> e <code>analise/extra/</code>, prontas para o LaTeX.</p>
+</footer>
+
+</div>

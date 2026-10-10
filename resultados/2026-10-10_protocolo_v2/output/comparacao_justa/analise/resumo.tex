@@ -1,0 +1,49 @@
+\begin{table}[htbp]
+    \centering
+    \caption{Macro F1-Score no conjunto de teste com a mesma divis\~ao de dados para todos os modelos.}
+    \label{tab:comparacao_justa}
+    \begin{tabular}{lccccc}
+        \hline
+        Modelo & M\'edia & Desvio-padr\~ao & M\'inimo & M\'aximo & Infer\^encia (ms/jogada) \\
+        \hline
+        DeepSets-tuned & 0,8404 & 0,0080 & 0,8285 & 0,8619 & 0,95 \\
+        SAGE-RNG & 0,8386 & 0,0073 & 0,8264 & 0,8581 & 1,18 \\
+        SAGE-DELAUNAY & 0,8383 & 0,0087 & 0,8248 & 0,8587 & 1,32 \\
+        SAGE-QB-CLOSEST & 0,8380 & 0,0072 & 0,8216 & 0,8506 & 1,24 \\
+        SAGE-CLOSEST & 0,8373 & 0,0082 & 0,8176 & 0,8522 & 1,62 \\
+        SAGE-GABRIEL & 0,8354 & 0,0087 & 0,8197 & 0,8506 & 1,17 \\
+        SAGE-MST & 0,8348 & 0,0087 & 0,8191 & 0,8498 & 1,41 \\
+        DeepSets-tuned (antigo) & 0,8316 & 0,0080 & 0,8159 & 0,8459 & 0,42 \\
+        DeepSets-matched & 0,8206 & 0,0085 & 0,8040 & 0,8377 & 0,79 \\
+        DeepSets-matched (antigo) & 0,8186 & 0,0128 & 0,7935 & 0,8382 & 0,37 \\
+        GCN-RNG & 0,8167 & 0,0077 & 0,7993 & 0,8352 & 3,11 \\
+        GCN-MST & 0,8159 & 0,0070 & 0,8033 & 0,8331 & 1,97 \\
+        GCN-GABRIEL & 0,8158 & 0,0083 & 0,8014 & 0,8332 & 1,89 \\
+        GCN-QB-CLOSEST & 0,8158 & 0,0077 & 0,7999 & 0,8324 & 1,82 \\
+        MLP-concat\_team\_role-tuned & 0,8138 & 0,0087 & 0,7964 & 0,8342 & 0,05 \\
+        GCN-CLOSEST & 0,8132 & 0,0070 & 0,7982 & 0,8254 & 3,30 \\
+        GCN-DELAUNAY & 0,8128 & 0,0084 & 0,7919 & 0,8303 & 1,57 \\
+        RF-concat\_team\_role-tuned & 0,8055 & 0,0095 & 0,7870 & 0,8327 & 2,31 \\
+        GCN-MST (texto) & 0,7925 & 0,0102 & 0,7751 & 0,8138 & -- \\
+        GCN-RNG (texto) & 0,7916 & 0,0090 & 0,7637 & 0,8158 & -- \\
+        MLP-concat\_xy-tuned & 0,7884 & 0,0105 & 0,7678 & 0,8089 & 0,05 \\
+        MLP-concat\_team\_y-tuned & 0,7875 & 0,0091 & 0,7673 & 0,8076 & 0,04 \\
+        MLP-stats\_team-tuned & 0,7873 & 0,0136 & 0,7547 & 0,8108 & 0,05 \\
+        RF-stats\_team-tuned & 0,7853 & 0,0109 & 0,7671 & 0,8058 & 2,39 \\
+        GCN-CLOSEST (texto) & 0,7812 & 0,0124 & 0,7439 & 0,7995 & -- \\
+        RF-concat\_xy-tuned & 0,7763 & 0,0098 & 0,7580 & 0,7942 & 2,44 \\
+        GCN-GABRIEL (texto) & 0,7731 & 0,0134 & 0,7349 & 0,7922 & -- \\
+        GCN-QB-CLOSEST (texto) & 0,7720 & 0,0117 & 0,7392 & 0,7935 & -- \\
+        GCN-DELAUNAY (texto) & 0,7628 & 0,0128 & 0,7371 & 0,7850 & -- \\
+        RF-concat\_team\_y-tuned & 0,7568 & 0,0114 & 0,7336 & 0,7786 & 2,33 \\
+        MLP-stats-tuned & 0,7485 & 0,0100 & 0,7339 & 0,7722 & 0,06 \\
+        RF-stats-tuned & 0,7393 & 0,0096 & 0,7163 & 0,7601 & 2,34 \\
+        MLP-mean-tuned & 0,7328 & 0,0128 & 0,7067 & 0,7655 & 0,03 \\
+        RF-mean-default & 0,7281 & 0,0102 & 0,7093 & 0,7450 & 2,43 \\
+        RF-mean-tuned & 0,7280 & 0,0106 & 0,7064 & 0,7530 & 5,56 \\
+        RF-concat\_raw-tuned & 0,7250 & 0,0117 & 0,6995 & 0,7513 & 2,33 \\
+        MLP-concat\_raw-tuned & 0,6931 & 0,0103 & 0,6652 & 0,7092 & 0,03 \\
+        MLP-mean-default & 0,6738 & 0,0088 & 0,6560 & 0,6954 & 0,04 \\
+        \hline
+    \end{tabular}
+\end{table}

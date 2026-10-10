@@ -1,0 +1,25 @@
+branch: experimentos-gnn-justa
+commit: b72a3b0c361df04c8ed44a64b325d5731263e7e4
+
+git status --short (alteracoes nao commitadas no momento do snapshot):
+M gnn_params.json
+ M optuna_gnn.db
+ M src/models/trainer_v2.py
+?? output/comparacao_justa/analise/
+?? output/comparacao_justa/runs_v2/
+?? resultados/
+
+git diff (codigo nao commitado):
+diff --git a/src/models/trainer_v2.py b/src/models/trainer_v2.py
+index 10f4606..ff71f5d 100644
+--- a/src/models/trainer_v2.py
++++ b/src/models/trainer_v2.py
+@@ -33,6 +33,8 @@ from src.utils.logger import Logger
+ # O SequentialLR chama internamente step(epoch) no agendador do cosseno ao fim do warmup, e o PyTorch
+ # avisa que esse uso sera descontinuado. O comportamento e correto (o mesmo do codigo original).
+ warnings.filterwarnings("ignore", message="The epoch parameter in `scheduler.step\\(\\)` was not necessary")
++# O pooling maximo do PyG sugere o pacote torch-scatter so por velocidade; o resultado e o mesmo.
++warnings.filterwarnings("ignore", message="The usage of `scatter\\(reduce='max'\\)` can be accelerated")
+ 
+ 
+ def set_seed(seed):

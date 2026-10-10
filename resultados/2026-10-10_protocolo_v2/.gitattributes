@@ -1,0 +1,3 @@
+# Snapshot congelado: guardar os arquivos byte a byte (sem conversao de fim de linha),
+# para que o MANIFEST.sha256 continue valido em qualquer checkout.
+* -text
