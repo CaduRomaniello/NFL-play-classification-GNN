@@ -1,0 +1,33 @@
+model,per_play_ms,device
+DeepSets-matched,0.7768,cuda
+DeepSets-matched (antigo),0.3649,cuda
+DeepSets-tuned,0.9008,cuda
+DeepSets-tuned (antigo),0.3672,cuda
+GCN-CLOSEST,3.3701,cuda
+GCN-DELAUNAY,1.5811,cuda
+GCN-GABRIEL,1.8762,cuda
+GCN-MST,1.9821,cuda
+GCN-QB-CLOSEST,1.8214,cuda
+GCN-RNG,3.0783,cuda
+MLP-concat_raw-tuned,0.0331,cpu
+MLP-concat_team_role-tuned,0.0389,cpu
+MLP-concat_team_y-tuned,0.0298,cpu
+MLP-concat_xy-tuned,0.0472,cpu
+MLP-mean-default,0.0323,cpu
+MLP-mean-tuned,0.0234,cpu
+MLP-stats-tuned,0.0484,cpu
+MLP-stats_team-tuned,0.0483,cpu
+RF-concat_raw-tuned,2.2432,cpu
+RF-concat_team_role-tuned,2.2751,cpu
+RF-concat_team_y-tuned,2.2059,cpu
+RF-concat_xy-tuned,2.4308,cpu
+RF-mean-default,2.4575,cpu
+RF-mean-tuned,5.5799,cpu
+RF-stats-tuned,2.3574,cpu
+RF-stats_team-tuned,2.3647,cpu
+SAGE-CLOSEST,1.6335,cuda
+SAGE-DELAUNAY,1.2767,cuda
+SAGE-GABRIEL,1.1059,cuda
+SAGE-MST,1.3927,cuda
+SAGE-QB-CLOSEST,1.2222,cuda
+SAGE-RNG,1.1309,cuda

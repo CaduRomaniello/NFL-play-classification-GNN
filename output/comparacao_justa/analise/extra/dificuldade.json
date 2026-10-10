@@ -1,0 +1,35 @@
+{
+  "jogadas_unicas": 15285,
+  "sempre_acertadas_deepsets": 0.7840366372260386,
+  "sempre_erradas_deepsets": 0.10114491331370624,
+  "sempre_erradas_todos_5": 0.029244357212953875,
+  "sempre_acertadas_todos_5": 0.515603532875368,
+  "dificeis_pct_passe": 0.6912751677852349,
+  "dificeis_pct_play_action": 0.5727069351230425,
+  "dificeis_pct_rpo": 0.19239373601789708,
+  "geral_pct_passe": 0.6041216879293425,
+  "geral_pct_play_action": 0.15250245338567223,
+  "geral_pct_rpo": 0.1051357540071966,
+  "dificeis_formacoes": {
+    "SINGLEBACK": [
+      0.46756152125279643,
+      0.24612365063788028
+    ],
+    "SHOTGUN": [
+      0.3221476510067114,
+      0.5519790644422636
+    ],
+    "I_FORM": [
+      0.11185682326621924,
+      0.06496565260058881
+    ],
+    "PISTOL": [
+      0.042505592841163314,
+      0.040562643114164215
+    ],
+    "EMPTY": [
+      0.03803131991051454,
+      0.08413477265292771
+    ]
+  }
+}

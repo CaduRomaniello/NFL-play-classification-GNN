@@ -33,6 +33,8 @@ from src.utils.logger import Logger
 # O SequentialLR chama internamente step(epoch) no agendador do cosseno ao fim do warmup, e o PyTorch
 # avisa que esse uso sera descontinuado. O comportamento e correto (o mesmo do codigo original).
 warnings.filterwarnings("ignore", message="The epoch parameter in `scheduler.step\\(\\)` was not necessary")
+# O pooling maximo do PyG sugere o pacote torch-scatter so por velocidade; o resultado e o mesmo.
+warnings.filterwarnings("ignore", message="The usage of `scatter\\(reduce='max'\\)` can be accelerated")
 
 
 def set_seed(seed):

@@ -1,0 +1,36 @@
+Friedman: chi2 = 811.92, p = 3.63e-152 (k = 30 modelos, N = 29 sementes)
+
+Ranks medios (1 = melhor):
+    2.62  DeepSets-tuned
+    3.62  SAGE-RNG
+    3.72  SAGE-DELAUNAY
+    3.76  SAGE-QB-CLOSEST
+    3.97  SAGE-CLOSEST
+    5.14  SAGE-GABRIEL
+    5.34  SAGE-MST
+    9.05  DeepSets-matched
+   10.90  GCN-RNG
+   11.45  GCN-MST
+   11.52  GCN-GABRIEL
+   11.52  GCN-QB-CLOSEST
+   12.55  MLP-concat_team_role-tuned
+   12.64  GCN-CLOSEST
+   12.90  GCN-DELAUNAY
+   15.41  RF-concat_team_role-tuned
+   18.38  MLP-concat_team_y-tuned
+   18.45  MLP-concat_xy-tuned
+   18.55  MLP-stats_team-tuned
+   18.97  RF-stats_team-tuned
+   20.59  RF-concat_xy-tuned
+   22.24  RF-concat_team_y-tuned
+   23.14  MLP-stats-tuned
+   24.17  RF-stats-tuned
+   25.41  MLP-mean-tuned
+   26.48  RF-mean-tuned
+   26.48  RF-mean-default
+   27.03  RF-concat_raw-tuned
+   29.07  MLP-concat_raw-tuned
+   29.93  MLP-mean-default
+
+Nemenyi: CD = 8.666 (q_0.05 = 3.749, k = 30, N = 29)
+p-valores de Nemenyi salvos em nemenyi_pvalues.csv

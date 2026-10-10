@@ -21,6 +21,50 @@
             "LEARNING_RATE": 0.00010467692124289185,
             "WEIGHT_DECAY": 6.0263907439503096e-06,
             "EDGE_WEIGHT": "inverse"
+        },
+        "CLOSEST-": {
+            "CONV": "gcn",
+            "HIDDEN_CHANNELS": 64,
+            "CONV_LAYERS": 2,
+            "POOLING": "mean+max",
+            "POST_LAYERS": 1,
+            "DROPOUT": 0.28595933345255997,
+            "LEARNING_RATE": 0.00023279501362556958,
+            "WEIGHT_DECAY": 1.974886123422045e-06,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "QB-CLOSEST-": {
+            "CONV": "gcn",
+            "HIDDEN_CHANNELS": 64,
+            "CONV_LAYERS": 1,
+            "POOLING": "mean",
+            "POST_LAYERS": 1,
+            "DROPOUT": 0.1078989403807957,
+            "LEARNING_RATE": 0.0009734746872177171,
+            "WEIGHT_DECAY": 8.717150567439247e-06,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "GABRIEL": {
+            "CONV": "gcn",
+            "HIDDEN_CHANNELS": 64,
+            "CONV_LAYERS": 1,
+            "POOLING": "mean",
+            "POST_LAYERS": 1,
+            "DROPOUT": 0.13233253249888044,
+            "LEARNING_RATE": 0.0005050506393204962,
+            "WEIGHT_DECAY": 5.829036538570092e-06,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "DELAUNAY": {
+            "CONV": "gcn",
+            "HIDDEN_CHANNELS": 64,
+            "CONV_LAYERS": 1,
+            "POOLING": "mean",
+            "POST_LAYERS": 1,
+            "DROPOUT": 0.13233253249888044,
+            "LEARNING_RATE": 0.0005050506393204962,
+            "WEIGHT_DECAY": 5.829036538570092e-06,
+            "EDGE_WEIGHT": "inverse"
         }
     },
     "_tuning_info": {
@@ -39,7 +83,7 @@
                 "MIN_DELTA": 0.001,
                 "BATCH_SIZE": 32
             },
-            "updated_at": "2026-10-09T14:07:22"
+            "updated_at": "2026-10-09T20:05:47"
         },
         "GCN-RNG": {
             "best_val_macro_f1": 0.8331390823494478,
@@ -56,7 +100,275 @@
                 "MIN_DELTA": 0.001,
                 "BATCH_SIZE": 32
             },
-            "updated_at": "2026-10-09T16:11:27"
+            "updated_at": "2026-10-09T20:05:47"
+        },
+        "GCN-CLOSEST-": {
+            "best_val_macro_f1": 0.8302887311723635,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_GCN-CLOSEST-_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T20:13:51"
+        },
+        "DeepSets": {
+            "best_val_macro_f1": 0.8515982063392294,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_DeepSets_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T20:40:53"
+        },
+        "GCN-QB-CLOSEST-": {
+            "best_val_macro_f1": 0.8287759040106784,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_GCN-QB-CLOSEST-_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T20:45:55"
+        },
+        "GCN-GABRIEL": {
+            "best_val_macro_f1": 0.8317653013117391,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_GCN-GABRIEL_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T21:00:59"
+        },
+        "SAGE-CLOSEST-": {
+            "best_val_macro_f1": 0.8520703147587003,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_SAGE-CLOSEST-_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T21:18:00"
+        },
+        "GCN-DELAUNAY": {
+            "best_val_macro_f1": 0.8271828853235466,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_GCN-DELAUNAY_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T21:23:10"
+        },
+        "SAGE-GABRIEL": {
+            "best_val_macro_f1": 0.8492778823191263,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_SAGE-GABRIEL_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T21:54:38"
+        },
+        "SAGE-MST": {
+            "best_val_macro_f1": 0.8483572388025136,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_SAGE-MST_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T21:54:59"
+        },
+        "SAGE-RNG": {
+            "best_val_macro_f1": 0.8527186260375597,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_SAGE-RNG_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T22:25:50"
+        },
+        "SAGE-QB-CLOSEST-": {
+            "best_val_macro_f1": 0.8498557081597522,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_SAGE-QB-CLOSEST-_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T22:33:56"
+        },
+        "SAGE-DELAUNAY": {
+            "best_val_macro_f1": 0.8561656465091768,
+            "n_trials": 20,
+            "tuning_seed": 0,
+            "sampler": "TPESampler(seed=42)",
+            "optuna_version": "4.7.0",
+            "study_name": "gnn_SAGE-DELAUNAY_seed0",
+            "storage": "sqlite:///optuna_gnn.db",
+            "training": {
+                "EPOCHS": 500,
+                "WARMUP_EPOCHS": 20,
+                "EARLY_STOP_PATIENCE": 30,
+                "MIN_DELTA": 0.001,
+                "BATCH_SIZE": 32
+            },
+            "updated_at": "2026-10-09T23:07:44"
+        }
+    },
+    "DEEPSETS": {
+        "tuned": {
+            "CONV": "none",
+            "HIDDEN_CHANNELS": 256,
+            "CONV_LAYERS": 3,
+            "POOLING": "mean+max",
+            "POST_LAYERS": 0,
+            "DROPOUT": 0.3037724259507192,
+            "LEARNING_RATE": 0.00021930485556643703,
+            "WEIGHT_DECAY": 1.5673095467235414e-06,
+            "EDGE_WEIGHT": "none"
+        }
+    },
+    "SAGE": {
+        "CLOSEST-": {
+            "CONV": "sage",
+            "HIDDEN_CHANNELS": 64,
+            "CONV_LAYERS": 3,
+            "POOLING": "mean+max",
+            "POST_LAYERS": 1,
+            "DROPOUT": 0.18031843578631807,
+            "LEARNING_RATE": 0.00020696771271195492,
+            "WEIGHT_DECAY": 0.0001736966460130972,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "GABRIEL": {
+            "CONV": "sage",
+            "HIDDEN_CHANNELS": 128,
+            "CONV_LAYERS": 2,
+            "POOLING": "max",
+            "POST_LAYERS": 1,
+            "DROPOUT": 0.3255079015857973,
+            "LEARNING_RATE": 0.00011209741471981802,
+            "WEIGHT_DECAY": 1.2199276462640016e-06,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "MST": {
+            "CONV": "sage",
+            "HIDDEN_CHANNELS": 128,
+            "CONV_LAYERS": 2,
+            "POOLING": "mean+max",
+            "POST_LAYERS": 0,
+            "DROPOUT": 0.0619129991247484,
+            "LEARNING_RATE": 0.00024794056708018667,
+            "WEIGHT_DECAY": 0.0001388951296695682,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "RNG": {
+            "CONV": "sage",
+            "HIDDEN_CHANNELS": 128,
+            "CONV_LAYERS": 2,
+            "POOLING": "max",
+            "POST_LAYERS": 0,
+            "DROPOUT": 0.15078541480780544,
+            "LEARNING_RATE": 0.0007594691128201427,
+            "WEIGHT_DECAY": 3.7932913261380056e-05,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "QB-CLOSEST-": {
+            "CONV": "sage",
+            "HIDDEN_CHANNELS": 128,
+            "CONV_LAYERS": 2,
+            "POOLING": "max",
+            "POST_LAYERS": 1,
+            "DROPOUT": 0.3609508494017094,
+            "LEARNING_RATE": 0.0008106836225173638,
+            "WEIGHT_DECAY": 0.0009681708566843159,
+            "EDGE_WEIGHT": "inverse"
+        },
+        "DELAUNAY": {
+            "CONV": "sage",
+            "HIDDEN_CHANNELS": 64,
+            "CONV_LAYERS": 3,
+            "POOLING": "mean+max",
+            "POST_LAYERS": 0,
+            "DROPOUT": 0.0710998982491128,
+            "LEARNING_RATE": 0.0008795188471333268,
+            "WEIGHT_DECAY": 9.091886550549113e-05,
+            "EDGE_WEIGHT": "inverse"
         }
     }
 }
